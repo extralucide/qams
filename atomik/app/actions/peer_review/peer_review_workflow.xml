@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram bgcolor="#f" bgcolor2="#d9e3ed">
+    <node id='15' name="Submitted" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+        The reader detects a potential defect.
+        <node id='3' name="Accepted" connectionname="Remark becomes a defect" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+            The author commit to fix the defect.
+			<node id='4' name="Corrected" connectionname="" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+            The author fixed the defect.
+				<node id="5" name="QA acceptance" connectionname="" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				Evidence of completion has been provided.
+				</node>
+				<node id='2' name="To be reviewed" connectionname="Disagree on correction" connectioncolor="#526e88" borderconnection="3" namecolor="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				Additional remark should written.
+				</node>
+			</node>
+        </node>
+        <node id='2' name="To be reviewed" connectionname="" connectioncolor="#526e88" borderconnection="3" namecolor="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+            The author wants to obtain consensus of the peer review team or ask for opening an issue.
+			<node id='6' name="Postponed" connectionname="" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				A justification must be provided and Problem Report may be opened.
+			</node>
+			<node id='1' name="Rejected" connectionname="" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				Consensus of the peer reviewers. Not a defect.
+				<node id='2' name="To be reviewed" connectionname="Disagree on rejection." connectioncolor="#526e88" borderconnection="3" namecolor="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				Additional remark should be considered.
+				</node>
+			</node>	
+			<node id='3' name="Accepted" connectionname="Remark becomes a defect" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				The author commit to fix the defect.
+			</node>			
+        </node>
+        <node id='1' name="Rejected" connectionname="Not a defect" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+        The remark is kept in the database.
+				<node id='2' name="To be reviewed" connectionname="Disagree on rejection." connectioncolor="#526e88" borderconnection="3" namecolor="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">
+				Additional remark should be considered.
+				</node>		
+		</node>		
+    </node>
+</diagram>
