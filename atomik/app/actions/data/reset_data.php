@@ -1,0 +1,11 @@
+<?php
+Atomik::needed('Tool.class');
+Tool::deleteKey('session/sub_project_id');
+Tool::deleteKey('session/review_id');
+Tool::deleteKey('session/data_status_id');
+Tool::deleteKey('session/user_id');
+Tool::deleteKey('session/type_id');
+Tool::deleteKey('session/criticality_id');
+Tool::deleteKey('session/baseline_id');
+Tool::deleteKey('session/reference');
+Atomik::redirect('data');
