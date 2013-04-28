@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7"/>
+		<link rel="shortcut icon" href="/qams/qams.ico" />
+        <title>
+            <?= A('title', 'ECE Zodiac Aerospace System Management') ?>
+        </title>
+        <? foreach (A('styles', array()) as $style): ?>
+        <link rel="stylesheet" type="text/css" href="<?= Atomik::appAsset($style) ?>" />
+        <? endforeach; ?> 
+		<script type="text/javascript" src="assets/js/libs/dojo/dojo.js" djConfig="parseOnLoad: true , locale: &#39;en&#39;"></script>
+        <? foreach (A('scripts', array()) as $script): ?>
+        <script type="text/javascript" src="<?= Atomik::appAsset($script) ?>"></script>
+        <? endforeach; ?>
+		 <script type="text/javascript">
+            dojo.require("dijit.dijit"); // loads the optimized dijit layer
+            dojo.require("dijit._Calendar");
+            dojo.require("dojo.parser");
+        </script>
+    </head>
+    <body class="plain">	
+        <div style="background-color:#FFF">
+            <div id="content_" >
+                <ul id="messages" style="margin-left:-40px;">
+                    <?php foreach (A('flash:all') as $label => $messages): ?>
+                        <?php foreach ($messages as $message): ?>
+                    <li class="<?php echo $label ?>" style="list-style-type: none">
+                                <?php echo $message ?></li>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </ul>
+                <div style="min-height:800px">
+                    <?php echo $contentForLayout; ?>
+                </div>	
+            </div>
+            <div class="spacer"></div>
+            <div id="piedpage_generic">
+            </div>
+        </div>
+    </body>
+</html>

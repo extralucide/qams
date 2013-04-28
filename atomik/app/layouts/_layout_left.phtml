@@ -1,0 +1,13 @@
+<div>
+<div class="default_left" >
+<h3 class="<?= A('css_title')?>" ><?= A('title')?></h3>
+<span class="<?= A('css_reset')?>">Reset filter
+<a href="<?= Atomik::url(A('url_reset'),false)?>">
+<img border="0" src="<?= Atomik::asset('assets/images/silk_icons/arrow_rotate_clockwise.png')?>" alt="reset" title='reset' /></a>
+</span>
+<div class="small_nice_square">
+<?= A('select_menu')?>
+</div>
+</div>
+<?php echo $contentForLayout; ?>
+</div>

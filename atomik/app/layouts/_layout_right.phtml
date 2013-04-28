@@ -1,0 +1,57 @@
+<div id="content">
+<div id="javascript_dialog" height="32"></div>
+<div class="<?= A('css_add')?>" style="width:824px;">
+<a href="<?= A('url_add')?>" style="width:60%;text-decoration: none;outline-width: medium;outline-style: none;" title="Add new entry">
+<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="32" alt="Add new entry" title="Add new entry" border="no" /><?= A('title_add')?></a>
+</div>
+<?php echo $contentForLayout; ?>
+<div class="spacer"></div>
+<div class="<?=A('css_page')?>">
+<form method="POST" action="<?= A('url') ?>" >
+<table class="art-article" style='width:100%'>
+<thead>
+<tr>
+<th style="width:80px">
+<label for="current_page">Page</label>
+<input type="text" name="page" style="width:30px;float:right" value="<?= A('page') ?>" size="6" maxlength="6" id="current_page" />
+</th>
+<th style="width:80px">
+<label for="row_number">Rows</label>
+<input type="text" name="limite" style="width:30px;float:right" value="<?= A('limite') ?>" size="6" maxlength="6" id="row_number" />
+</th>
+<th style="width:20px" >
+<label for="display_button"></label>
+<span class="art-button-wrapper" >
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="display_button" type="submit" value="Display" />
+</span>
+<!-- Send all the hidden variables -->
+<input type="hidden" name='context' 			value='<?= A('context') ?>'>
+</th>
+<th>
+<div class="centeralign" >
+<span class="<?= A('css_page_previous')?>">
+<a href="<?= A('url_first')?>">
+<img src="<?= Atomik::asset('assets/images/pages/32x32/2leftarrow.png')?>" alt='First >>' title='First >>' style='border:none'/></a>
+<a href="<?= A('url_previous')?>">
+<img src="<?= Atomik::asset('assets/images/pages/32x32/1leftarrow.png')?>" alt='< Previous' title='< Previous' style='border:none'/></a>
+</span>
+<span class="<?= A('css_page_next')?>">
+<a href="<?= A('url_next')?>">
+<img src="<?= Atomik::asset('assets/images/pages/32x32/1rightarrow.png')?>" alt='Next >' title='Next >' style='border:none' /></a>
+<a href="<?= A('url_last')?>">
+<img src="<?= Atomik::asset('assets/images/pages/32x32/2rightarrow.png')?>" alt='Last >>' title='Last >>' style='border:none'/></a>
+</span>
+</div> <!-- class="centeralign" -->
+</th>
+</tr>
+</thead>
+</table>
+</form>
+</div>
+</div> <!-- content -->
+<script type="text/javascript">
+	/* cms_page_tab_style() */
+</script>
+

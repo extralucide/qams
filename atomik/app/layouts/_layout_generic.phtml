@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7">
+		<link rel="shortcut icon" href="/qams/qams.ico" />
+        <title>
+            <?= A('title', 'ECE Zodiac Aerospace System Management') ?>
+        </title>
+        <? foreach (A('styles', array()) as $style): ?>
+        <link rel="stylesheet" type="text/css" href="<?= Atomik::appAsset($style) ?>" />
+        <? endforeach; ?> 
+		<script type="text/javascript" src="assets/js/libs/dojo/dojo.js" djConfig="parseOnLoad: true , locale: &#39;en&#39;"></script>
+        <? foreach (A('scripts', array()) as $script): ?>
+        <script type="text/javascript" src="<?= Atomik::appAsset($script) ?>"></script>
+        <? endforeach; ?>
+		 <script type="text/javascript">
+            dojo.require("dijit.dijit"); // loads the optimized dijit layer
+            dojo.require("dijit._Calendar");
+            dojo.require("dojo.parser");
+        </script>
+    </head>
+    <body>	
+        <div style="background-color:#FFF">
+            <div id="bandeau_generic">
+                <div id="bandeau3">	<span id="img_user">
+                        <?
+						Atomik::needed('User.class');
+                        if(User::isUserLogged()){
+							print User::getNameUserLogged()."<br/>";
+                            print '<div class="font_project">'.A('session/current_project_name').'</div>';
+                        }
+                        else {
+                        	if(Atomik::get('request/action') == "view"){
+                        		/* access enabled just to see wiki*/
+                        	}
+                        	else{
+                        		header('Location:../index.php');
+                        		//Atomik::redirect('../index.php');
+                        	}
+                        }
+                        ?>
+                    </span>
+                    <a href="../index.php?loggedOut=TRUE"><img alt="loggout" height="22" width="22" src="<?= Atomik::asset('assets/images/22x22/exit.png')?>" class='img_logout_btn' /></a>
+                </div>
+                <div id="bandeau2">
+                    <a href="<?= Atomik::url('home',false) ?>" style="text-decoration:none"><h2><?= A('site_title')?></h2></a>
+                </div>
+            </div>
+            <div id="menu_horizontal">
+                <ul id="menu">
+                    <li class="<?= (A('tab_select') == 'data') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('data',false)?>" >Documents</a>
+                        <ul>
+                             <li><a href="<?= Atomik::url('data',false)?>">View Documents</a></li>
+                             <li><a href="<?= Atomik::url('data_type',false)?>">View Types</a></li>
+                             <li><a href="<?= Atomik::url('baseline') ?>">View Baseline</a></li>
+                        </ul>
+                    </li>
+                    <li class="<?= (A('tab_select') == 'remark') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('inspection?search=')?>">Peer Reviews</a>
+					       <ul>
+                              <li><a href="<?= Atomik::url('inspection?search=',false)?>">View Peer Reviews</a></li>
+                              <li><a href="<?= Atomik::url('post_remark',false)?>">Post Peer Review</a></li>
+							  <li><a href="<?= Atomik::url('export/read_docx',false)?>">Create Validation Matrix</a></li>
+                          </ul>
+					</li>
+                    <li class="<?= (A('tab_select') == 'review') ? 'tab_highlight':'tab_normal' ?>">
+					<a href="<?= Atomik::url('show_reviews',false) ?>">Meetings</a>
+                         <ul>
+                             <li><a href="<?= Atomik::url('show_reviews',false) ?>">View Reviews</a></li>
+                             <li><a href="<?= Atomik::url('review_type',false)?>">View Types</a></li>
+ 							 <li><a href="<?= Atomik::url('show_checklists',array('tab_select' => 'review')) ?>">View Checklists</a></li>
+							 <li><a href="<?= Atomik::url('build_logbook') ?>">View Logbook</a></li>
+						 </ul>
+                    </li>
+                    <li class="<?= (A('tab_select') == 'action') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('actions',false)?>">Action Items</a>
+                          <ul>
+                              <li><a href="<?= Atomik::url('actions',false)?>">View Action Items</a></li>
+                              <li><a href="<?= Atomik::url('post_action',false)?>">Post Action Items</a></li>
+                          </ul>
+                    </li>
+                    </li>
+                    <li class="<?= (A('tab_select') == 'misc') ? 'tab_highlight':'tab_normal' ?>"><a href="#">Miscelleanous</a>
+                    <ul>
+                    	<li><a href="<?= Atomik::url('users',false) ?>">View Users</a></li>
+                    	<li><a href="<?= Atomik::url('wiki') ?>">Wiki</a></li>
+						<li class="<?= (A('tab_select') == 'about') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('about',false) ?>">About</a></li>
+						<li class="<?= (A('tab_select') == 'user_guide') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('user_guide',false) ?>">User Guide</a></li>
+            		</ul>
+                    </li>
+					<? if (User::getAdminUserLogged()){?>
+                    <li class="<?= (A('tab_select') == 'admin') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('admin',false) ?>">Admin</a>
+                    </li>
+					<?}
+					?>				
+                </ul>
+                <div class="<?= A('css_search')?>">
+                    <form class="search_form" method="POST" action="<?= Atomik::url() ?>">
+                        <fieldset class="search">
+                            <input type="text" class="box" name="search" size="150" value="<?= A('search')?>" />
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+            <div id="content_" >
+                <ul id="messages" style="margin-left:-40px;">
+                    <?php foreach (A('flash:all') as $label => $messages): ?>
+                        <?php foreach ($messages as $message): ?>
+                    <li class="<?php echo $label ?>" style="list-style-type: none">
+                                <?php echo $message ?></li>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </ul>
+                <div style="min-height:800px">
+                    <?php echo $contentForLayout; ?>
+                </div>	
+            </div>
+            <div class="spacer"></div>
+            <div id="piedpage_generic">
+                <span class="copyright">Copyright &copy; 2010 All Rights Reserved</span>
+            </div>
+        </div>
+    </body>
+</html>
