@@ -1,0 +1,32 @@
+<div class="nice_square go_right">
+<form action="<?= Atomik::url('mail/report_bugs',false)?>" method="POST" >
+	<h2>Vos commentaires:</h2>
+	<textarea class="ckeditor"cols="40" id="report" name="report" rows="10" ></textarea>			
+	<dl><dd style="padding-left:0px">
+		<span class="art-button-wrapper" >
+			<span class="l"> </span>
+			<span class="r"> </span>
+			<input class="art-button" type="submit" name="submit" value="Send"/>
+
+		</span>
+		<span class="art-button-wrapper" >
+			<span class="l"> </span>
+			<span class="r"> </span>
+			<input class="art-button" type="submit" name="submit_cancel" id="submit_cancel" value="Cancel"/>
+		</span>				
+	</dd>
+</dl>
+</fieldset>
+<input type="hidden" name="reporter_id" value="<?= User::getIdUserLogged()?>">
+</form>	
+</div>
+<script type="text/javascript">
+//<![CDATA[
+	CKEDITOR.replace( 'question',
+	{	
+		toolbarStartupExpanded : false,
+		height : '200',
+		width : '600'
+	});	
+//]]>
+</script>

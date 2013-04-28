@@ -1,0 +1,34 @@
+
+     <h1>SOI objectives</h1>
+         <table class="art-article">
+         <thead>
+           <tr class='vert' > 
+            <? foreach ($header_fields as $value ): ?>
+            <th>
+                    <?= $value ?>
+            </th>
+            <? endforeach; ?>
+           </tr>
+           </thead>
+           <tbody>
+           	<? $fill = 0; ?>
+           <? foreach ($table as $row_table): ?>  
+           	<tr class=
+           	<? if ($fill){
+	       		echo "'rouge'";
+	    	}
+	    	else{
+	       		echo "'vert'";
+        	}
+    		$fill = !$fill; ?>>
+           <? foreach ($column as $row_header => $value ): ?>
+            <td> 
+              <?= $row_table[$column[$row_header][0]] ?>
+            </td> 
+           <? endforeach; ?>
+           </tr>
+           <? endforeach; ?>
+          </tbody>
+         </table>
+
+

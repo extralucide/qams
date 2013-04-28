@@ -1,0 +1,60 @@
+<div class="nice_square go_right">
+<table cellspacing="0" class="pagetable">
+    <thead>
+        <tr class='vert' >
+			<? foreach( $header_fields as $value => $colpsan):?>
+				<th colspan="<?= $colpsan ?>"><?= $value?></th>
+			<? endforeach ?>
+        </tr>
+    </thead>
+    <? foreach ($list_baseline as $row_table): ?>
+    <tbody>
+        <? $color = ($fill)?'rouge':'vert'?>
+        <tr class=<?= $color ?>>
+            <td style="width:20px"><a href="<?= Atomik::url('add_baseline',array('baseline_id'=>$row_table['id']))?>">
+             <img border=0 width="32" height="32" src='assets/images/64x64/easymoblog.png' alt="update baseline" title='update baseline' /></a>
+            </td>
+            <td colspan="4"><?= $row_table['project']." ".$row_table['lru']?></td>
+            <td colspan="6"><?= $row_table['description'] ?></td>
+			<td colspan="2"><?= $row_table['date'] ?></td>
+            <td colspan="2">
+                <a><span class="down_arrow" style="margin-left:10px" onClick="return display_baseline_data('data_<?= $row_table['id'] ?>',this)"></span></a>
+				<form method="POST" action="" onsubmit="get_baseline_backup('<?= Atomik::url('baseline/export_data',array('baseline_id'=>$row_table['id']))?>');return false;">
+					<span class="art-button-wrapper">
+					<span class="l"> </span>
+					<span class="r"> </span>
+					<input class='art-button' type="submit" name="submit_export" value='Export' /></span>
+					<input type="hidden" name="baseline_id" value="<?= $row_table['id'] ?>">
+				</form>				
+            </td>
+        </tr>
+    </tbody>
+    <tbody class="menu" id="data_<?= $row_table['id']?>">
+            <?
+			$data = $baseline->get($row_table['id']);
+			foreach ($data as $row):
+				if (preg_match("/(w+)<br\/>/",$row->description)){
+					$data_description = $row->description;
+				}
+				else{
+					$data_description = $row->type_description;
+				}?>
+				<tr class="grey_border">
+				<td colspan='7'><?= $row->project." ".$row->lru." " ?>
+				<a href="<?= Atomik::url('edit_data',array('id'=>$row->id))?>"><?= $row->application." ".$row->name." issue ".$row->version?></a>
+				</td>
+				<td colspan='7'>
+				<?= $data_description?>
+				</td>
+				<td colspan='1'>
+				<a href="<?= Atomik::url('remove_baseline', array('id' => $row->link_id))?>" >
+				<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='assets/images/32x32/agt_action_fail.png' alt='remove link' title='remove link' /></a>
+				</td>
+				</tr>
+            <?= $description ?>
+			<? endforeach ?>
+    </tbody>
+        <? $fill = !$fill; ?>
+    <? endforeach ?>
+</table>
+</div>

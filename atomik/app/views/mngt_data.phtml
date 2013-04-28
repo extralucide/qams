@@ -1,0 +1,68 @@
+<div class="big_left">
+<div class="grey_box">
+</div>
+<div style="margin-top:-60px">
+	<h3 class="logbook" >Manage Data</h3>
+	<span style="color:#FFF">Reset filter
+<a href="<?= Atomik::url('build_logbook') ?>">
+<img border=0 src='../images/silk_icons/arrow_rotate_clockwise.png' alt="reset" title='reset' /></a></span>
+<form action="" method="post" >
+<fieldset class="medium">
+<label for='show_project'>Project</label>
+<select class='combobox' onchange="this.form.submit()" name='project' id='show_project'>
+<option value=''>--All--
+<?php foreach ($projects as $row) {
+print "<option value='{$row['id']}'";
+if ($row['id'] == $show_project) {
+    print " SELECTED";
+}
+print ">".$row['project'];
+}?>
+</select>
+<input type="hidden" name="type" value="<?= $show_type?>">
+</fieldset>
+</form>
+<form method="post" action="">
+<fieldset class="medium">
+<label for='show_lru'>Component</label>
+<select class='combobox' onchange="this.form.submit()" name='lru' id="show_lru">
+<option value=''>--All--
+<?php foreach ($components as $row) {
+$id_equipment = $row['id'];
+print "<option value='{$id_equipment}'";
+if ($id_equipment == $show_lru) {
+    print " SELECTED";
+}
+print ">".$row['lru'];
+}?>
+</select>
+<input type="hidden" name="project" value="<?= $show_project?>">
+<input type="hidden" name="type" value="<?= $show_type?>">
+</fieldset>
+</form>
+<form method="post" name ="submit_post" action="<?= Atomik::url('create_data') ?>">
+<fieldset class="medium">
+<label for="show_type">Type </label> 
+<select class='combobox' name='type' id="show_type">
+<option value=''>--All--
+<?php foreach ($type as $row) {
+    print "<option value='{$row['id']}'";
+    if ($row['id'] == $show_type) {
+        print " SELECTED";
+    }
+    $description = utf8_decode($row['name']." ".$row['description']);
+    print ">{$description}";
+}?>
+</select><br/>
+<input type="hidden" name="project" value="<?= $show_project?>">
+<input type="hidden" name="lru" value="<?= $show_lru?>">
+<span class="art-button-wrapper">
+            <span class="l"> </span>
+            <span class="r"> </span>
+            <input class="art-button" type="submit" value="Create Data"/>
+        </span>
+</fieldset>
+</form>
+</div>  
+</div>
+<div class="spacer"></div>

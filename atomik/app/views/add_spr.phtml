@@ -1,0 +1,95 @@
+<div class="tundra" style="background-color: #FFF">
+    <h1><?= $title ?></h1>
+    <fieldset>
+        <dl>
+            <form action="<?= $location ?>" method="post" name="project" >
+                <dt><label style="width:10%;float:left;text-align:right;" for="select_project">Project</label></dt>
+                <select style='width:160px;' name='select_project' onchange="this.form.submit()">";
+                    <option value=''>--All--
+                        <? foreach ($projects as $row_projects): ?>
+                    <option value="<?= $row_projects['id'] ?>"
+                                <?php if ($row_projects['id'] == $select_project )print " SELECTED"; ?> >
+                                    <?= $row_projects['project'] ?>
+                                <? endforeach; ?>
+                </select>
+                <input type="hidden" name='id' value="<?= $update_id ?>"/>
+            </form>
+            <form action="" method="post" name="problem_report" >
+                <dt><label style="width:10%;float:left;text-align:right;" for="select_equipment">Equipment</label></dt>
+                <select class='style' style='width:80px;' name='select_equipment' >
+                    <option value=''>--All--
+                        <? foreach ($equipment as $row_equipments): ?>
+                            <?php $id_equipment = $row_equipments['id']; ?>
+                    <option value="<?= $row_equipments['id'] ?>"
+                                <?php if ($id_equipment == $select_equipment )print " SELECTED"; ?> >
+                                    <?= $row_equipments['lru'] ?>
+                                <? endforeach; ?>
+                </select>
+                <dt><label style="width:10%;float:left;text-align:right;" for="cr_id">Problem Report ID</label></dt>
+                <dd><input type="text" style="width:30px" name="cr_id" value="<?= $cr_id ?>"/></dd>
+                <dt><label style="width:10%;float:left;text-align:right;" for="system_pr">System PR</label></dt>
+                <dd><input type="text" style="width:30px" name="system_pr" value="<?= $system_pr ?>"/></dd>
+                <dt><label style="width:10%;float:left;text-align:right;" for="origin">Origin</label></dt>
+                <dd><input type="text" style="width:300px" name="origin" value="<?= $origin ?>"/></dd>
+                <dt><label style="width:10%;float:left;text-align:right;" for="synopsis">Synopsis</label></dt>
+                <dd><input type="text" style="width:600px" name="synopsis" value="<?= $synopsis ?>"/></dd>
+                <dt><label style="width:10%;float:left;text-align:right;" for="description">Description</label></dt>
+                <dd>
+                    <div style="width:90%;float:left;">
+                        <textarea class="ckeditor" cols="80" id="editor1" name="description" rows="10" ><?= $description ?></textarea>
+                    </div>
+                </dd>
+                <dt><label style="width:10%;float:left;text-align:right;" for="impact_analysis">Impact analysis</label></dt>
+                <dd>
+                    <div style="width:90%;float:left;">
+                        <textarea class="ckeditor" cols="80" id="editor2" name="impact_analysis" rows="10" ><?= $impact_analysis ?></textarea>
+                    </div>
+                </dd>
+                <dt><label style="width:10%;float:left;text-align:right;" for="conclusion">Conclusion</label></dt>
+                <dd><div style="width:90%;float:left;">
+                        <textarea class="ckeditor" cols="80" id="editor3" name="conclusion" rows="10" ><?= $conclusion ?></textarea>
+                    </div></dd>
+                <dt></dt>
+                <dt><label style="width:10%;float:left;text-align:right;" for="system_impact">System/Safety impact</label></dt>
+                <dd><div style="width:90%;float:left;">
+                        <textarea class="ckeditor" cols="80" id="editor4" name="system_impact" rows="10" ><?= $system_impact ?></textarea>
+                    </div></dd>
+                <dt></dt>
+                <dt><label style="width:10%;float:left;text-align:right;" for="select_severity">Severity</label></dt>
+                <select class='style' style='width:80px;' name='select_severity' >
+                    <option value=''>--All--
+                        <? foreach ($severity as $row_severity): ?>
+                            <?php $id_severity = $row_severity['level']; ?>
+                    <option value="<?= $id_severity ?>"
+                                <?php if ($id_severity == $select_severity )print " SELECTED"; ?> >
+                                    <?= $row_severity['name'] ?>
+                                <? endforeach; ?>
+                </select>
+                <dt><label style="width:10%;float:left;text-align:right;" for="select_status">Status</label></dt>
+                <select class='style' style='width:80px;' name='select_status' >
+                    <option value=''>--All--
+                        <? foreach ($status as $row_status): ?>
+                            <?php $id_status = $row_status['id']; ?>
+                    <option value="<?= $id_status ?>"
+                                <?php if ($id_status == $select_status )print " SELECTED"; ?> >
+                                    <?= $row_status['status'] ?>
+                                <? endforeach; ?>
+                </select>
+                <dd style="padding-left:65px">
+                    <span class="art-button-wrapper" >
+                        <span class="l"> </span>
+                        <span class="r"> </span>
+                        <input class="art-button" type="submit" value="<?= $button ?>"/>
+                    </span></dd>
+                <input type="hidden" name='project_id' value="<?= $select_project ?>"/>
+                <input type="hidden" name='lru_id' value="<?= $select_equipment ?>"/>
+                <input type="hidden" name='status_id' value="<?= $select_status ?>"/>
+                <input type="hidden" name='severity_id' value="<?= $select_severity ?>"/>
+                <input type="hidden" name='update' value="<?= $update ?>"/>
+                <input type="hidden" name='update_id' value="<?= $update_id ?>"/>
+            </form>
+        </dl>
+    </fieldset>
+</div>
+<div style="height:20px;"></div>
+

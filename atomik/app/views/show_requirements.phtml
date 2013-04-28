@@ -1,0 +1,184 @@
+<?php
+//echo "TEST:".$test_data_spec."<br/>";  
+?>
+<div style="height:20px;"></div>
+<div class="default_left" style="min-height:800px">
+	<h3 class="data" >Manage Data</h3>
+	<span style="color:#FFF">Reset filter
+<a href="<?= Atomik::url('build_logbook') ?>">
+<img border=0 src='../images/silk_icons/arrow_rotate_clockwise.png' alt="reset" title='reset' /></a></span>
+<form action="" method="post" >
+<fieldset class="medium">
+<label for='show_project'>Project</label>
+<select class='combobox' onchange="this.form.submit()" name='project_id' id='show_project'>
+<option value=''>--All--
+<?php foreach ($projects as $row) {
+print "<option value='{$row['id']}'";
+if ($row['id'] == $show_project) {
+    print " SELECTED";
+}
+print ">".$row['project'];
+}?>
+</select>
+<input type="hidden" name="type_id" value="<?= $show_type?>">
+</fieldset>
+</form>
+<form method="post" action="">
+<fieldset class="medium">
+<label for='show_lru'>Component</label>
+<select class='combobox' onchange="this.form.submit()" name='lru_id' id="show_lru">
+<option value=''>--All--
+<?php foreach ($components as $row) {
+$id_equipment = $row['id'];
+print "<option value='{$id_equipment}'";
+if ($id_equipment == $show_lru) {
+    print " SELECTED";
+}
+print ">".$row['lru'];
+}?>
+</select>
+<input type="hidden" name="project_id" value="<?= $show_project?>">
+<input type="hidden" name="type_id" value="<?= $show_type?>">
+<input type="hidden" name="spec_id" value="<?= $spec_id?>">
+</fieldset>
+</form>
+<form method="post" action="">
+<fieldset class="medium">
+<label for="show_type">Type </label> 
+<select class='combobox' onchange="this.form.submit()" name='type_id' id="show_type">
+<option value=''>--All--
+<?php foreach ($type as $row) {
+    print "<option value='{$row['id']}'";
+    if ($row['id'] == $show_type) {
+        print " SELECTED";
+    }
+    $description = utf8_decode($row['name']." ".$row['description']);
+    print ">{$description}";
+}?>
+</select><br/>
+<input type="hidden" name="project_id" value="<?= $show_project?>">
+<input type="hidden" name="lru_id" value="<?= $show_lru?>">
+<input type="hidden" name="spec_id" value="<?= $spec_id?>">
+</fieldset>
+</form>
+<form method="post" action="">
+<fieldset class="medium">
+<label for="show_type">Specification </label> 
+<select class='combobox' onchange="this.form.submit()" name='spec_id' id="spec_id">
+<option value=''>--All--
+<?php foreach ($data as $row) {
+    print "<option value='{$row['id']}'";
+    if ($row['id'] == $spec_id) {
+        print " SELECTED";
+    }
+    if ($row['description'] == "")
+       $description = $row['type_description'];
+    else
+       $description = $row['description'];    
+    print ">".$row['type']." ".$row['reference']." ".$row['version']." ".$description;
+}?>
+</select><br/>
+<input type="hidden" name="project_id" value="<?= $show_project?>">
+<input type="hidden" name="lru_id" value="<?= $show_lru?>">
+<input type="hidden" name="type_id" value="<?= $show_type?>">
+</fieldset>
+</form>
+  <form id="create_req" name="create_req" method="POST" action="<?= Atomik::url('add_requirement', false) ?>" >
+    <fieldset>
+       <input type="hidden" name="show_project" value="<?= $show_project?>">
+      <input type="hidden" name="show_lru" value="<?= $show_lru?>">
+      <input type="hidden" name="type_id" value="<?= $show_type?>">
+	  <input type="hidden" name="spec_id" value="<?= $spec_id?>">
+	  <input type="hidden" name="table_req" value="table_req_<?= $spec_id?>">
+      </fieldset>
+  </form>
+<div class="my_menu" style="margin-left:-45px;width:180px;">
+    <ul>
+      <li class="mom">
+        <h2>
+          <a href="<?= Atomik::url('add_requirement', array('show_project' => $show_project,'show_lru' => $show_lru,'type_id' => $show_type,'spec_id' => $spec_id,'table_req' => 'table_req_'.$spec_id)) ?>" border="0" >Add Requirement</a></h2></li>
+      <li class="export_word">
+        <h2>
+          <a href="../export/export_spec.php?spec_id=<?= $spec_id ?>" border="0" target="export_spec">Export Requirements</a></h2></li>
+	</ul>
+  </div>
+</div>  
+<div id="right" style="margin-top:0px;background-color:#AAA;width:800px">
+<div id="bandeau_gris_" style="margin-left:10px;margin-top:5px;margin-bottom:5px;">
+<?php 
+$fill = 0;
+$count = 0;
+//print_r($data_spec);
+if ($data_spec !="") {
+   foreach ($data_selected as $row ){
+      if ($row['description'] == "")
+         $description = $row['type_description'];
+      else
+         $description = $row['description'];    
+      echo $row['type']." ".$row['reference']." ".$row['version']." ".$description;
+  }
+?>
+<table class="art-article">
+    <thead>
+        <tr class='vert' >
+            <? foreach ($header_fields as $value ): ?>
+            <th>
+                    <?= $value ?>
+            </th>
+            <? endforeach; ?>
+        </tr>
+    </thead>
+    <tbody>
+        <? 
+         foreach ($data_spec as $row_table): ?>
+        <tr class=
+            <? if ($fill) {
+                echo "'rouge'";
+            }
+            else {
+                echo "'vert'";
+            }
+                $fill = !$fill; ?>>
+            <td><?= $row_table['id'] ?></td>
+            <td><?= $row_table['text'] ?></td>
+	        <td><?php 
+	        /* find upper link */
+			$list_table_traca_query = "SHOW TABLES  FROM {$db_select} LIKE '%table_traca_req_".$spec_id."%'";
+			$result = $db->db_query($list_table_traca_query); 
+			$nbtotal=mysql_num_rows($result);
+			if ($nbtotal != 0){ 
+		        $test_data_traca_spec = "SELECT req_id,upper_table_id,upper_req_id,bug_applications.application as reference, bug_applications.version, data_cycle_type.name as type FROM {$table_traca_req} ".
+		        						"LEFT OUTER JOIN bug_applications ON bug_applications.id = upper_table_id ".
+		        						"LEFT OUTER JOIN data_cycle_type ON data_cycle_type.id = bug_applications.type ".
+		        						"WHERE req_id = {$row_table['id']}";
+		        //echo $test_data_traca_spec."<br/>";						
+	    		$data_traca_spec = A("db:".$test_data_traca_spec);
+		        foreach ($data_traca_spec as $row_traca ){
+		        	echo $row_traca['reference']." ".$row_traca['type']." issue ".$row_traca['version']." Req ID ".$row_traca['upper_req_id'];
+		        }
+			}
+	        else {
+				echo "Warning, no upper link table exists.";
+			}
+	        ?></td>
+            <td><?= $row_table['derived'] ?></td>
+            <td><?= $row_table['safety'] ?></td>
+            <td><?= $row_table['rationale'] ?></td>
+            <td><?= $row_table['allocation'] ?></td>
+            <td><?= $row_table['status'] ?></td>
+            <td><?= $row_table['validation'] ?></td>
+            <td><a href="<?= Atomik::url('add_requirement', array('spec_id' => $row_table['id'],'table_req' => $table_req)) ?>">
+                  <img border=0 width="32" height="32" src='../images/64x64/easymoblog.png' alt="edit" title='edit' />
+            </a></td>
+            <? $count++; ?>
+        </tr>
+        <? endforeach; ?>
+    </tbody>
+</table>
+<?php } ?>
+<table class="art-article"><thead><tr><td>
+<?= $count ?> responses found<td/></tr></thead></table>
+<iframe style="width:800px" id="export_spec"></iframe>
+</div>
+</div>
+<div class="spacer"></div>

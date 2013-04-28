@@ -1,0 +1,221 @@
+<div id="page_tabs">
+<div id="actions" class="<?= A('actions_highlight')?>">Actions</div>
+<div id="metrics" class="<?= A('metrics_highlight')?>">Metrics</div>
+<div id="export">Export</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="actions_c">
+<?php  
+if ($nb_actions != 0){ 
+    ?>	
+    <form method="post" name="orderform" id="orderform" >
+    <table cellspacing="0" class="pagetable" style="width:812px">
+    <thead>
+    <tr>
+    <th colspan="2">Id<br/>
+    <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $id_down?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>" width="16" height="16" border="0"></a>
+    <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $id_up?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>"  width="16" height="16" border="0"></a>
+    </th>
+    <th colspan="2">Project</th>
+    <th colspan="3">Who</th>
+    <th colspan="7">Description</th>
+    <th colspan="2">Status</th>
+    <th >Open<br/>
+    <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $open_down?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>" width="16" height="16" border="0"></a>
+    <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $open_up?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>"  width="16" height="16" border="0"></a>      
+    </th>
+    <th >Due<br/>
+    <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $expected_down?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>" width="16" height="16" border="0"></a>
+    <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $expected_up?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>" width="16" height="16" border="0"></a>    
+	</th>
+    <th >Closed</th>
+    <th ></th>
+    </tr>
+    </thead>
+    <tbody> 
+    <?php 
+    foreach($list_actions_lite as $row) :
+		$action->get($row['id']);
+        $color = ($line_counter % 2 == 0) ? "rouge" : "vert";
+		?>
+		<tr class="<?= $color ?>">
+        <td colspan="2" style="width:60px"><a href="<?= Atomik::url('post_action',array('id'=>$action->id,'page'=>$page,'limite'=>$limite))?>"><?=$action->id?></a>
+        <input type='radio' style='display:none' name='modify_action_id' value="<?=$action->id?>"  /><input type='checkbox' class='no_styled' id='data_check' name='data_check[]' value="<?= $action->id?>"  /></td>
+        <td colspan="2"><?=$action->project." ".$action->lru?></td>
+        <td colspan="3"><?=$action->getAssignee()?></td>
+        <td colspan="7" style="word-wrap: break-word;"><font size="1" color="#000" face="Arial"><?=$action->getDescription()?></font></td>
+		<?php
+		switch($action->status){
+			case "Open":
+				?>
+				<td colspan="2"><a href='#'>
+				<?php 
+				if ($action->deadline_over) {
+					$img_src=Atomik::asset('assets/images/32x32/agt_update_critical.png');
+				} else { 
+					$img_src=Atomik::asset('assets/images/32x32/run.png');
+				} 
+				?>
+				<img class="action_opened" src="<?= $img_src?>" alt ="close action" title='close action' onclick="document.orderform.modify_action_id<?php if ($nb_actions > 1)echo '['.$line_counter.']'; ?>.checked=true;return action_radio_value('close')"/>
+				</a></td>
+				<td><?= $action->date_open ?></td>
+				<td><?= $action->date_expected ?></td>
+				<td><span class='action_clock'></span></td>
+				<?php
+				break;
+			case "Propose to close":
+				?>
+				<td colspan="2"><a href='#'>
+				<img class="action_opened" src="<?= Atomik::asset('assets/images/32x32/agt_runit.png')?>" alt ="action in progress" title='action in progress' onclick="document.orderform.modify_action_id<?php if ($nb_actions > 1)echo '['.$line_counter.']'; ?>.checked=true;return action_radio_value('close')"/>
+				</td>
+				<td><?= $action->date_open ?></td>
+				<td><?= $action->date_expected ?></td>
+				<td><span class='action_clock'></span></td>
+				<?php
+				break;
+			default:
+			   ?>
+			   <td>
+			   <span class="action_closed"></span></td>
+			   <td colspan="2"><?= $action->date_open ?></td>
+			   <td><?= $action->date_expected ?></td>
+			   <td><?= $action->date_closure ?></td>
+			   <?php	
+        }
+		?>
+		<td><a><span class='down_arrow' onClick="return display_action_comment('action_comment_<?=$action->id?>',this)"></a></td>
+		</tr>
+		<tr class='menu' id="action_comment_<?= $action->id?>" style='background:#C4C4C4'>
+		<td colspan="20" >
+		<div class='entry' id='first_entry'>
+		<div>
+		<div id="bande_gauche" style="width:350px;float:left">
+			<div class="my_menu" >
+				<ul>
+					<li class="edit_action"><h2><a href="<?= Atomik::url('post_action',false)?>?id=<?= $action->id ?>" >Edit action</h2></a></li>
+					<li class="copy_action"><h2><a href="<?= Atomik::url('post_action',false)?>?copy_id=<?= $action->id ?>" >Copy action</h2></a></li>
+					<li class="delete"><h2><a href="<?= Atomik::url('action/remove_action',false)?>?id=<?= $action->id ?>"  >Delete action</a></h2></li>
+					<li class="edit_action"><h2><a href="<?= Atomik::url('comment_action',false)?>?id=<?= $action->id ?>"  >Comment action</a></h2></li>
+				</ul>		
+			</div>
+		</div>	
+		<div id="bande_gauche">
+			<div class="contenu smallsize_nomargin">
+			<h1><u>Poster</u></h1><?=$action->getPoster()?>
+			<h1><u>Severity</u></h1><?=$action->getSeverity()?>
+			<h1><u>Context</u></h1>
+			<?=stripslashes($action->context)?>
+			</div>
+		</div>
+		<div style="float:left;width:450px">
+		</div>
+		</div>
+		<div class="spacer"></div>
+		<h1><u>Text of the action</u></h1>
+		<blockquote><?= $action->getDescription();?></blockquote>
+		<?
+		if ($action->response != ""){
+			?>
+			<h1><u>Comment</u></h1>
+			<blockquote><?=$action->response?></blockquote>
+			<?php
+		}
+		?>
+		</div>
+		</td>
+		</tr>
+		<?php
+        $line_counter++;
+    endforeach; //ends while loop
+	?>
+	<tr><td colspan="10" style="width:60px">Check All<input type='checkbox' class='no_styled' name='checkall' value="Check All" onClick='checkAll()'/></td>
+    <td colspan="10"></td></tr>
+    <p style="padding: 20px 0 50px;display:none"><input type="submit" value="Submit" style="width: 200px"  /></p>
+    </tbody>
+    </table>
+	<div class="nice_square" style="height:100px;min-height:100px;margin-top:10px">
+	<fieldset class="medium"  style="width:200px;margin:5px;border:1px;float:left">
+	<label for='set_status' style="color:#000">Apply Status</label>
+	<select class='combobox' name='set_status' id="set_status" >
+	<option value=''>--All--
+	<?php foreach ($status_list as $row) {
+		/* status type */
+		print "<option value='{$row['id']}'";
+		//if ($row['id'] == $show_status) {
+		//	print " SELECTED";
+		//}
+		print ">{$row['name']}";
+	}?>
+	</select>
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class='art-button' type="submit" name="submit_status" value='Set Status' /></span><br/>
+	</fieldset>
+	</div>  
+	</form>  
+<?php
+}
+else {
+	echo "<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>";
+    echo "no data !";
+    echo "</li>";
+}?>
+</div>
+<div id="metrics_c">
+<form method="POST" action="" >
+<fieldset >
+<? if (($nb_actions > 0)&&(A('session/search')=="")) {?>
+	<label for='iterations'>Iterations:</label>
+	<select class='combobox_' name='iterations' onchange="this.form.submit()">
+	<? foreach(array(10,20,30,40,50) as $value):?>
+		<option value="<?= $value ?>"
+		<? if ($value == $iterations_selected){ print " SELECTED ";}?>
+		><?= $value?>
+	<? endforeach ?>
+	</select>
+	</fieldset>
+	<input type="hidden" name='granularity' value='<?= $granularity_selected ?>'  />
+	</form>
+	<form method="POST" action="" >
+	<fieldset >
+	<label for='granularity'>Granularity:</label>
+	<select class='combobox_' name='granularity' onchange="this.form.submit()">
+	<? foreach(array(1=>"Weeks",2=>"Months") as $key=>$value):?>
+		<option value="<?= $key ?>"
+		<? if ($key == $granularity_selected){ print " SELECTED ";}?>
+		><?= $value?>
+	<? endforeach ?>
+	</select>
+	</fieldset>
+	<input type="hidden" name='iterations' value='<?= $iterations_selected ?>'  />
+	</form>
+	<br />
+	<img src="<?= $pie_filename ?>"><br/>
+	<img src="<?= $spline_filename ?>" width="800"><br/>
+	<img src="<?= $bar_filename ?>" width="800"><br/>
+<?}?>
+</div>
+<div id="export_c">
+<form method="POST" id="export_actions_list_form" action="<?= Atomik::url('export/export_xlsx_actions_list')?>" enctype="multipart/form-data" target="export_actions_list_frame" name="export_actions_list_form" style="padding-left:44px">  
+</form>
+<form method="POST" id="send_mail_form" action="<?= Atomik::url('mail/send_actions_list')?>" name="send_mail_form" style="padding-left:44px" target="export_actions_list_frame">
+</form>
+<div class="my_menu" style="width:400px;min-height:200px">
+<ul>
+	<li class="export_pdf"><h2><a href="<?= Atomik::url('export/export_actions_pdf_tcpdf')?>" >Export PDF</a></h2></li>
+	<li class="export_excel"><h2><a href="#" onclick="ActionExportRun();export_actions_list_form.submit()">Export Excel</a></h2></li>
+	<li class="email"><h2><a href="#" onclick="ActionExportRun();send_mail_form.submit()">Send mail</a></h2></li>
+</ul>
+</div>
+<iframe id="export_actions_list_frame" name="export_actions_list_frame" src="../blank.php" style="display:none;border:none;width:100%;min-height:400px;overflow:scroll"></iframe>
+</div>
+<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+Create an action list for the team using the "Add an action" button above. 
+</li>
+</div>
+<script type="text/javascript">
+cms_page_tab_style();
+</script>
+<?php Atomik::flash(A('nb_entries')." entries found", 'success'); ?>

@@ -1,0 +1,339 @@
+<div class="report_problem">
+	<div class="font_project">Report a problem<a href="<?= Atomik::url('mail/report_bugs')?>">
+	<img alt="Send mail" title="Send mail" border="0" src="<?= Atomik::asset('assets/images/32x32/mail_send.png')?>" height="32" width="32" />
+	</a></div>
+</div>
+<div id="page_tabs">
+<div id="last_read">Last read</div>
+<div id="project" class="active">Project</div>
+<div id="events" >Meetings</div>
+<div id="actions">Actions</div>
+<div id="peer_reviews">Peer reviews</div>
+<div id="normes">Référentiel</div>
+<!-- <div id="plansite">Plan site</div>-->
+</div><!-- EndTabHeaders -->
+<div id="last_read_c">
+<div class="nice_square go_right">
+<table cellspacing="0" class="pagetable">
+        <thead>
+            <tr>
+                <th>Id</th>				
+                <th colspan="2">Author</th>
+                <th>Type</th>
+				<th colspan="3">Reference</th>
+				<th colspan="6">Description</th>
+                <th colspan="2">Published</th>
+            </tr>
+        </thead>
+			<? foreach ($last_read_data as $data):
+				$row_color = ($line_counter++ % 2 == 0) ? "rouge" : "vert"; 
+				/* Convert date to display nicely */
+				$date_published = Date::convert_date($data['date_published']);
+				$date_review = Date::convert_date($data['date_review']);
+				?>    
+				<tr class="<?= $row_color ?>" >
+						<td><a href="<?= Atomik::url('edit_data',array('id'=>$data['id'])) ?>"><?= $data['id'] ?></a></td>
+						<td colspan="2"><?= User::getLiteName($data['author_fname'],$data['author_lname']) ?></td>
+						<td><?= $data['type'] ?></td>
+						<td  colspan="3"><?
+						if ($data['version'] != ""){
+						    echo $data['reference']." issue ".$data['version'];
+						}
+						else {
+							 echo $data['reference'];
+						} 
+						 ?></td>
+						<td colspan="6"><p><?
+						$description = Tool::cleanDescription($data['description']);
+						if ($description != ""){
+							echo $description;
+						}
+						else{
+							echo $data['type_description'];
+						}
+						?></p></td>
+						<td colspan="2"><?= $date_published?></td>
+				</tr>
+			<? endforeach ?>		
+</table>
+</div>
+</div>
+<div id="project_c">
+<div class="nice_square go_right">
+<?
+if ($project_found || $aircraft_found) {
+	?>
+	<div id="project_front_page_id" class="user_guide" style="min-height:800px;overflow:scroll;padding-top:10px">
+	<?= $html_project?>
+<?	
+}
+else{
+	/* No system selected */
+		?>
+		<div id="project_front_page_id" class="user_guide" style="min-height:600px;padding-top:10px">
+		<div class="image_board" >
+		  <div class="image_board_text"><b>Q</b>uality<br/><b>A</b>ssurance<br/><b>M</b>anagement<br/><b>S</b>ystem
+			  <div class="user_guide">
+			  <p>Tool to manage quality assurance artifacts:</p>
+				  <ul>
+					  <li>Data status tracking</li>
+					  <li>Peer reviews tracking</li>
+					  <li>Action items tracking</li>
+					  <li>Milestone meeting reviews</li>
+				  </ul>
+			  </div>
+		  </div>	  
+		  <a class="inspection_click" href="<?= Atomik::url('inspection') ?>" title="Remarks"></a>
+		  <a class="review_click" href="<?= Atomik::url('show_reviews') ?>" title="Reviews"></a>
+		  <a class="action_click" href="<?= Atomik::url('actions')?>" title="Actions"></a>
+		  <a class="logbook_click" href="<?= Atomik::url('show_checklists',array('tab_select' => 'review')) ?>" title="Checklist"></a>
+		  <a class="data_click" href="<?= Atomik::url('data')?>" title="Data"></a>
+		  <a class="people_click" href="<?= Atomik::url('display_users')?>" title="People"></a>
+		  <a class="checklist_click" href="<?= Atomik::url('show_checklists',array('tab_select' => 'review')) ?>" title="Checklist"></a>
+		  <a class="wiki_click" href="<?= Atomik::url('wiki') ?>" title="Wiki"></a>
+	  </div>
+	<?php
+}
+?> 
+</div>		
+</div><div class="spacer"></div></div>	
+<div id="events_c">
+<div class="nice_square" style="float:right">
+	<? if ($all_posts != null){?>
+      <h1><img src="<?= Atomik::asset('assets/images/64x64/knewsticker.png')?>" width="64" height="64" class='img_button' >The 10th last meetings</h1><hr>
+      <span style="float:right;margin-top:-70px;"> Add a new meeting
+        <a href="<?= Atomik::url('post_review')?>" >
+          <img alt='add a new event' title='add a new event' src="<?= Atomik::asset('assets/images/64x64/edit.png')?>" class='img_button'    onmouseover="this.style.margin='0px';this.style.width='64px';this.style.height='64px';"    onmouseout="this.style.margin='8px';this.style.width='48px';this.style.height='48px';" /></a>
+      </span>
+<div class="main_oap">
+<table cellspacing="0" class="pagetable">
+        <thead>
+            <tr>
+                <th>Id</th>
+				<th>Project</th>				
+                <th>Type</th>	
+				<th>Chairman</th>				
+				<th>Description</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+                <? foreach ($all_posts as $events):    
+					$row_color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+					/* Convert date to display nicely */
+					if (strtotime($events['date']) < strtotime($today_date)) $color='rouge'; else $color='vert';
+					?>
+					<tr class="grey_border <?= $row_color ?>" onmouseover_="this.className='row1hover <?= $color[1] ?>'" onmouseout_="this.className='row1 <?= $color[0] ?>'" >
+						<td><a class="<?= $color ?>" href="<?=($events['event'] == 1)?
+						Atomik::url('view_events', array('id' =>$events['id']))
+						:Atomik::url('post_review', array('id'=>$events['id']))?>">
+						<?= $events['id'] ?></a></td>
+						<td>
+						<? if ($events['project'] == ""){
+							echo "All";
+						}
+						else{
+							echo $events['project']." ".$events['lru'];
+						}?></td>
+						<td><?= $events['type'] ?></td>
+						<td><?= $events['managed_by']?></td>
+						<td><p><?= $events['type_description']?><a/></p></td>
+						<td><?= Date::convert_date($events['date']) ?></td>
+                        </tr>
+				<? endforeach ?>		
+</table>
+</div>	  
+</div>
+        <div class="spacer">
+        <? }
+         ?>
+	  </div></div>
+<div id="actions_c">
+<div class="nice_square" style="float:right">
+<? if ($actions_list != null){?>
+<h1><img src="<?= Atomik::asset('assets/images/64x64/softwareD.png')?>" class='img_button' >Actions to be tracked</h1><hr>
+      <span style="float:right;margin-top:-70px;"> Add a new action
+        <a href="<?= Atomik::url('post_action')?>" >
+          <img alt='add a new action' title='add a new action' src="<?= Atomik::asset('assets/images/64x64/edit.png')?>" class='img_button' onmouseover="this.style.margin='0px';this.style.width='64px';this.style.height='64px';"    onmouseout="this.style.margin='8px';this.style.width='48px';this.style.height='48px';" /></a>
+      </span>
+       <div class="main_oap" style="overflow_:scroll">
+<table cellspacing="0" class="pagetable">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Project</th>
+			<th>Attendee</th>
+			<th>Context</th>
+			<th>Content</th>
+			<th>Open</th>
+			<th>Expected</th>
+		</tr>
+	</thead>
+<tbody>
+<? foreach ($actions_list as $action):
+	/* $date = new Date; */
+	$color = Date::compute_expired($action['date_expected']);
+	$row_color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+	?>    
+	<tr class="grey_border <?= $row_color ?>"'>
+	<td><a href="<?= Atomik::url('post_action',array('action_id'=>$action['id'])) ?>"><?= $action['id']?></a></td>
+	<td><?= $action['project']." ".$action['lru'] ?></td>
+	<td><?= $action['fname']." ".$action['lname'] ?></td>
+	<td><?= $action['context'] ?></td>
+	<td><p><?= $action['description'] ?></p></td>
+	<td><?= Date::convert_date($action['date_open']) ?></td>
+	<td class="<?= $color[($line_counter % 2)]?>"><?= Date::convert_date($action['date_expected']) ?></td>
+	</tr>
+<? endforeach ?>		
+</tbody>
+</table>   
+</div>
+<? } 
+?>
+</div>
+<div class="spacer"></div>
+</div>	
+<div id="peer_reviews_c">
+<div class="nice_square" style="float:right">
+<? if ($data_list != null){?>
+<h1><img src="<?= Atomik::asset('assets/images/64x64/kghostview.png')?>" class='img_button' >Peer data reviews to be tracked</h1><hr>
+      <span style="float:right;margin-top:-70px;"> Add a new remark
+        <a href="<?= Atomik::url('post')?> >
+          <img alt='add a new remark' title='add a new remark' src="<?= Atomik::asset('assets/images/64x64/edit.png')?>" class='img_button'    onmouseover="this.style.margin='0px';this.style.width='64px';this.style.height='64px';"    onmouseout="this.style.margin='8px';this.style.width='48px';this.style.height='48px';" /></a>
+      </span>
+<div class="main_oap">
+<table cellspacing="0" class="pagetable">
+        <thead>
+            <tr>
+                <th>Id</th>
+				<th>Project</th>				
+                <th>Author</th>
+                <th>Type</th>
+				<th>Reference</th>
+				<th>Description</th>
+                <th>Published</th>
+                <th>Expected</th>
+            </tr>
+        </thead>
+			<? foreach ($data_list as $data): 
+				$color = Date::compute_expired($data['date_review']);
+				$row_color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+				?>    
+				<tr class="grey_border <?= $row_color ?>" >
+						<td><a href="<?= Atomik::url('edit_data',array('id'=>$data['id'])) ?>"><?= $data['id'] ?></a></td>
+						<td><?= $data['project']." ".$data['lru'] ?></td>
+						<td><?= $data['author_fname']." ".$data['author_lname'] ?></td>
+						<td><?= $data['type'] ?></td>
+						<td><?= $data['reference']." issue ".$data['version'] ?></td>
+						<td><p><?
+						if ($data['description'] == "")
+							echo $data['type_description'];
+						else
+							echo $data['description'];
+						?></p></td>
+						<td><?= Date::convert_date($data['date_published']) ?></td>
+						<td class="<?= $color[($line_counter % 2)]?>"><?= Date::convert_date($data['date_review']) ?></td>
+				</tr>
+			<? endforeach ?>		
+</table>
+</div>
+</div>
+<div class="spacer">
+<? } 
+?>
+</div>
+<div class="spacer"></div></div>	
+<div id="normes_c">
+<div class="nice_square go_right">
+<?if($config['select'] != "finister"){?>
+<fieldset class="medium" style="float:left;padding:10px">
+<legend><h2>Normes DT</h2></legend>
+<!-- <a href="#" onclick="get_intranet('http://intranet-ece.in.com/dt/be/normes');return false;">Test</a>-->
+<form method="post" action="http://intranet-ece.in.com/dt/be/normes" target="list_normes">
+	<label for="sort1">Sort by:</label>
+	<select size="1" name="sort1">
+		<option selected value="reference">Référence</option>
+		<option  value="revision">Révision</option>
+		<option  value="publishingdate">Date de publication</option>
+		<option  value="status">Statut</option>
+		<option  value="description">Description</option>
+		<option  value="classification">Classification</option>
+	</select><br/>
+	<label for="search1">Find:</label>
+	<input name="search1" value="*DO*"><br/>
+	<label for="search2">By:</label>
+	<select size="1" name="search2">
+		<option selected value="reference">Référence</option>
+		<option  value="revision">Révision</option>
+		<option  value="publishingdate">Date de publication</option>
+		<option  value="status">Statut</option>
+		<option  value="description">Description</option>
+		<option  value="classification">Classification</option>
+	</select><br/>
+	<label for="valid"></label>
+	<input type="submit" value="Go" name="valid"><br/>
+</form>
+</fieldset>
+<fieldset class="medium" style="float:left;padding:10px">
+<legend><h2>IG ECE</h2></legend>
+<form method="post" action="http://intranet-ece.in.com/dq/documentation/procedures"  target="list_normes">
+	<label for="tri">Sort by:</label>
+	<select size="1" name="tri">
+		<option  value="type">Type</option>
+		<option  value="reference" selected >Référence</option>
+		<option  value="indice">Indice</option>
+		<option  value="titre">Titre</option>
+		<option  value="applicabilite">Applicabilité</option>
+		<option  value="mq">MQ</option>
+	</select><br/>
+	<label for="search">Find:</label>
+	<input name="search" value=""><br/> 
+	<label for="search2">By:</label>
+	<select size="1" name="search2">
+		<option  value="type">Type</option>
+		<option  value="reference">Référence</option>
+		<option  value="indice">Indice</option>
+		<option  value="titre" selected >Titre</option>
+		<option  value="applicabilite">Applicabilité</option>
+		<option  value="mq">MQ</option>
+	</select><br/>
+	<label for="valid_2"></label>
+	<input type="submit" value="Go"  name="valid_2">
+</form>
+</fieldset>
+<fieldset class="medium" style="padding:10px">
+<legend><h2>IG D7</h2></legend>
+<form method="post" action="http://intranet/D7/Dir.-Technique/Documentation-de-reference-des-Etudes/Les-Procedures-7PE"  target="list_normes">
+	<label for="valid_3"></label>
+	<input type="submit" value="Go"  name="valid_3">
+</form>
+</fieldset>
+<iframe id="list_normes" name="list_normes" style="border:none;width:800px;height:800px;display:none_" onload="trigger();"></iframe>
+<?}
+?>
+</div>
+</div>
+<!--
+<div id="plansite_c" >
+	<div id="project_front_page_id" class="user_guide" style="min-height:800px;overflow:scroll">
+	<?php /* Tool::drawTree(array("test"=>array("test1","test2","test3"=>array("test31"),"test4")),5) */?>
+	</div>
+</div>
+-->
+<div class="spacer"></div></div>
+</div>
+</div>
+<?php
+if($message != null){
+	Atomik::flash($message,$label);
+}
+?>
+<!-- <script type="text/javascript" src="assets/js/libs/jquery.min.js" ></script> -->
+<!-- <script type="text/javascript" src="assets/js/libs/jquery.cycle.all.js" ></script> -->
+<!-- <script type="text/javascript" src="assets/js/libs/slideshow.js" ></script> -->
+<script type="text/javascript">
+	/* get_user_guide('../users_guide/user_guide_fr.php'); */
+	cms_page_tab_style();
+	/* dojo.require("dojo.data.ItemFileReadStore"); */
+	/* dojo.require("dojox.image.Gallery"); */ /* For gallery */
+	/* dojo.require("dojox.image.SlideShow"); */ /* For slideshow */
+</script>

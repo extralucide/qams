@@ -1,0 +1,62 @@
+
+<div class="tundra">
+    <h1><?= $titre ?></h1>
+    <?php
+    if(isset($_REQUEST['bug_cookie'])) {
+        $bug_cookie = $_REQUEST['bug_cookie'];
+        /* If user is logged in, get all user information */
+        if(isset($bug_cookie)) {
+            $array=unserialize(stripslashes($bug_cookie));
+            $Id_User = $array[6];
+        }
+    }
+    /* Calendar */
+    //$date_open="CURRENT_TIMESTAMP";
+    $m = date("n");
+    $a = date("Y");
+    $current_date=$a."-".$m."-".date("d");
+    ?>
+    <form action="" method="post" name="my_form" >
+        <dl>
+            <dt><label style="width:10%;float:left;text-align:right;"for="title">Title:</label></dt>
+            <dd><input type="text" name="title" style="width:300px" value="<?= $title ?>" /></dd>
+            <dt><label style="width:10%;float:left;text-align:right;"for="description">Description:</label></dt>
+            <dd>
+                <div style="width:80%;float:left;">
+                <textarea class="ckeditor" cols="80" id="editor1" name="description" rows="10"><?= $text_post ?></textarea>
+            </div>
+            </dd>
+            <div style="width:10%;float:right"></div>
+            <div style="clear: both;" ></div>
+            <div class="tundra" id="calendar" >
+                <div style="width:10%;float:left;text-align:right;color:#fff">Date Review:
+                <dt><label for='no_week'></label>Week</dt>
+                <dd><textarea  name="no_week" id="no_week" class="no_sho" cols="2" rows="1" style="font-size:large" ></textarea></dd>
+            <?php print("<script language='javascript' type='text/javascript'>no_week.innerHTML=DefSemaineNum({$current_date})</script>"); ?>
+                </div>
+                <div style="width:30%;float:left;margin-top:2px" dojoType="dijit._Calendar" value='<?php echo $date_event ?>' onChange="dojo.byId('formatted').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'});dojo.byId('no_week').innerHTML=DefSemaineNum(dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date',fullYear:'true'}))">
+                </div>
+                <div style="width:60%"></div>
+            </div>
+            <div style="clear: both;" ></div>
+            <dt><label for='date'></label></dt>
+            <dd><textarea  name="date" id="formatted" class="no_show" cols="10" rows="1" ><?= $current_date?></textarea></dd>
+            
+            
+            <dt><label for="attendee"></label></dt>
+            <dd><input type="hidden" name='attendee' value="<?= $Id_User ?>"></dd>
+            <dt></dt>
+            <dd>
+                <span class="art-button-wrapper">
+                    <span class="l"> </span>
+                    <span class="r"> </span>
+                    <input class="art-button" type="submit" value="<?= $button ?>"/>
+                </span>
+            </dd>
+        </dl>
+        <input type="hidden" name='update' value="<?= $update ?>"/>
+        <input type="hidden" name='update_id' value="<?= $update_id ?>"/>
+    </form>
+</div>
+<div style="height:20px;"></div>
+

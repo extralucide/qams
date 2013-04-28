@@ -1,0 +1,623 @@
+<div id="page_tabs">
+<div id="data_description" class="<?= A('description_highlight')?>">Description</div>
+<div id="baseline" class="<?= A('baseline_highlight')?>">Baseline</div>
+<div id="diagram_tree" class="<?= A('traceability_highlight')?>">Traceability</div>
+<div id="first_page" class="<?= A('attachment_highlight') ?>">Attachment</div>
+<div id="impact" class="<?= A('impact_highlight') ?>">Impact</div>
+<div id="peer_reviews" class="<?=A('peer_review_highlight') ?>">Peer reviews</div>
+<div id="quality" class="<?=A('quality_highlight') ?>">Quality</div>
+<div id="sources">Sources</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="data_description_c">
+<div>
+<div style="float:right">
+<div class="tundra" id="calendar1" style="margin-right:30px">
+<b>Date of publication</b>
+<div style="width:250px" dojoType="dijit._Calendar" value="<?= $data->date_published_sql ?>" onChange="dojo.byId('formatted1').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short',fullYear: false, selector:'date'})">
+</div>
+</div>
+<div class="tundra <?= A('date_hidden')?>" id="calendar2" >
+<b>Date of peer review deadline</b>
+<div style="width:250px" dojoType="dijit._Calendar" value="<?= $data->date_review_sql ?>" onChange="dojo.byId('formatted2').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short',fullYear: false, selector:'date'})">
+</div>
+</div>	
+</div>
+<div style="width:500px">
+<!--
+<form class="edit_data" method="POST" action="<?= Atomik::url('edit_data', false) ?>" >
+<fieldset class="medium">
+<?= Project::getSelectProject($data->project_id,"active") ?>
+<input type="hidden" name="id" value="<?= $data->id ?>"/>
+<input type="hidden" name="add_app_name" value="<?= $data->reference ?>"/>
+<input type="hidden" name="add_app_version" value="<?= $data->version ?>"/>
+<input type="hidden" name="show_status" value="<?= $data->status_id ?>"/>
+<input type="hidden" name="show_type" value="<?= $data->type_id ?>"/>
+<input type="hidden" name="show_poster" value="<?= $data->author_id ?>"/>
+<input type="hidden" name="previous_data_id" value="<?= $data->previous_data_id ?>"/>
+<input type="hidden" name="add_app_date" value="<?= $data->date_published_sql ?>"/>
+<input type="hidden" name="peer_review_deadline" value="<?= $data->date_review_sql ?>"/>
+<input type="hidden" name="add_app_description" value="<?= stripslashes($data->description) ?>"/>
+<input type="hidden" name="add_app_abstract" value="<?= stripslashes($data->abstract) ?>"/>
+<input name="change_project" type="hidden" value=""/>
+</fieldset >
+</form>-->
+<form class="edit_data" id="form_edit_data" name="form_edit_data" method='post' action="">
+<fieldset class="medium">
+<?= Project::getSelectProject($data->project_id,"inactive") ?>
+</fieldset >
+<fieldset class="medium">
+<?= Project::getSelectSubProject(&$project,$data->lru_id,"inactive") ?>
+</fieldset >
+<fieldset class="medium">
+<label class="inline" for='add_app_name'>Reference:</label>
+<input type="text" class="box" size='35' name="add_app_name" value="<?= $data->reference ?>"/>
+<label class="inline2" for='add_app_version'>Version:</label>
+<input type="text" class="box" size='6' name="add_app_version" value="<?= $data->version ?>"/><br/>
+</fieldset >
+<fieldset class="medium">
+<?= $data->getSelectStatus($data->status_id,"active",$data_type)?>
+</fieldset >
+<fieldset class="medium">
+<label for='priority_id'>Priority:</label>
+<select class='combobox' name='priority_id'>
+<? foreach ($priority_list as $row) :?> 
+	  <option value="<?= $row['level']?>"
+	  <?
+	  if ($row['level'] == $data->priority_id){
+			print " SELECTED";
+		}
+		print ">".$row['name'];		
+  endforeach; ?>
+</select>
+</fieldset>
+<fieldset class="medium">
+<?= $data->getSelectTypeGroup($data->type_id,"") ?>
+</fieldset >
+<fieldset class="medium">
+<?= User::getSelectAssignee(&$project,$data->author_id,"active") ?>
+</fieldset >
+<fieldset class="medium">
+<label for='previous_data_id'>Previous version:</label>
+<select class='combobox' name='previous_data_id'>
+<option value='' /> --All--
+<?php foreach ($previous_data_list as $row) :?> 
+	  <option value="<?= $row['id']?>"
+	  <?
+	  if ($row['id'] == $data->previous_data_id){
+			print " SELECTED";
+		}
+	  if ($row['description'] == "")
+		 $description = $row['type_description'];
+	  else
+		 $description = $row['description'];    
+	  $date_published= Date::convert_date_conviviale ($row['date_published']);
+	  if($row['version'] != ""){
+		print ">".$row['type']." <b>".$row['reference']."</b> issue ".$row['version']." ".$description." ".$date_published;
+	  }
+	  else{
+		print ">".$row['type']." <b>".$row['reference']."</b> ".$description." ".$date_published;
+	  }  		
+  endforeach; ?>
+</select></fieldset>
+<fieldset class="medium">
+<label class="inline" for='keywords'>Keywords:</label>
+<input type="text" class="box" size='50' name="keywords" value="<?= $data->keywords ?>"/><br/>
+</fieldset>	
+<fieldset class="medium">
+<label class="inline" for='add_app_location'>External link:</label>
+<input type="text" class="box" size='50' name="add_app_location" value="<?= $data->location ?>"/><br/>
+</fieldset>	
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="submit" id="submit_up" type="submit" value="<?= $button_value ?>"/>
+</span>
+<span class="no_show">
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="cancel_up" id="cancel_up" type="submit" value="Back"/>
+</span>
+</span>
+<span class="no_show_">
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="submit_new" id="submit_new" type="submit" value="New"/>
+</span>
+</span>
+<textarea  name="add_app_date" 			id="formatted1" class="no_show" cols="10" rows="1" ><?= $data->date_published_sql ?></textarea>
+<textarea  name="peer_review_deadline" 	id="formatted2" class="no_show" cols="10" rows="1" ><?= $data->date_review_sql ?></textarea>
+<h2>Subject</h2>
+<textarea class="ckeditor" 	id="ck_description" name="add_app_description" ><?= $data->description ?></textarea>
+<h2>Abstract</h2>
+<textarea class="ckeditor" 	id="data_abstract" name="add_app_abstract" cols="40" style="float:left"><?= $data->abstract ?></textarea>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="submit" id="submit_down" type="submit" value="<?= $button_value ?>"/>
+</span>
+<span class="no_show">
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="cancel_down" id="cancel_down" type="submit" value="Back"/>
+</span>	
+</span>
+<input type="hidden" name='id' value='<?= $data->id ?>'  />
+</form>
+</div>
+</div>
+</div>
+<div id="baseline_c">
+<span id="baseline_table"></span>
+<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+<p>
+	Associer une &eacute;tiquette de r&eacute;f&eacute;rence &agrave; un document permet de lier plusieurs documents &agrave; une configuration donn&eacute;e.</p>
+<p>
+	Cette configuration pourra &ecirc;tre associ&eacute;e &agrave; une revue.</p>
+<p>
+	
+	<u>According to the document <em>Guidelines for configuration management </em>(ISO 10007:2003)</u></p>
+<blockquote>
+<p>
+	<strong>Configuration baseline</strong><br />
+	approved <strong>product configuration information</strong>&nbsp; that establishes the characteristics of a product at a point
+	in time that serves as reference for activities throughout the life cycle of the product</p>
+<p>
+	<strong>product configuration information</strong><br />
+	requirements for product design, realization, verification, operation and support</p>
+</blockquote>	
+<p>
+	<u>Selon le document <em>Lignes directrices pour la gestion de la configuration </em>(ISO 10007:2003)</u></p>
+<blockquote>
+<p>
+	<strong>Configuration de r&eacute;f&eacute;rence</strong><br />
+	<strong>information&nbsp; de&nbsp; configuration&nbsp; produit</strong>&nbsp; approuv&eacute;e&nbsp; qui&nbsp; &eacute;tablit&nbsp; les&nbsp; caract&eacute;ristiques&nbsp; d&#39;un&nbsp; produit&nbsp; &agrave;&nbsp; une
+	&eacute;tape de la vie du produit et servant de r&eacute;f&eacute;rence pour les activit&eacute;s r&eacute;alis&eacute;es tout au long du cycle de vie du produit</p>
+<p>
+	<strong>information de configuration produit</strong><br />
+	exigences relatives &agrave; la conception, &agrave; la r&eacute;alisation, &agrave; la v&eacute;rification, &agrave; l&rsquo;utilisation et au soutien d&rsquo;un produit</p>
+</blockquote>
+</li>
+</div>
+<div id="diagram_tree_c">
+<h2>Diagram tree</h2>
+<span id="diagram_tree_img"></span>
+<iframe class="diagram_frame" src="<?= Atomik::url('view_diagram',array('id'=>$data->id))?>" ></iframe>
+<!-- <iframe class="diagram_frame" src="<?= Atomik::url('data/view_graphviz',array('id'=>$data->id))?>" ></iframe> -->
+<!--<iframe class="diagram_frame" src="<?= Atomik::url('data/view_spring_chart',array('id'=>$data->id))?>" ></iframe> -->
+<?php
+/* Display diagram tree */	
+/* Check type of the document */
+switch ($data->type) {
+	case "IG":
+	case "SAQ":
+	case "NOTE":
+	case "MOM":
+	break;
+	default:
+	?>		
+	<p><a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a baseline" onclick="add_upper_link_form.submit()">
+	<img src="assets/images/newobject.gif" class="systemicon" width="36" height="32" alt="Add upper link" title="Add upper link" border="no" /> Add upper document link</a></p>
+	<form method="POST" action="<?= Atomik::url('data/add_upper_data_link')?>" name="add_upper_link_form" id="add_upper_link_form">  
+	<fieldset class="medium">
+	<label for="select_upper_data_id">Reference:</label>
+	<select class='combobox' name='select_upper_data_id' id='select_upper_data_id'style="width:600px" >
+	  <option value=''> --All--
+	<?php
+	Atomik::needed("Tool.class");
+	foreach ($list_upper_data as $row):
+		$description = Tool::cleanDescription($row['description']);	  
+		if ($description == ""){
+			$description = $row['type_description'];
+		}
+		else{
+			$description = $row['description'];
+		}
+		$current_reference = $row['reference']." ".$row['type']." ".$row['lru'];
+		if ($row['version'] != "") {
+			$current_reference .= " issue ".$row['version']." ".$description;
+		}
+		else{
+			$current_reference .= " ".$description;
+		}
+		print "<option value='{$row['id']}'>{$current_reference}";
+	endforeach;
+	?>
+	</select>
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" value="Add Link"/>	  
+	</fieldset>  
+	<input type="hidden" value='<?= $data->id ?>' name='id' />	
+	</form>	
+	<h2>List of upper data</h2>
+	<?php 
+	if ($found_upper_data){   
+		/* find upper data */
+		?> 
+		<p><table cellspacing="0" class="pagetable"  style="margin-left:10px;width:700px">
+		<thead><tr><th>Reference</th><th colspan="5">Description</th><th></th></tr></thead>
+		<tbody>				
+		<? foreach ($list_upper as $row_traca) :?>
+			<tr class='vert'>
+			<td><a href="<?= Atomik::url('edit_data',array('id'=>$row_traca['id']))?>">
+			<span style="color:#000"><?= $row_traca['reference']." ".$row_traca['type']." issue ".$row_traca['version']?></span></a></td>
+			<td colspan="5"><?= $row_traca['description']?></td>
+			<td><a style="float:right" href="<?= Atomik::url('data/remove_upper_data_link',array('delete_link_id'=>$row_traca['link_id'],'table_upper_id'=>$data->id))?>">
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='<?= Atomik::asset('assets/images/32x32/agt_action_fail.png')?>' alt='remove link' title='remove link' /></a></td>
+			</td></tr>
+		<? endforeach ?>
+		</tbody></table></p>
+	<?php }   
+	else {
+		echo "<p>No upper data.</p>";
+	}
+	?>	
+	 <h2>List of downstream data</h2> 
+	<?php 	
+	if ($downstream_data_list !== false){
+		?>
+		 <table cellspacing="0" class="pagetable" style="margin-left:10px;width:600px"><tbody>
+		<thead><tr><th>Reference</th><th>Description</th><th></th></tr></thead>
+		<tbody>
+		<? foreach ($downstream_data_list as $id) :?>
+			<?php $downstream_data->get($id);?>
+			<tr class='vert'><td>
+			<a href="<? Atomik::url('edit_data',array('id'=>$downstream_data->id))?>"><span style="color:#000"><?=$downstream_data->reference.' '.$downstream_data->type.' issue '.$downstream_data->version?></span></a></td><td colspan="2"><?= $downstream_data->description?></td>
+			</tr>
+		<? endforeach ?>
+		</tbody></table>
+		<?php
+	}
+	break;
+	/* end of switch case */
+}
+?>
+</div>
+<div id="first_page_c">
+<h2>Documents attached</h2>
+	<?
+	if ($list_attached !== false){
+	?>
+	<table class="art-article pagetable" style="width:800px;float:left">
+	<thead>
+	<tr class="vert"><th colspan="6">Filename</th></tr>
+	</thead>
+	<tbody>	
+	<? 
+		$line_counter=0;
+		unset($row);
+		foreach ($list_attached as $row):
+			if ($row['real_name'] != ""){
+				$description = $row['real_name'];
+			}
+			else{
+				if ($row['version'] != ""){
+				    $description = $row['reference']." issue ".$row['version'];
+				}
+				else {
+					$description = $row['reference'];
+				} 
+			}
+			$data_link = "docs".DIRECTORY_SEPARATOR.$row['id'].".".$row['ext'];
+			$input_pdf=realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR.
+								"..".DIRECTORY_SEPARATOR.
+								"..".DIRECTORY_SEPARATOR.
+								"..".DIRECTORY_SEPARATOR.
+								$data_link;
+			$warn = "";					
+			if(!file_exists($input_pdf)){
+				$warn = " file ".$row['id'].".".$row['ext']." does not exists on the server.";
+			}					
+			
+			$link_mime = Tool::Get_Mime($data_link);
+			$color= ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+			?>
+			<tr class= "<?= $color?>"><th>[Ref <?=$line_counter?>]</th><td colspan='4'><span style="color:#74A8C4"><?= $description?></span>
+			<a href="../<?= 'docs/'.$row['id'].'.'.$row['ext'] ?>" TARGET="popup" onClick="ouvrir(this.href,this.target);return false">
+			<img style='padding-left:5px;padding-top:5px' alt="Document attached" title="Document attached" width="20" height="20" border="0" src="<?= $link_mime ?>" />
+			</a><?= $warn ?>
+			<?if(preg_match("#doc\w#",$row['ext'])){?>
+			<a href="<?= Atomik::url('export/export_validation_matrix',array('project_id'=>$data->project_id,'sub_project_id'=>$data->lru_id,'type_id'=>$data->type_id,'file_id'=>$row['id'],'ext'=>$row['ext']))?>">Export Validation Matrix</a>
+			<?}?>
+			<br/>
+			</td>
+			<td>
+			<a href="data/remove_data_attachment?data_id=<?= $data->id?>&link_id=<?= $row['id']?>" onclick="confirm_suppress_attach(<?= $data->id?>,<?= $row['id']?>)" >
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='assets/images/32x32/agt_action_fail.png' alt='remove link' title='remove link' />
+			</a>
+			</td>
+			</tr>
+	   <? endforeach?>
+	</tbody>
+	</table>
+	<?}
+	?><br/>
+<h2>First page preview</h2>
+<div><?= $first_page_img ?></div>
+<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+Only first page of PDF documents are visible.
+</li>
+<div style="padding-bottom:20px">
+<h2>Upload document</h2>
+<form method="post" action="<?= Atomik::url('edit_data')?>" enctype="multipart/form-data" name="upload_data_form" style="padding-left:44px">   
+	<fieldset>
+	<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+	<input type="file" style="width:300px" name="filename" >
+	<input type="hidden" value='<?= $data_id ?>' name='id' />
+	<input type="hidden" value='yes' name='upload_data' /><br/>
+	<label for='update_ref'>Update reference</label>
+	<input type='checkbox' name='update_ref' value="locked" />		
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" name="submit_data_upload" value="Upload"/></span>
+	<input type="hidden" name="add_app_name" value="<?= $data->reference ?>"/>
+	</fieldset>
+</form>
+</div>
+</div>
+<div id="impact_c">
+<p>
+<div class="contenu_ smallsize_nomargin_">
+<h2>Problem Report Impact</h2>
+<span id="pr_table"></span>
+</div>
+</p>
+</div>
+<div id="peer_reviews_c">
+	<div style="width:800px">
+	<h2><u>Peer Review Register summary</u></h2>
+	<h3 class="edit_"><span class='down_arrow3' onClick="return display_data_baseline('internal_prr',this)">Internal database peer review</span></h3>
+	<div class='menu' style="width:100%" id='internal_prr'>
+	<span id="internal_prr_table"></span>
+	<?
+	if ($data->id != "") {?>
+		<h3 class="edit"style="color:#000" >Import Peer Review Register</h3>
+		<form class="post_" id="import_prr" name="import_prr" method="post" action="<?= Atomik::url('peer_review/import_prr')?>" enctype="multipart/form-data"> 
+		<div>
+		<div style="width:50%;float:left">
+		<fieldset >	
+		<input type="hidden" name="MAX_FILE_SIZE" value="2097152"/>
+		<label for='filename'>Filename</label>
+		<input class="no_file" type="file" name="filename" id="filename"/><br/>
+		<label for="type_remark">Type </label>
+		<select class='combobox' name='type_remark' id="type_remark">
+		<option value="">--All--</option>
+		<option value="1" selected="selected" >ECE</option>
+		<option value="2">Eurocopter</option>
+		<option value="3">Airbus</option>
+		</select><br/>
+		<label for='remark_body' style="width:200px">Read-only</label>
+		<input type='checkbox' name='remark_body' value="locked" />
+		</div> 
+		<h4>Date of publication</h4>
+		<div class="tundra" style="margin-left:200px">
+		<div style="width:250px" dojoType="dijit._Calendar" value="<?= Date::getTodayDate()?>" onChange="dojo.byId('remark_date').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'})">
+		</div></div>
+		<label for='remark_date'></label>
+		<textarea  name="remark_date" id="remark_date" class="no_show" cols="10" rows="1" ><?= Date::getTodayDate()?></textarea>
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class="art-button" type="submit" name="submit" value="Import PRR"/>
+		</span>
+		</fieldset>
+		</div>
+		</form>		
+		<div class="spacer" ></div>
+		</div>
+		<h3 class="edit_"><span class='down_arrow3' onClick="return display_data_baseline('external_prr',this)">External peer review reports</h3>
+		<div class='menu' id='external_prr' >	
+		<span id="prr_table"></span>
+		<span id="update_upload_peer_review"></span>
+		<div id="update_upload_peer_review_div" style="display:none">
+			<!-- <a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a baseline">
+			<img src="assets/images/newobject.gif" class="systemicon" width="36" height="32" alt="Cancel Update" title="Cancel update" border="no" onclick="New_Peer_Review();return false;"/> Cancel peer review update</a>-->		
+			<h4>Update existing peer review with link <span id="prr_link_id_in_title"></span></h4>
+			<form method="POST" id="reuploadForm" action="<?= Atomik::url('peer_review/update_prr')?>" enctype="multipart/form-data" target="uploadFrame" onsubmit="PRR_reuploadRun()" name="reupload_peer_review_form" style="padding-left:44px;">   
+			<fieldset>
+			<input type="hidden" 	name="MAX_FILE_SIZE" value="30000000">   
+			<input type="file" 		name="filename" style="width:300px">
+			<input type="hidden" 	name='id' value='<?= $data->id ?>'/>
+			<input type="hidden" 	name='update_prr_id' id='update_prr_id' value='undefined_id'/>
+			<input type="hidden" 	name='upload_peer_review' 	value='yes'/>
+			<span class="art-button-wrapper">
+			<span class="l"> </span>
+			<span class="r"> </span>
+			<input class="art-button" type="submit" id="resubmit_peer_review" value="Upload"/>	
+			</fieldset>
+			</form>
+		</div>
+		<div id="upload_peer_review_div">
+			<h4>Upload peer review</h4>
+			<form method="POST" id="uploadForm" action="<?= Atomik::url('peer_review/upload_prr')?>" enctype="multipart/form-data" target="uploadFrame" onsubmit="PRR_uploadRun()" name="upload_peer_review_form" style="padding-left:44px;">   
+			<fieldset>
+			<input type="hidden" 	name="MAX_FILE_SIZE" value="30000000">   
+			<input type="file" 		name="filename" style="width:300px">
+			<input type="hidden" 	name='id' value='<?= $data->id ?>'/>
+			<input type="hidden" 	name='upload_peer_review' 	value='yes'/>
+			<span class="art-button-wrapper">
+			<span class="l"> </span>
+			<span class="r"> </span>
+			<input class="art-button" type="submit" id="submit_peer_review" value="Upload"/>	
+			</fieldset>
+			</form>
+		</div>
+        <span id="uploadStatus" style="padding-left:40px"></span>
+		<iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none_;border:none;width:600px;height:400px"></iframe>
+	<?php  
+	}
+	?>
+	</div>
+	</div>
+</div>
+<div id="quality_c">
+	<form method="POST" action="<? Atomik::url('edit_data')?>" name="data_acceptance_form">  
+	<fieldset class="medium">
+	<h3>Quality Acceptance comment</h3>
+    <textarea class="ckeditor"  id="data_qa_acceptance" name="data_acceptance" 	rows="6" >
+	<?= $data->acceptance ?>
+	</textarea>			
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" name="submit_acceptance" value="OK"/>		
+	<input type="hidden" name='id' value='<?= $data->id ?>'  />		
+	</fieldset>
+	</form>
+</div>
+<div id="sources_c">
+<?php
+	if (($data->id != "") && ($copy_data != "yes")) {?>
+  		<?php
+		if (($data->type == "CSCI")||($data->type == "HWCI")) { // CSCI
+		?>
+	<h3>Upload sources</h3>
+	<form id="form1" method="POST" action="data/multi_upload_sources.php"> 
+	<? $uploader->Render() ?>
+	<input type=hidden value='<?= $data->id ?>' name='id' />
+	</form> 		
+	  <?php   
+	$src_table_data_name = strtolower($data->reference)."_src";
+	$src_table_version_name = strtolower($data->reference)."_".strtolower($data->version); 
+	$list_table_query = "SHOW TABLES  FROM ".$db->db_select." LIKE '%".$src_table_version_name."%'";
+	$list_table = A('db:'.$list_table_query);
+	$nb_tab = $list_table->fetchAll(PDO::FETCH_ASSOC);
+	$nbtotal=count($nb_tab);
+	$list=array();
+	if ($nbtotal != 0){
+		  $sql_query = "SELECT ".$src_table_version_name.".id as link_id, ".
+							$src_table_data_name.".id, ".
+							$src_table_version_name.".src_id,name,version,extension ".
+							"FROM ".$src_table_data_name.
+							" RIGHT OUTER JOIN ".$src_table_version_name." ON ".$src_table_data_name.".id = src_id";
+		  //echo $list_src."<br/>";
+		  $list_src = A("db:".$sql_query); 
+		  echo $sql_query;
+		  foreach($list_src as $row_src) {
+				$list[$row_src->id]=$row_src->link_id; 
+		  }
+	}
+	$exist_query = "SHOW TABLES  FROM ".$db->db_select." LIKE '%".$src_table_data_name."%'";
+	$list = A('db:'.$exist_query);
+	$result = $list->fetchAll(PDO::FETCH_ASSOC);
+	$nbtotal=count($result);
+	if ($nbtotal != 0){ 
+		//$sql_query = "SELECT * FROM ".$src_table_data_name." ORDER BY name ASC, version DESC";
+		$list_sources = Atomik_Db::findAll($src_table_data_name,null,"name ASC, version DESC");
+		//echo $sql_query;
+		?>
+		<form method="POST" name="select_source_data" action="data/add_source_link.php" >  
+		<fieldset >
+		<label for="select_source_data">
+		<h3>List of sources</h3> 
+		</label>
+		<table>
+		<thead>
+		  <tr><th></th><th>Name</th><th>Version</th><th></th></tr>
+		</thead>
+		<tbody>
+		<?php
+			$previous_name = "";
+			  foreach ($list_sources  as $row_src) {
+				  $color = "";
+				  $link=false;
+				  foreach ($list as $src_id => $link_id) {
+					if ($row_src['id'] == $src_id) {
+						$color = "green";
+						$link=true;
+						break;
+					}
+				  }
+				 if (($row_src['name'] != $previous_name) && ($color=="")) {
+					$color="rouge_fonce";	
+					$code_checked ='checked="checked"';
+				 }
+				 else {
+					$code_checked ="";
+				 }
+				 $previous_name = $row_src['name'];
+				  ?>
+				  <tr class="<?php echo $color; ?>">
+				  <td>
+				  <input type='checkbox' class='styled' name='source_id' value="<?= $row_src['id']?>" <?= $code_checked ?> />
+				  </td><td><?= $row_src['name'].".".$row_src['extension'] ?></td><td><?= $row_src['version'] ?></td>
+				   <td>
+				   <?php if ($link==true) {?>
+						<a href='remove_baseline_src_link.php?table=<?= $src_table_version_name?>&link_id=<?= $link_id ?>' >
+						<img style='padding-left:5px;padding-top:0px' border=0 width='20' height='20' src='images/32x32/agt_action_fail.png' alt='remove link' title='remove link' /></a>
+					<?php 
+					}
+					else if ($color == "rouge_fonce") {?>
+					<img style='padding-left:5px;padding-top:0px' border=0 width='16' height='16' src='images/silk_icons/asterisk_orange.png'alt='new' title='new' />
+					<?php } ?></td>
+				  </tr>
+				  <?php 
+			}
+			?>
+		</tbody>
+		</table>
+		  <h3>Add sources link</h3>
+		<input type=hidden name='table'        value='<?=$src_table_version_name?>'>
+		<input type=hidden name='multi_modify'        value='yes'>
+		<input type=hidden name='multiple_data_id'        value=''>
+		  </fieldset>  
+			  <span class="art-button-wrapper">
+				<span class="l"> </span>
+				<span class="r"> </span>
+				<label for='button' style='padding: 0 0 0 0'></label></span>
+			<input class="art-button" type="submit" value="Add source link" name="button" onclick="return get_checkbox_value()" />
+			<input type="hidden" value='<?= $data->id ?>' name='id' />	
+		 </form>	
+	<?php } 	 		      			
+		}		      			
+	}
+	?>
+</div>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+	cms_page_tab_style();
+	
+	CKEDITOR.replace( 'data_qa_acceptance',
+	{	
+		toolbarStartupExpanded : false,
+		height : '800',
+		width : '700',
+	});
+
+	CKEDITOR.replace( 'data_abstract',
+	{	
+		toolbarStartupExpanded : false,
+		height : '400',
+		width : '600',
+	});				
+	CKEDITOR.replace( 'ck_description',
+	{	
+		toolbarStartupExpanded : false,
+		/* toolbarStartupExpanded : 'false' */
+		/* toolbar : 'Basic', */
+		height : '200',
+		width : '500'
+		/* editingBlock: 'false' */
+		/* uiColor : '#9AB8F3' */
+	});
+	CKEDITOR.on( 'dialogDefinition', function( ev )
+	{
+		ev.data.definition.resizable = CKEDITOR.DIALOG_RESIZE_NONE;
+	});
+	/* gestion_diagram("diagram_tree_img","<?= Atomik::url('data/view_graphviz',array('id'=>$data->id))?>"); */
+	gestion_internal_prr("<?= Atomik::url('peer_review/display_internal_peer_review',array('id'=>$data->id))?>");
+	gestion_prr("<?= Atomik::url('peer_review/display_peer_review',array('id' => $data->id))?>");
+	gestion_baseline("<?= Atomik::url('baseline/list_baseline.',array('id'=>$data->id))?>");
+	gestion_pr("<?= Atomik::url('data/pr_link',array('id'=>$data->id,'pr'=>$pr_treatment))?>");
+
+//]]>
+</script>

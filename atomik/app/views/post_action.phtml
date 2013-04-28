@@ -1,0 +1,180 @@
+<div id="page_tabs">
+<div id="action_form" class="<?= A('action_highlight')?>">Form</div>
+<div id="upload_form" class="<?= A('upload_highlight')?>">Attachment</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="action_form_c">
+<?= $msg?>
+<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+Fill this form to input an action. <br/>Go to the folder Attach to attached a document to this action afterward.
+</li>
+<form method="POST" action="<?= Atomik::url('post_action', false) ?>" name='copy_action' >
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<label for='button' style='padding: 0 0 0 0'></label>
+<input class="art-button" type="submit" value="Post" name="submit_action_up" />
+</span>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<label for='button' style='padding: 0 0 0 0'></label>
+<input class="art-button" type="submit" value="Cancel" name="cancel_up" />
+</span>	
+<fieldset class="form_action medium">
+<label for='project'><?= A('menu/project')?>:</label>			
+<select class='combobox' onchange="this.form.submit()" name='project'>
+<option value=''/> --All--
+<?php foreach($project->getProject() as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $project_selected){ print " SELECTED ";}?>
+	><?= $row['project']?>
+<?php endforeach ?>
+</select><br />	
+<label for='lru'><?= A('menu/lru')?>:</label>			
+<select class='combobox' name='lru'>
+<option value=''/> --All--
+<?php foreach($project->getSubProjectList() as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $sub_project_selected){ print " SELECTED ";}?>
+	><?= $row['lru']?>
+<?php endforeach ?>
+</select><br />				
+<label for='review'><?= A('menu/review')?>:</label>			
+<select class='combobox' name='review'>
+<option value=''>--All--
+	<?php foreach($review_list as $row):?>
+		<option value="<?= $row['id'] ?>"
+		<?php if ($row['id'] == $review_selected){ print " SELECTED ";}?>
+		><?= $row['managed_by']." ".$row['lru']." ".$row['type']." ".Date::convert_date($row['date']) ?>
+	<?php endforeach ?>		
+</select><br />
+<label for='submittername'><?= A('menu/submitter')?>:</label>
+<select class='combobox' name='submittername'>
+<option value=''/> --All--
+<?php foreach($list_users as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $submitter_selected){ print " SELECTED ";}?>
+	><?= $row['lname']." ".$row['fname']?>
+<?php endforeach; ?>
+</select><br />
+<label for='username'><?= A('menu/username')?>:</label>
+<select class='combobox' name='username'>
+<option value=''/> --All--
+<?php foreach($list_users as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $user_selected){ print " SELECTED ";}?>
+	><?= $row['lname']." ".$row['fname']?>
+<?php endforeach ?>
+</select><br />	
+<label for='show_status'><?= A('menu/status')?>:</label>
+<select class='combobox' name='show_status' readonly='readonly'>
+<option value=''/> --All--
+<?php foreach($action->getStatusList() as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $status_selected){ print " SELECTED ";}?>
+	><?= $row['name']?>
+<?php endforeach ?>
+</select><br />	
+<label for='show_criticality'><?= A('menu/criticality')?>:</label>
+<select class='combobox' onchange="criticality_explain(this)" name='show_criticality' id='criticality'>
+<option value=''/> --All--
+<?php foreach($action->getSeverityList() as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $severity_selected){ print " SELECTED ";}?>
+	><?= $row['name']?>
+<?php endforeach ?>
+</select>
+<span class='down_arrow3' onClick="return display_data_baseline('internal_prr',this)">Help</span><br/>
+<div class='menu' style="width:100%" id='internal_prr'>
+<label for='crit_explain' style='padding: 10px 0 0 0'></label>
+<textarea class='explain' cols='60' rows='2' id='crit_explain' name='crit_explain' readonly='readonly' disabled='disabled' ></textarea>
+</div><br/>
+<label for='action_context'><?= A('menu/action_context')?>:</label>
+<textarea cols=60 rows=1 name='action_context' ><?= $context?></textarea><br />
+<label for='action_type_selected'></label>
+<textarea class='no_show' cols=3 rows=1 id='action_type_selected'  >...</textarea><br />
+<label for='description'><?= A('menu/description')?>:</label>
+<div><textarea class="ckeditor" cols="60" id="description" name="description" rows="10"><?= $description?></textarea></div>
+<div style="padding:20px">
+<div class="tundra" id="calendar_open" style="margin-left:10px;float:left" >
+<h4><?= A('menu/date_open')?> (Week <span id="no_week_open"></span>)</h4>
+<div style="width:250px" dojoType="dijit._Calendar" value='<?=$date_open ?>' onChange="dojo.byId('date_open_dojo').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'});dojo.byId('no_week_open').innerHTML=DefSemaineNum(dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date',fullYear:'true'}))">
+</div>
+</div>
+<div class="tundra" id="calendar_expected" style="float:left">
+<h4><?= A('menu/date_expected')?> (Week <span id="no_week_close"></span>)</h4>
+<div style="width:250px" dojoType="dijit._Calendar" value='<?=$date_expected ?>' onChange="dojo.byId('date_expected_dojo').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'});dojo.byId('no_week_close').innerHTML=DefSemaineNum(dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date',fullYear:'true'}))">
+</div>
+</div>
+<div style="margin-top:280px">
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<label for='button' style='padding: 0 0 0 0'></label>
+<input class="art-button" type="submit" value="Post" name="submit_action" />
+</span>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<label for='button' style='padding: 0 0 0 0'></label>
+<input class="art-button" type="submit" value="Cancel" name="cancel_down" />
+</span>	
+<div class="spacer"></div>
+</div>
+</div>
+<input type="hidden" name='remark_id' value='<?=$remark_id ?>' />
+<input type="hidden" name='date_closure' value='<?=$date_closure ?>'  />
+<input type="hidden" name='update_id' value='<?= $update_id ?>' />
+<input type="hidden" name='isReply' value='<?=$update ?>'/>
+<input type="hidden" name='page' value='<?=$page ?>' />
+<input type="hidden" name='limite' value='<?=$limite ?>' />
+</fieldset>
+<textarea cols="11" rows="1" name="date_open" id='date_open_dojo' class='no_show' ></textarea>
+<textarea cols="11" rows="1" name="date_expected" id='date_expected_dojo' class='no_show' ></textarea>
+<textarea id='project_selected' class='no_show' cols="0" rows="0"  name='project_selected' ></textarea>
+</form>
+</div>
+<div id="upload_form_c">
+<div style="padding-bottom:20px">
+<h2>Upload document</h2>
+<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+A document can be attached to this action.
+</li>
+<form method="post" action="<?= Atomik::url('post_action')?>" enctype="multipart/form-data" name="upload_data_form" style="padding-left:44px;">   
+	<fieldset>
+	<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+	<input type="file" style="width:300px" name="filename" >
+	<input type="hidden" value='<?= $action->id ?>' name='id' />
+	<input type="hidden" value='yes' name='upload_data' />
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" name="submit_data_upload" value="Upload"/>	
+	</fieldset>
+</form>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+	cms_page_tab_style();
+	CKEDITOR.replace( 'description',
+	{	
+		toolbarStartupExpanded : false,
+		height : '600',
+		width : '700'
+	});
+	function criticality_explain(obj) {
+		<?php
+		echo( "var tableauFromPHP = new Array();\n" ); 
+		foreach ($action->getSeverityList() as $row) {
+		  echo( "tableauFromPHP[".$row['id']."] = '{$row['description']}';\n" ); 
+		}	
+		?> 
+		obj.form.crit_explain.innerHTML = tableauFromPHP[obj.form.criticality.value];
+	}
+	window.onload = criticality_explain(document.copy_action.criticality);
+	document.getElementById('no_week_open').innerHTML=DefSemaineNum(<?=$date_open?>);	
+	document.getElementById('no_week_close').innerHTML=DefSemaineNum(<?=$date_expected?>);
+</script>

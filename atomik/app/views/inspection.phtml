@@ -1,0 +1,70 @@
+<div id="page_tabs">
+<div id="remarks_tab" class="active">Remarks</div>
+<div id="summary_tab" >Stats</div>
+<div id="import_tab" >Import</div>
+<div id="export_tab" >Export</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="remarks_tab_c">
+<span id="nbr_clics"></span>
+</div>
+<div id="summary_tab_c" >
+<img src="<?= A('stats_graphic_bar')?>" border="0" alt ="" title="" />
+<img src="<?= A('stats_graphic_pie')?>" border="0" alt ="" title="" />
+</div>
+<div id="import_tab_c" >
+<form class="post_" id="import_prr" name="import_prr" method="post" action="<?= Atomik::url('peer_review/import_prr')?>" enctype="multipart/form-data">   
+<h3 class="edit"style="color:#000" >Import Peer Review Register</h3>
+<div style="float:right;margin-right:40px">
+<h4>Date of publication</h4>
+<div class="tundra" style="color:#000;width:350px">
+<div style="width:250px" dojoType="dijit._Calendar" value="<?= $current_date ?>" onChange="dojo.byId('remark_date').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'})">
+</div></div>
+<label for='remark_date'></label>
+<textarea  name="remark_date" id="remark_date" class="no_show" cols="10" rows="1" ><?= $current_date?></textarea>
+</div>
+<div style="width:400px;margin:10px">
+<fieldset class="medium_">	
+<input type="hidden" name="MAX_FILE_SIZE" value="2097152"/>
+<label for='filename'>Filename</label>
+<input class="no_file" type="file" name="filename" id="filename"/><br/>
+<label for="type_remark">Type </label>
+<select class='combobox' name='type_remark' id="type_remark">
+<option value="">--All--</option>
+<option value="1" selected="selected" >ECE</option>
+<option value="2">Eurocopter</option>
+<option value="3">Airbus</option>
+</select><br/>
+		<label for='remark_body'>Read-only</label>
+		<input type='checkbox' name='remark_body' value="locked" />
+<div> 
+<div class="spacer" ></div>
+
+
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" type="submit" name="submit" value="Import"/>
+</span>
+</fieldset>
+
+</div>
+</form>
+</div>
+<div id="export_tab_c" >
+<h3 class="edit" style="color:#000">Export Peer Review Register</h3> 
+<div class="my_menu" style="width:400px;min-height:200px">
+<ul>
+      <li class="export_pdf"><h2><a href="<?= Atomik::url('export/export_remarks_pdf_tcpdf')?>" >Export PDF</a></h2></li>
+      <li class="export_excel"><h2><a href="<?= Atomik::url('export/export_xlsx_peer_review_report',array('id'=>$context_array['data_id']))?>" target="export_data_list_frame" >Export Excel</a></h2></li>
+</ul>
+</div>
+</div><div class="spacer" ></div>
+<iframe id="export_data_list_frame" name="export_data_list_frame" src="../blank.php" style="display_:none;border:none;width:100%;min-height:300px;overflow:scroll"></iframe>
+</div>
+<script type="text/javascript">
+gestionClic('<?= $table_data ?>',<?= $nb_remarks?>);
+cms_page_tab_style();
+</script>
+<?php Atomik::flash(A('nb_entries')." entries found", 'success'); ?>

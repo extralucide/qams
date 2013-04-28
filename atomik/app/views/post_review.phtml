@@ -1,0 +1,502 @@
+<div id="page_tabs">
+<div id="data_description" class="<?= A('description_highlight')?>">Description</div>
+<div id="attendees" class="<?= A('attendee_highlight')?>">Attendees</div>
+<div id="baseline" class="<?= A('baseline_highlight')?>">Baseline</div>
+<div id="actions" class="<?= A('actions_highlight')?>">Actions</div>
+<div id="minutes" class="<?= A('minutes_highlight')?>">Minutes</div>
+<div id="attachment" class="<?= A('attachment_highlight')?>">Attachment</div>
+<div id="checklist" class="<?= A('checklist_highlight')?>">Checklist</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="data_description_c">
+<div class="tundra">
+<form id="form_review" method='post' action="<?= Atomik::url('post_review', false) ?>">
+<fieldset class="medium">
+<label for='show_project'>
+Project:
+</label>
+<select class='combobox' onchange_="this.form.submit()" name='show_project'>
+<option value=''/> --All--
+<? foreach($project->getProject($aircraft_id=$context['aircraft_id']) as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<? if ($row['id'] ==$context['project_id']){ print " SELECTED ";}?>
+	><?= $row['aircraft']." ".$row['project']?>
+<? endforeach ?>
+</select>
+</fieldset >
+<!-- <input type="hidden" value="<?= $update_review ?>" name="update_review" /> -->
+<fieldset class="medium">			
+<label for='show_lru'>
+Equipment:
+</label>
+<select class='combobox' name='show_lru'>
+<option value=''/> --All--
+<? foreach($list_eqpt as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<? if ($row['id'] == $context['sub_project_id']){ print " SELECTED ";}?>
+	><? if ($row['parent_lru'] == $row['lru']) {
+			echo $row['project']." ".$row['lru'];
+		}
+		else{
+			echo $row['project']." ".$row['parent_lru']." ".$row['lru'];
+		}
+	endforeach ?>
+</select>
+</fieldset >
+<fieldset class="medium">
+<label for='show_type'>
+Type:
+</label>
+<select class='combobox' name='show_type'>
+<option value='' /> --All--
+<? foreach($review->getAllReviewType() as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<? if ($row['id'] == $context['type_id']){ print " SELECTED ";}?>
+	><?= $row['name']." ".$row['type']." ".$row['description'] ?>
+<? endforeach ?>
+</select>
+</fieldset>
+<fieldset class="medium">
+<label for='previous_review_id'>
+Previous review:
+</label>
+<select class='combobox'  name='previous_review_id' id='previous_review_id' >
+<option value='0'>--All--
+<? foreach($review->getPreviousReview($review->id,
+										$review->project_id,
+										$review->lru_id) as $row):?>
+	<option value="<?= $row->id?>"
+	<?php if ($row->id == $review->previous_id){ print " SELECTED ";}?>
+	><?= $row->managed_by." ".$row->lru." ".$row->type." ".Date::convert_date_conviviale ($row->date) ?>
+<? endforeach ?>
+</select>
+</fieldset>
+<fieldset class="medium">
+<label for='show_status'>
+Status:
+</label>
+<select class='combobox' name='show_status'>
+<option value='' /> --All--
+<?php foreach($review->getStatusList() as $row):?>
+	<option value="<?= $row['id'] ?>"
+	<?php if ($row['id'] == $review->status_id){ print " SELECTED ";}?>
+	><?= $row['name'] ?>
+<?php endforeach ?>
+</select>
+</fieldset >
+<fieldset class="medium">
+<label for="add_review_managed_by">
+Managed by:
+</label>
+<input type="text" class='combobox'  name="add_review_managed_by" value="<?= $review->managed_by ?>"/>
+</fieldset >
+<span class="art-button-wrapper">
+<span class="l"></span>
+<span class="r"></span>
+<input class="art-button" name="submit" id="submit" type="submit" value="<?= $button ?>"/>
+</span>	
+<div>
+<div class="tundra" id="calendar" style="float:left;margin-right:10px">
+<b>Beginning</b>
+<div style="width:250px" dojoType="dijit._Calendar" value="<?= $current_date?>" onChange="dojo.byId('formatted').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'})">
+</div>
+</div>
+<div class="tundra" id="calendar_end" style="margin-right:10px">
+<b>End</b>
+<div style="width:250px" dojoType="dijit._Calendar" value="<?= $end_date?>" onChange="dojo.byId('formatted_end').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'})">
+</div>
+</div>				  
+</div>
+<fieldset>
+<h3>Objective</h3><br/>
+<textarea class="ckeditor" style="margin-bottom:10px;" cols="80" name="objective" rows="2"><?= $review->objective ?></textarea> 
+<h3>Description</h3><br/>
+<textarea class="ckeditor" cols="80" id="add_review_description" name="add_review_description" rows="20"><?= $review->description ?></textarea>
+<h3>Conclusion</h3><br/>
+<textarea class="ckeditor" style="margin-bottom:10px;" cols="80" id="add_review_comment" name="add_review_comment" rows="5"><?= $review->comment ?></textarea> 
+</fieldset>
+</div>
+<label for='add_review_date'>
+</label>
+<textarea  name="add_review_date" id="formatted" class="no_show" cols="10" rows="1" ><?= $current_date?></textarea>
+<textarea  name="add_review_date_end" id="formatted_end" class="no_show" cols="10" rows="1" ><?= $end_date?></textarea>
+<input type="hidden" name='id' 				value="<?= $review->id  ?>" />
+<input type="hidden" name="update_review"	value="<?= $update_review ?>"  />
+<span class="art-button-wrapper">
+<span class="l"></span>
+<span class="r"></span>
+<input class="art-button" name="submit" id="submit" type="submit" value="<?= $button ?>"/>
+</span>
+</form>
+</div>
+<div id="attendees_c">
+<h2>List of attendees</h2>
+<? if ($review->id != ""){
+if ($review->attendees != null) {?>
+	<table cellspacing="0" class="pagetable" style="float:left;width:70%">
+	<thead><tr><th>Company</th><th colspan="2">Attendee</th></tr></thead>
+	<tbody>
+    <? foreach( $review->attendees as $id => $users ):
+			$color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";?>
+			<tr class='<?= $color?>' style='color:#74A8C4'><td><?= $users['company']?></td><td colspan="2">
+			<b><a href="<?=Atomik::url('edit_user',array('id'=>$users['id']))?>"><?= $users['lname']." ".$users['fname']?></a></b> <?= $users['function']?>
+			<a style="float:right" href='<?= Atomik::url('remove_review_assign',array('id'=>$users['link_id']))?>' >
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='<?= Atomik::asset('assets/images/32x32/agt_action_fail.png')?>' alt='remove link' title='remove link' /></a><br/>
+			</td></tr>
+	<?endforeach?>
+    </tbody>
+   </table>
+<? 
+}?>
+<div class="spacer"></div>
+<h2>List of persons to be informed</h2><br/>
+<?php if ($review->person_copy != null) {?>
+	<table cellspacing="0" class="pagetable" style="float:left;width:50%">
+	<thead><tr><th>Company</th><th colspan="2">Attendee</th></tr></thead>
+	<tbody>
+    <? foreach( $review->person_copy as $id => $users ):
+			$color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";?>
+			<tr class='<?= $color?>' style='color:#74A8C4'><td><?= $users['company']?></td><td colspan="2">
+			<b><?= $users['lname']." ".$users['fname']?></b> <?= $users['function']?>
+			<a style="float:right" href='<?= Atomik::url('remove_review_assign',array('id'=>$users['link_id']))?>' >
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='<?= Atomik::asset('assets/images/32x32/agt_action_fail.png')?>' alt='remove link' title='remove link' /></a><br/>
+			</td></tr>
+		<?endforeach?>
+    </tbody>
+    </table>
+<?	
+}?>   
+<div class="spacer"></div>
+<form method='post' action="<?= Atomik::url('review/add_user_review_link')?>">
+<fieldset class="no_medium_black">
+<label for='project' style='color:#74A8C4'>Add a person</label>
+<select  class='combobox' name='users_id' >
+<option value=''>--All--
+<?php
+foreach ($project->getUsers($review->project_id) as $row) {
+	print "<option value='{$row['id']}'";
+	if ($row['id'] == $add_app_author) {
+		print " SELECTED";
+	}
+	print ">{$row['lname']} {$row['fname']}";
+}?>
+</select>
+Copy:
+<input type="checkbox" name="copy" id="copy" VALUE="on"/>
+<br />
+<input type='hidden' name='update_review_attendee' value='<?= $update_review ?>'/>
+<input type='hidden' name='review_id' value='<?php echo $review->id ?>'/>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type='submit' value='Add person'>
+</span>
+</fieldset>
+</form>
+<? }?>
+</div>
+<div id="baseline_c">
+	<h2 >List of Inputs</h2>
+<?php
+if ($review->id != ""){
+	?>
+	<fieldset class="no_medium_black">
+	<table class="art-article pagetable" style="width:500px;float:left">
+	<thead>
+	<? 
+	$line_counter=0;
+	if ($list_baseline_linked !== false){
+		foreach ($list_baseline_linked as $row):
+		  $color= ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+		  /* Display baseline */?>
+		  <tr class= "<?= $color?>"><th>[Baseline <?=$line_counter?>]</th><td colspan='4'><?= $row->baseline_name ?>
+		  <a href="<?= Atomik::url('review/remove_baseline_review_link',array('link_id'=>$row->baseline_id,'review_id'=>$row->review_id))?>" >
+		  <img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='<?= Atomik::asset('assets/images/32x32/agt_action_fail.png')?>' alt='remove link' title='remove link' /></a>
+		  </td></tr>
+		<? endforeach; 
+	}?>
+	</thead>
+	<tbody>
+	<?
+	$line_counter=0;
+	if ($list_data !== false){
+		foreach ($list_data as $baseline_row):
+			$description = $baseline_row['project']." ".$baseline_row['lru']." ".$baseline_row['application']." ".$baseline_row['name']." issue ".$baseline_row['version'];
+			$data_link = Tool::Get_Filename($baseline_row['link_id'],$baseline_row['link_extension']);
+			$color= ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+			?>
+			<tr class= "<?= $color?>"><th>[Ref I<?=$line_counter?>]</th><td colspan='4'><a href="../<?= $data_link ?>" TARGET="popup" onClick="ouvrir(this.href,this.target);return false"><span style="color:#74A8C4">
+			<?= $description?>
+			</span><a/><br/>
+			</td></tr>
+	   <? endforeach;
+	}
+	?>
+	</tbody>
+	</table> 
+	</fieldset>  
+   <form method="POST" name="multi_modify_data" id="multi_modify_data" action="<?= Atomik::url('review/link_review_baseline')?>" >
+	<fieldset class="medium_black">
+	<label for='show_baseline'>Baseline</label>
+	<select class='combobox' name='show_baseline' id='show_baseline' >
+	<option value=''>--All--
+	<?php
+	if ($list_baseline !== false){
+		foreach ($list_baseline as $row):
+			print "<option value='".$row['id']."'";
+			print ">".$row['project']." ".$row['lru']." ".$row['description'];
+		endforeach;
+	}
+	?>	
+	</select>	  
+	   <input type='hidden' name='review_id' value='<?= $review->id ?>'/>
+		  <span class="art-button-wrapper"  style="float:right-left:100px">
+			<span class="l"></span>
+			<span class="r"></span>
+			<input class='art-button' type='submit' value='Link Baseline'>
+		  </span>
+	  </fieldset>
+  </form> 
+ <?php  
+}
+?>  
+</div> 
+<div id="actions_c">
+	<h2 >List of Actions</h2>
+<?php
+if ($review->id != ""){
+	?>	
+	<form method="post" name="orderform" id="orderform" >
+	<table class="art-article pagetable">
+	<thead>
+	<tr><th>Id</th><th colspan="2">Who</th><th colspan="10">Action</th><th colspan="2">When</th><th colspan="2">Status</th></tr>
+	</thead>
+	<tbody>	
+	<? if ($list_actions !== false){
+		$list_actions_fetch = $list_actions->fetchAll();
+		$nb_actions = count($list_actions_fetch);
+		// echo "TEST:".$nb_actions;
+		foreach ($list_actions_fetch as $row):
+		$color= ($line_counter % 2 == 0) ? "rouge" : "vert";
+			?>
+			<tr class= "<?= $color?>">
+			<td><a href="<?= Atomik::url('post_action',array('id'=>$row['id']))?>" target="_blank">
+			<input type='radio' style='display:none' name='modify_action_id' value="<?=$row['id']?>"  />
+			<input type='checkbox' class='no_styled' id='data_check' name='data_check[]' value="<?= $row['id']?>"  />
+			<?= $row['id']?></a></td>
+			<td colspan="2"><?= $row['fname']." ".$row['lname']?></td>
+			<td colspan="10"><?= $row['Description']?></td>
+			<td colspan="2"><?= Date::SmallDate($row['date_expected'])?></td>
+			<?php
+		switch($row['status']){
+			case "Open":
+				?>
+				<td colspan="2"><a href='#'>
+				<?php  
+				$img_src=Atomik::asset('assets/images/32x32/run.png');
+				?>
+				<img class="action_opened" src="<?= $img_src?>" alt ="close action" title='close action' onclick="document.orderform.modify_action_id<?php if ($nb_actions > 1)echo '['.$line_counter.']'; ?>.checked=true;return action_radio_value('close')"/>
+				</a></td>
+				<?php
+				break;
+			case "Propose to close":
+				?>
+				<td colspan="2"><a href='#'>
+				<img class="action_opened" src="<?= Atomik::asset('assets/images/32x32/agt_runit.png')?>" alt ="action in progress" title='action in progress' onclick="document.orderform.modify_action_id<?php if ($nb_actions > 1)echo '['.$line_counter.']'; ?>.checked=true;return action_radio_value('close')"/>
+				</td>
+				<?php
+				break;
+			default:
+			   ?>
+			   <td colspan="2">
+			   <span class="action_closed"></span></td>
+			   <?php
+        }
+		$line_counter++
+		?>
+			<!-- <td colspan="2"><?= $row['status']?></td> -->
+			</tr>
+	<? endforeach; 
+	}
+	?>
+	</tbody>
+	</table>
+	</form>
+ <?php  
+}
+?>  	
+</div>         	  
+<div id="minutes_c">
+<h2>Minutes to link</h2>
+<?php
+if ($review->id != ""){
+?>	
+<form method='POST' action="<?= Atomik::url('review/add_report_review_link')?>">  
+<?php 
+if (isset($review->id)) {
+	echo "<table>";
+	echo "<tbody>";
+	foreach ($minutes_list_linked as $row):
+		$color= ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+		echo "<tr class='".$color."' style='color:#74A8C4'>";
+		// echo "<td>{$row->id}</td>";
+		$document = new Data;
+		$document->get($row->data_id);
+		echo '<td><a href="'.$document->link.'"><img alt="Document attached" title="Document attached" width="16" height="16" border="0" src="'.$document->link_mime.'" /></a></td>';
+		echo "<td><a href='".Atomik::url('edit_data',array('id'=>$row->data_id))."'>{$row->reference}</a></td><td>";
+		echo "<b></b>";
+		echo "<a href='remove_report_review_link.php?link_id={$row->id}&review_id={$review->id}' >".
+		"<img style='padding-left:5px;padding-top:5px' border=0 width='20' height='20' src='".Atomik::asset('assets/images/32x32/agt_action_fail.png')."' alt='remove link' title='remove link' /></a><br/>";
+		echo "</td></tr>";
+	endforeach;
+	echo "</tbody>";
+	echo "</table>";
+}
+?>	
+<fieldset class="medium" >	  
+<select class='combobox' style="width:600px" name='select_mom_id'>
+<option value='' /> --All--
+<?php 
+if ($minutes_list !== false){
+	foreach ($minutes_list as $row): 
+	  print "<option value='{$row['id']}'";
+	  if ($row['id'] == $review->report_link_id){
+			print " SELECTED";
+		}
+	  if ($row['description'] == "")
+		 $description = $row['type_description'];
+	  else
+		 $description = $row['description'];    
+		$date_published= Date::convert_date_conviviale ($row['date_published']);
+	  print ">".$row['type']." ".$row['reference']." issue ".$row['version']." ".$description." ".$date_published;  		
+	endforeach;
+}
+?>
+</select>
+<input type='hidden' name='review_id' value='<?= $review->id ?>'/>
+<span class="art-button-wrapper"  style="float:right-left:100px">
+<span class="l"></span>
+<span class="r"></span>
+<input class='art-button' type='submit' value='Link Report'>
+</span>
+</fieldset>
+</form>
+<h2>First page preview</h2>
+<?= $first_page ?>  
+ <?php  
+}
+?> 
+</div>
+<div id="attachment_c">
+	<?
+	if ($list_attached !== false){
+	?>
+	<table class="art-article pagetable" style="width:800px;float:left">
+	<thead>
+	<tr class="vert"><th colspan="6">Filename</th></tr>
+	</thead>
+	<tbody>
+	<?
+		$line_counter=0;
+		foreach ($list_attached as $row):
+			$description = $row['real_name'];
+			$data_link = "docs/reviews/".$row['id'].".".$row['ext'];
+			$link_mime = Tool::Get_Mime($data_link);
+			$color= ($line_counter++ % 2 == 0) ? "rouge" : "vert";
+			?>
+			<tr class= "<?= $color?>"><th>[Ref A<?=$line_counter?>]</th><td colspan='4'><span style="color:#74A8C4"><?= $description?></span>
+			<a href="../<?= $data_link ?>" TARGET="popup" onClick="ouvrir(this.href,this.target);return false">
+			<img style='padding-left:5px;padding-top:5px' alt="Document attached" title="Document attached" width="20" height="20" border="0" src="<?= $link_mime ?>" />
+			</a>
+			<br/>
+			</td>
+			<td>
+			<a href="review/remove_attachment_link?data_id=<?= $review->id?>&link_id=<?= $row['id']?>" onclick="confirm_suppress(<?= $review->id?>,<?= $row['id']?>)" >
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='assets/images/32x32/agt_action_fail.png' alt='remove link' title='remove link' />
+			</a>
+			</td>
+			</tr>
+	   <? endforeach;?>
+	</tbody>
+	</table>
+	<?}
+	?><br/>
+<h2>Attach document to meeting:</h2>
+<form method="post" action="<?= Atomik::url('post_review')?>" enctype="multipart/form-data" name="upload_data_form" style="padding-left:44px;">   
+	<fieldset>
+	<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+	<input type="file" style="width:300px" name="filename" >
+	<input type="hidden" value='<?= $review->id ?>' name='id' />
+	<input type="hidden" value='yes' name='upload_data' />
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" name="submit_data_upload" value="Upload"/>	
+	</fieldset>
+</form>
+</div>
+<div id="checklist_c">
+<table cellspacing="0" class="pagetable">
+    <thead>
+        <tr class='vert' >
+            <? /* foreach ($header_fields as $value ): */?>
+            <th colspan="2">Id</th><th colspan="2">Checklist</th><th colspan="2">Item</th><th colspan="11">Question</th>
+            </th>
+            <? /* endforeach */?>
+        </tr>
+    </thead>
+    <tbody>
+        <? 
+         foreach ($list_questions as $row_table):
+         	$color = ($fill) ? "rouge" : "vert";?>
+        	<tr class="<?=$color?>">	
+            <td colspan="2"><a href="<?= Atomik::url('edit_checklist', array('question_id' => $row_table['id']))?>"><?= $row_table['acronym']."_"?><? printf("%1$03d",$row_table['item_order'])?></a></td>
+            <td colspan="2"><?= $row_table['description'] ?></td>
+            <td colspan="2"><?= $row_table['tag'] ?></td>
+            <td colspan="10"><?= $row_table['question'] ?></td>
+			<td><a style="float:right" href='<?= Atomik::url('remove_question', array('id' => $row_table['id'],'review_id' => $review->type_id))?>' >
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='assets/images/32x32/agt_action_fail.png' alt='remove link' title='remove link' /></a></td>
+        </tr>
+        <? $fill = !$fill;endforeach?>
+    </tbody>
+</table>
+</div>
+</div>
+<div style="height:20px">
+<script type="text/javascript">
+	cms_page_tab_style();
+	//<![CDATA[
+	// This call can be placed at any point after the
+	// <textarea>, or inside a <head><script> in a
+	// window.onload event handler.
+	
+	// Replace the <textarea id="editor"> with an CKEditor
+	// instance, using default configurations.
+	CKEDITOR.replace( 'objective',
+	{	
+		//toolbarStartupExpanded : 'false'
+		toolbarStartupExpanded : false,
+		toolbar : 'Full',
+		height : '500',
+		width : '800'
+		//uiColor : '#9AB8F3'
+	});
+	CKEDITOR.replace( 'add_review_comment',
+	{	
+		toolbarStartupExpanded : false,
+		toolbar : 'Full',
+		height : '100',
+		width : '800'
+		//uiColor : '#9AB8F3'
+	});
+	CKEDITOR.replace( 'add_review_description',
+	{	
+		toolbarStartupExpanded : true,
+		toolbar : 'Full',
+		height : '1000',
+		width : '800'
+		//uiColor : '#9AB8F3'
+	});
+	//]]>
+</script>

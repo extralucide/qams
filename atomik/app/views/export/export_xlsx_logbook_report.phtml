@@ -1,0 +1,87 @@
+<style type="text/css">
+li.box {
+	margin: 2px 2px 5px 2px;
+	padding: 10px 10px 10px 35px;
+	border: 1px solid #E8EFDE;
+	color: #000;
+	width: auto;
+	background: #F9FBF7;
+	/* height: 1%; */ /*IE6*/
+}
+</style>
+<div id="page_tabs">
+<div id="report" class="active">Report</div>
+<div id="documents">Peer reviews</div>
+<div id="actions">Actions</div>
+<div id="reviews">Reviews</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="report_c">
+<h3> Logbook generation report </h3>
+<p>
+Title: <?= $logbook->title ?><br />
+Reference: <?= $logbook->ref ?><br />
+Issue: <?= $logbook->issue ?><br />
+Author: <?= $logbook->author ?><br />
+
+Documents listed: <?= $amount_data ?>
+<? if ($amount_remarks > 1) {
+		echo " with ".$amount_remarks." remarks";
+	}	
+	else if ($amount_remarks > 0){
+		echo " with 1 remark";
+	}	
+	else{
+	}
+?> <br />
+Actions: <?= $amount_actions ?><br />
+Reviews: <?= $amount_reviews ?><br />
+Done writing logbook.<br />
+Logbook generated at <?= date('H:i:s')?> with peak memory usage: <?= (memory_get_peak_usage(true) / 1024 / 1024) ?> MB
+<li class="box" style="list-style-type: none">
+<?= $excel_filename?> report has been generated.<br/>
+Click here to open the worksheet:
+<a href="<?= $path_result.$excel_filename ?>" >
+<img alt="Export openxml" title="Export openxml" border="0" src="<?= Atomik::asset('assets/images/32x32/Excel2007.png')?>" class='no_img_button' width="32" height="32"style="margin='8px';width='48px';height='48px';" />
+</a>
+</li>
+</p>
+</div>
+<div id="documents_c">
+<? if ($amount_remarks > 0) {?>
+<img src="<?= $path_result.$peer_reviews_pie_filename ?>"><br/>
+<img src="<?= $path_result.$peer_reviews_bar_filename ?>"  width="800"><br/>
+<? }else{?>
+<li class="warning" style="list-style-type: none">
+No internal peer reviews remarks available.
+</li>
+<?
+}?>
+</div>
+<div id="actions_c">
+<? if ($amount_actions > 0) {?>
+<img src="<?= $path_result.$actions_pie_filename ?>"><br/>
+<img src="<?= $path_result.$actions_bar_filename ?>"  width="800"><br/>
+<? }else{?>
+<li class="warning" style="list-style-type: none">
+No actions available.
+</li>
+<?
+}?>
+</div>
+<div id="reviews_c"><ul>
+Reviews are sorted below from the newest to the oldest:<br/>
+<?
+foreach($review_list as $review):
+	$review_description = Tool::clean_text($review->type_description)." performed on ".Date::convert_date_conviviale($review->date);
+	$review_description .= ($review->managed_by !="") ?' by '.$review->managed_by:"";
+	echo "<li><img class='calendar' src='' alt=''/>".$review_description."</li>";
+endforeach;
+?>
+</ul>
+</div>
+</div>
+<script type="text/javascript">
+cms_page_tab_style();
+</script>

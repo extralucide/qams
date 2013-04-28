@@ -1,0 +1,26 @@
+<div class="nice_square go_right">
+<a href="<?= A('filename') ?>" >
+<img alt="Export openxml" title="Export openxml" border=0 src="assets/images/128x128/120px-OfficeWord.png" class='img_button' />
+</a>  
+<div class="<?= A('css_display') ?>">
+<!-- <iframe name="get_word_memo" width="280" style="witdh:160px;height:400px;border:none"></iframe> -->
+<form class='post' name='create_memo' action='' method='post'>
+    <fieldset class="medium">
+		<label for='reference'><h3> Reference:</h3></label>
+        <textarea cols="60" rows="1" name='reference' ><?= A('reference') ?></textarea><br />
+		<label for='subject'><h3> Subject:</h3></label>
+        <textarea cols=60 rows=1 name='subject' ></textarea><br />
+        <label for='description'><h3> Body:</h3></label>
+        <div >
+        <textarea class="ckeditor" cols="60" id="editor1" name="description" rows="10"></textarea></div>
+        <span class="art-button-wrapper">
+            <span class="l"> </span>
+            <span class="r"> </span>
+            <label for='button' style='padding: 0 0 0 0'></label>	
+			<input class="art-button" type="submit" value="Create memo" name="button" />
+		</span>
+        <input type="hidden" name='memo_id' value='<?= A('memo_id') ?>' />
+    </fieldset>
+</form>
+</div>
+</div>

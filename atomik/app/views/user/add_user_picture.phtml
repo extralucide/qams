@@ -1,0 +1,12 @@
+<form method="post" action="<? Atomik::url('edituser')?>" enctype="multipart/form-data" name="upload_data_form" style="padding-left:44px;">   
+	<fieldset>
+	<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+	<input type="file" style="width:300px" name="filename" >
+	<input type="hidden" value='<?php $user_id ?>' name='id' />
+	<input type="hidden" value='yes' name='upload_data' />
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" name="submit_data_upload" value="Upload"/>	
+	</fieldset>
+</form>

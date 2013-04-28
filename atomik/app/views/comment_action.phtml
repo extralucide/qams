@@ -1,0 +1,47 @@
+<div class="nice_square go_right">
+
+<h2>Action description:</h2>
+<blockquote><?= $action->getDescription()?></blockquote>
+<form method="POST" action="<?= Atomik::url('comment_action', false) ?>" name='comment_action' >
+	<fieldset>
+	<h2>New action comment</h2>
+	<textarea class='ckeditor'  id='comment' name='comment' style='margin-top:20px'><?= $new_comment ?></textarea><br />
+	<h2>Previous comments</h2>
+	<blockquote style="min-height:30px"><?= $reply_action_text?></blockquote>
+	<label for='button'></label>
+	<span class="art-button-wrapper" style="margin-left:300px" >
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class="art-button" type="submit" name="cancel" id="cancel" value="Back"/>
+	</span>
+	<? if ($action->getStatusId() != 9){?>
+		<span class="art-button-wrapper" >
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class="art-button" type="submit" name="submit_comment" value="Add a comment"/>
+		</span>
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class="art-button" type="submit" name="submit" id="submit" value="<?= A('button')?>"/>
+		</span>
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class="art-button" type="submit" name="submit_close" id="submit_close" value="Close"/>
+		</span>		
+	<?	
+	}?>
+	<input type="hidden" name='id' value="<?= $id?>">
+	<input type="hidden" name='context' value='<? stripslashes($env_context)?>' />
+	</fieldset>
+	</form>
+	</div>
+<script type="text/javascript">
+	CKEDITOR.replace( 'comment',
+	{	
+		toolbarStartupExpanded : false,
+		height : '200',
+		width : '800'
+	});
+</script>

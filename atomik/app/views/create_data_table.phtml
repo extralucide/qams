@@ -1,0 +1,223 @@
+<form method="POST" name="multi_modify_data" id="multi_modify_data" action="<?= Atomik::url('data')?>" >
+	<table cellspacing="0" class="pagetable" style="width:812px">
+    <thead>
+    <tr class='vert'>
+	<th style="width:40px">Id<br/><a href="<?= Atomik::url('data',array('order_data'=>$id_up))?>" >
+    <img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>"  border="0"></a>
+    <a href="<?= Atomik::url('data',array('order_data'=>$id_down))?>" >
+    <img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>"  border="0"></a>
+    </th>
+	<? foreach( $header_fields as $value => $colpsan):?>
+		<th colspan="<?= $colpsan ?>"><?= $value?></th>
+	<? endforeach ?>	
+    <th colspan="2">Publi.<br/><a href="<?= Atomik::url('data',array('order_data'=>$up))?>" >
+    <img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>"  border="0"></a>
+    <a href="<?= Atomik::url('data',array('order_data'=>$down))?>" >
+    <img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>"  border="0"></a>
+    </th>
+    <th colspan="2">Review<br/><a href="<?= Atomik::url('data',array('order_data'=>$review_up))?>" >
+    <img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>"  border="0"></a>
+    <a href="<?= Atomik::url('data',array('order_data'=>$review_down))?>" >
+    <img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>" width="16" height="16" border="0"></a>
+    </th>
+    <th colspan="3">Status</th>
+    </tr>
+     </thead>	 
+	 <?	
+    foreach ($list_data_lite as $row) {
+    	$data->get($row['id']);
+		$document = $data;
+		// if ($document->reference == $previous_reference) {
+			// continue;
+		// }
+        echo "<tbody>";
+		$color = ($line_counter % 2 == 0)?"rouge":"vert";
+		$color_date_review = ($document->deadline_over) ? "yellow" : "";
+        ?>
+		<tr class='grey_border <?= $color?>'>
+        <td><a href="<?= Atomik::url('edit_data',array('id'=>$document->id)) ?>"><?= $document->id ?></a>
+        <input type='checkbox' class='no_styled' name='data_check[]' value="<?= $document->id?>"  /></td>
+        <td colspan="2"><?= $document->project ?> <?= $document->lru ?></td>
+        <td colspan="4" style="word-wrap:none">
+		<?php	
+		if ($document->link != "empty") {
+		?>
+			<a href="<?= Atomik::url('edit_data',array('id'=>$document->id)) ?>"><?= $document->reference?></a>
+			<a href="../<?= $document->link ?>" target="popup" onClick="ouvrir(this.href,this.target);return false">
+			<img alt="Document attached" title="Open document <?= $document->real_filename?>" width="16" height="16" border="0" src=<?= $document->link_mime ?> />
+			</a>
+		<?php
+		}
+		else {
+		   if (preg_match("#undefined#", $document->location)) {
+				echo '<a href="'.Atomik::url('edit_data',array('id'=>$document->id)).'">'.$document->reference."</a>";
+		   }
+		   else {
+		   		echo '<a href="'.Atomik::url('edit_data',array('id'=>$document->id)).'">'.$document->reference.'</a>';
+				echo '<a href="'.$document->location.'" target="popup" onClick="ouvrir(this.href,this.target);return false">';
+				echo '<img alt="Document attached" title="Open document" width="16" height="16" border="0" src="'.$document->link_mime.'" />';
+				echo '</a>';
+		   }
+
+		}
+		?>
+		</td>
+        <td colspan="2"><?= $document->type?></td>
+        <td colspan="8"><?= $document->description?></td>
+        <td colspan="2"><?= $document->version?></td>
+		<td colspan="4"><a href="mailto:<?= $document->email ?>"><?= $document->author_lite ?></a></td>
+        <td colspan="2"><?= $document->date_published?></td>
+        <td colspan="2" class="<?= $color_date_review ?>"><?= $document->date_review?></td>
+        <td class="<?= $document->getStatusColor() ?>" colspan="2">
+		<a remark_status_click" href="#" onClick="gestionClicStatus('data/select_data_status.php?data_id=<?= $document->id ?>&status_id=<?= $document->status_id ?><?= $filter_param;?>');return false">
+		<?= $document->status ?><a/></td>
+        </td>
+		<td><a><span class='down_arrow' onClick="return display_data_baseline('data_baseline_<?= $document->id;?>',this)"></a>
+		<?php
+		if ($document->reference == $previous_reference) {
+			$icon_medal = Atomik::asset('assets/images/silk_icons/clock_red.png');
+			echo "<img src='".$icon_medal."'>";
+		}
+		// if ($document->status_id == 45) { /* Approved */
+			// $icon_medal = Atomik::asset('assets/images/silk_icons/page_white_medal.png');
+			// echo "<img src='".$icon_medal."'>";
+		// }
+		/* Save reference */
+		$previous_reference = $document->reference;		
+		?>
+		</td>
+        </tr>    
+		<tbody class='menu' id='data_baseline_<?= $document->id ?>' style='background:#F1F1F1' >
+		<tr>
+		<td colspan="30" style="border: none">
+		<div id="bande_gauche" style="width:350px;float:left">
+		<div class="my_menu">
+		<ul>
+			<li class="edit"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id)) ?>">Edit data</h2></a></li>
+			<li class="copy"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id,'copy_data'=>'yes')) ?>">Copy data</h2></a></li>
+			<li class="delete"><h2><a href="#" onclick="confime_delete_data(<?= $document->id ?>);" >Delete data</a></h2></li>
+			<li class="write"><h2><a href="<?= Atomik::url('post_remark',array('id'=>$document->id)) ?>">Write a remark</a></h2></li>
+			<li class="see"><h2><a href="<?= Atomik::url('inspection',array('data_id'=>$document->id)) ?>">See remarks</a></h2></li>
+			<li class="export"><h2><a href="<?= Atomik::url('export/export_xlsx_peer_review_report',array('id'=>$document->id))?>">Export remarks</a></h2></li>
+			<li class="delete"><h2><a href="peer_review/delete_remarks.php?delete_app=<?= $document->id ?><?= $filter_param;?>" >Delete all remarks</a></h2></li>
+			<li class="tag"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id,'baseline_tag'=>'yes'))?>" >Tag data with baseline</a></h2></li>
+			<li class="email"><h2><a href="#" onclick="send_mail(<?= $document->id ?>)">Send by mail</a></h2></li>
+		</ul>	
+		</div>
+		</div>
+		<div id="bande_gauche">
+			<div class="contenu smallsize_nomargin">
+			<h1><u>Abstract</u></h1>
+			<?= $document->abstract ?>
+			</div>
+		</div>
+		<?php
+		if (($document->type == "CSCI") || 
+			($document->type == "HWCI")) {
+  			$src_table_data_name = strtolower($document->reference)."_src";
+  			$src_table_version_name = strtolower($document->reference)."_".strtolower($document->version);
+  			$src_table_query = "SHOW TABLES FROM ".A('db_config/select')." LIKE '%".$src_table_version_name."%'";
+  			$src_table_result = A('db:'.$src_table_query)->fetchAll(); 
+  			$nbtotal_table_src=count($src_table_result);
+  			if ($nbtotal_table_src != 0){ 
+  				?>List of sources<br/><br/>
+				    <table style="width:300px">
+				<thead>
+				  <tr><th>Name</th><th>Version</th><th>Diff</th></tr>
+				</thead>
+				<tbody>
+				<?php
+  				$list_src = "SELECT * FROM ".$src_table_data_name." RIGHT OUTER JOIN ".$src_table_version_name." ON ".$src_table_data_name.".id = src_id";
+  				$list_src_result = A('db:'.$list_src); 
+  				foreach($list_src_result as $row_src) { 
+  				  /* current version */
+					$to_file = "docs/".$src_table_data_name."/".$row_src->src_id.".vhd";
+					/* find previous version */
+					$previous_version = $row_src->version-1;
+					//WHERE `name` LIKE 'cde_dso'
+					$previous_version_query = "SELECT * FROM ".$src_table_data_name." WHERE `name` = '".$row_src->name."' AND version = ".$previous_version;
+					//echo $previous_version_query."<br/>";
+					$list_previous_version_src_result = A('db:'.$previous_version_query)->fetchAll();; 
+					$nbtotal_table_src=count($list_previous_version_src_result);
+					if ($nbtotal_table_src != 0){
+						foreach($list_previous_version_src_result as $previous_version_src) { 
+							$from_file = "docs/".$src_table_data_name."/".$previous_version_src->id.".vhd";
+						}	
+					}
+					echo "<tr>";
+					echo "<td>";
+  					echo $row_src->name.".".$row_src->extension;
+					echo "</td><td>".$row_src->version;
+					echo "</td>";
+					echo "<td>";
+  					if ($previous_version > 0) {
+						echo "<a href='diff_src.php?from=".$from_file."&to=".$to_file."'>";
+						echo "<img style='padding-left:10px;padding-top:5px' border=0 width='16' height='16' src='images/32x32/editcopy.png'alt='diff' title='diff' /></a>";
+					}
+					else {
+						echo "<a href='diff_src.php?from=&to=".$to_file."'>";
+						echo "<img style='padding-left:10px;padding-top:5px' border=0 width='16' height='16' src='images/32x32/kghostview.png'alt='diff' title='diff' /></a>";
+					}
+					echo "</td>";
+		            echo "</tr>";	
+  				}
+				?>
+				    </tbody>
+					</table>
+				<?php
+  			}
+  			else {
+  			}
+			}
+		?>
+		</div>
+		</td>
+		</tr>
+        </tbody>
+       <?php $line_counter = $line_counter + 1;
+    } 
+    ?>
+    </tbody>
+</table>
+<div class="nice_square" style="height:100px;min-height:100px;margin-top:10px">
+<fieldset class="medium"  style="width:300px;margin:5px;border:1px;float:left">
+<label class="inline" for='set_baseline' style="color:#000">Apply Baseline</label>
+<select class='combobox' style="width:350px" name='set_baseline' id='set_baseline' >
+<option value=''>--All--
+<?php 
+foreach ($all_baseline_list as $row) {
+		print "<option value='{$row['id']}'";
+        if ($row['id'] == $context_array['baseline_id']) {
+            print " SELECTED";
+        }
+        print ">{$row['project']} {$row['lru']} {$row['description']}";
+}?>
+</select>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type="submit" name="submit_baseline" value='Set Baseline' /></span><br/>
+<input type=hidden name='page' 				value='<?= $page ?>'/>
+<input type=hidden name='limite' 			value='<?= $limite ?>'/>
+</fieldset>
+<fieldset class="medium"  style="width:200px;margin:5px;border:1px;float:left">
+<label for='set_status' style="color:#000">Apply Status</label>
+<select class='combobox' onchange="status_form.submit()" name='set_status' id="set_status" >
+<option value=''>--All--
+<?php foreach ($status_list as $row) {
+	/* status type */
+	print "<option value='{$row['id']}'";
+	if ($row['id'] == $context_array['data_status_id']) {
+		print " SELECTED";
+	}
+	print ">{$row['name']}";
+}?>
+</select>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type="submit" name="submit_status" value='Set Status' /></span><br/>
+</fieldset>
+</div>
+</form>	
+<div class="spacer"></div>

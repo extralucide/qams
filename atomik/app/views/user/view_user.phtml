@@ -1,0 +1,35 @@
+<div id="page_tabs">
+<div id="description" class="<?= A('description_highlight')?>">Description</div>
+<div id="projects" class="<?= A('projects_highlight')?>">Projects</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="description_c">
+	<div style="float:right;margin-right:40px">
+	<img style="padding:10px" src="<?= $user_to_edit->photo_file ?>" alt="" width="144" height="192" >
+	</div>
+	<div style="width:400px;margin:10px">
+		<label for='first_name'>First Name: </label><?= $user_to_edit->fname ?><br/>
+		<label for='last_name'>Last Name: </label><?= $user_to_edit->lname ?><br/>
+		<label for='function'>Function: </label><?= $user_to_edit->user_function ?><br/>
+		<label for='enterprise'>Company: </label><?= $user_to_edit->company_name ?><br/>
+		<label for='email'>E-Mail: </label><?= $user_to_edit->email ?><br/>
+		<label for='telephone'>Telephone: </label><?= $user_to_edit->phone ?><br/>
+		<h3>Overview</h3>
+		<?= $user_to_edit->getOverview() ?>
+	</div>
+</div>
+<div id="projects_c">
+<div class="<?= A('css_modify')?>">
+<span id="prr_table"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+	cms_page_tab_style();
+	gestion_prr("<?= Atomik::url('user/display_projects_list',array('id'=>$user_to_edit->id))?>");
+//]]>
+</script>

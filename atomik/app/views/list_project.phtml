@@ -1,0 +1,40 @@
+<div class="nice_square go_right">
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead>
+<tr><th colspan="6"></th></tr>
+</thead> 
+<tbody> 
+<?php 
+foreach ($list_data as $row) {
+    $project->get($row['id']);
+	$aircraft = $project->getAircraft();
+	$company = $project->getCompany();
+	$table_color= ($fill)?'rouge':'vert';?>
+	<tr class="<?= $table_color ?>">
+	<td style="padding:10px"><img src="<?= $row['thumbnail']?>" width="100"></td>
+	<td style="padding:10px" colspan="5"><a href="<?= Atomik::url('edit_project',array('id'=> $row['id']))?>"><b><?= $company." ".$aircraft." ".$row['project'].':</b> '.$row['description'] ?></a></td><td> 
+         <a style="float:right"><span class='down_arrow' style="margin-left:0px" onClick="return display_action_comment('eqpt_<?= $row['id'] ?>',this)"></span></a><br/>
+	</td>
+        </tr>
+	<tr class="menu" id="eqpt_<?= $row['id']?>" >
+	<td colspan="6">
+		<? $project->get($row['id']);
+		   $list_eqpt = $project->getSubProjectList();
+		   foreach ($list_eqpt as $eqpt):
+			if ($eqpt['parent_id'] == $eqpt['id']){
+				echo "<b><a href=".Atomik::url('edit_eqpt',array('id'=>$eqpt['id'])).">".$eqpt['lru']."</a></b>: ".$eqpt['description']."<br/>";
+			}
+			else{
+				echo "".Project::getSubProjectAcronym($eqpt['parent_id'])." --> <a href=".Atomik::url('edit_eqpt',array('id'=>$eqpt['id'])).">".$eqpt['lru']."</a>: ".$eqpt['description']."<br/>";
+			}
+		   endforeach;
+		?>
+	</td>
+	</tr> 	
+    <?php
+	$fill=!$fill;
+}
+?>
+</tbody> 
+</table>
+</div>

@@ -1,0 +1,31 @@
+<blockquote style="float:right;width:720px">
+<?= $user->getOverview() ?>
+</blockquote>
+<div class="nice_square go_right" style="background-color:#CCC">
+<? foreach ($list_items as $item):?>
+<h1><b><?= $item['company'] ?></b> 
+<?= Date::PrettyDate($item['date_start']) ?> --
+<?
+if ($item['date_end'] != "0000-00-00"){
+ 	echo Date::PrettyDate($item['date_end']); 
+}
+else{
+	echo "Until now";
+}
+?>
+</h1>
+<h2><?= $item['qualification'] ?></h2>
+<div class="cv_nice_square go_right" style="background-color:#FFF">
+<p style="float:right;width:200px;min-height:200px;background-color:#FFF;border: 1px solid #000;padding:5px;margin:5px;word-wrap: break-word;">
+<?  $keywords_array = explode(",",$item['keywords']);
+	foreach($keywords_array as $keywords):
+		echo $keywords."<br/>";
+	endforeach ?>
+<?  $keywords_array = explode(",",$item['languages']);
+	foreach($keywords_array as $keywords):
+		echo $keywords."<br/>";
+	endforeach ?></p>
+<?= $item['description'] ?>
+</div>
+<? endforeach?>
+</div>

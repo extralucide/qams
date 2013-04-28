@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" >
+    <head>
+        <meta charset="utf-8" />
+        <title>HTML5 Drag and Drop Multiple File Uploader | Script Tutorials</title>
+		<link rel="stylesheet" type="text/css" href="/qams/atomik/assets/css/main.css" />
+        <!--[if lt IE 9]>
+          <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <header tabindex="0">
+            <h2>HTML5 Drag and Drop Multiple File Uploader</h2>
+            <a  href="http://www.script-tutorials.com/html5-drag-and-drop-multiple-file-uploader/" class="stuts">Back to original tutorial on <span>Script Tutorials</span></a>
+        </header>
+
+        <div class="container">
+            <div class="contr"><h2>Drag and Drop your images to 'Drop Area' (up to 50 files at a time, size - under 25600kb)</h2></div>
+            <div class="upload_form_cont">
+                <div id="dropArea">Drop Area</div>
+
+                <div class="info">
+                    <div>Files left: <span id="count">0</span></div>
+					<!-- http://www.script-tutorials.com/demos/257/upload.php -->
+                    <div>Destination url: <input id="url" value="<?= Atomik::url('data/upload')?>"/></div>
+                    <h2>Result:</h2>
+                    <div id="result"></div>
+                    <canvas width="500" height="20"></canvas>
+                </div>
+            </div>
+        </div>
+		<script type="text/javascript" src="/qams/atomik/assets/js/libs/data.js"></script>
+    </body>
+</html>

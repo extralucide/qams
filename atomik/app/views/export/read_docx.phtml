@@ -1,0 +1,9 @@
+<h3> Select data </h3>
+<form method="post" action="<?= Atomik::url('export/export_validation_matrix')?>" enctype="multipart/form-data">
+          <input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+          <input type="file" name="filename">  
+          <input type="submit" value="Send">
+          <input type="hidden" name="project_id" value="<?= $context_array['project_id'] ?>">
+          <input type="hidden" name="sub_project_id" value="<?= $context_array['sub_project_id'] ?>">
+          <input type="hidden" name="type_id" value="<?= $context_array['type_id'] ?>">                    
+</form>

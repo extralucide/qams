@@ -1,0 +1,34 @@
+<div class="nice_square go_right">
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead>
+<tr><th colspan="7"></th></tr>
+</thead> 
+<tbody> 
+<?php 
+foreach ($list_data as $row) {
+	$table_color= ($fill)?'rouge':'vert';?>
+	<tr class="<?= $table_color ?>">
+	<? if ($row['parent_lru'] == $row['lru']){
+			$name = $row['aircraft']." ".$row['project']." ".$row['lru'];
+		}
+		else{
+			$name = $row['aircraft']." ".$row['project']." ".$row['parent_lru']." ".$row['lru'];
+		}
+	?>
+	<td colspan="5" style="padding:10px"><a href="<?= Atomik::url('edit_eqpt',array('id'=> $row['id']))?>"><b><?= $name."</b>: ".Tool::cleanDescription($row['description']) ?></a></td>
+	<td></td><td> 
+         <a style="float:right"><span class='down_arrow' style="margin-left:0px" onClick="return display_action_comment('eqpt_<?= $row['id'] ?>',this)"></span></a><br/>
+	</td>
+        </tr>
+	<tr class="menu" id="eqpt_<?= $row['id']?>" >
+	<td colspan="7">
+		<?= $row['abstract'] ?>
+	</td>
+	</tr> 	
+    <?php
+	$fill=!$fill;
+}
+?>
+</tbody> 
+</table>
+</div>

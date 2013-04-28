@@ -1,0 +1,47 @@
+<p>
+<table cellspacing="0" class="pagetable" style="width:800px">
+<thead>
+<tr class='vert'>
+<th>Id</th><th  colspan="4">Name</th><th></th><th>Remarks</th><th>Total</th><th>Open</th><th colspan="3">Type</th><th  colspan="2">Date</th>
+</tr>
+</thead>
+<tbody>
+<? foreach($list_prr as $row):
+    $prr_date = Date::convert_date($row->date);
+    $prr_link = "docs/peer_reviews/".$row->id.".".$row->ext;
+    $prr_link_mime = Tool::Get_Mime($prr_link); 
+    $type =  $row->ext;
+    $prr_type = "unknown";
+    $uploadName = getcwd()."/../".$prr_link;
+    $nb_remarks = $row->nb_remarks;
+    $open_remarks = $row->open_remarks;
+    $warning = "";
+    if ($open_remarks > 0) {
+        $warning ="red";
+    }
+    elseif ($nb_remarks > 0) {
+        $warning ="green";
+    } 
+    $prr_type = $row->type;
+    $color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";  
+    ?>
+     <tr class="<?= $color ?>"><td><?= $row->id ?></td><td colspan="4"><span style="padding-top:-5px"><?= $row->name ?></span>
+     <a href="../<?= $prr_link ?>">
+    <img style='padding-left:5px;padding-top:5px' alt="Document attached" title="Document attached" width="20" height="20" border="0" src="<?= $prr_link_mime ?>" />
+    </a>
+    </td>
+    <td><a href="peer_review/remove_peer_review_link?data_id=<?= $data_id?>&link_id=<?= $row->id?>" onclick="confirm_suppress(<?= $data_id?>,<?= $row->id?>)" >
+    <img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src='assets/images/32x32/agt_action_fail.png' alt='remove link' title='remove link' />
+    </a></td>
+    <td>
+	<a title="Update remark."><span class='down_arrow' onclick="Update_Peer_Review(<?= $row->id?>,this);return false">
+	<a title="Scan remarks."><span class='rework' onclick="Compute_Peer_Review(<?= $row->id?>,this);return false"></a></td>
+    <td><?= $nb_remarks ?></td>
+    <td class="<?= $warning ?>"><?= $open_remarks ?></td>
+    <td colspan="3"><?= $prr_type ?></td>
+    <td  colspan="2"><?= $prr_date ?></td>
+    </tr>
+  <? endforeach?>
+</tbody>
+</table>
+</p>

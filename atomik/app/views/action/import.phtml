@@ -1,0 +1,31 @@
+<br/>Found<b> <?= $res['nb_items']?></b> action items from <b><?= $filename?></b>.<br/>
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead>
+<tr>
+<? foreach( $header_fields as $key => $value ):?>
+	<th colspan="<?= $value ?>" ><?= $key?></th>
+<? endforeach ?>			
+</tr>
+</thead>	
+<tbody>	
+<? 
+if ($res['nb_items'] != null){
+	foreach ($html_table as $row):
+		$color = ($line_counter++ % 2 == 0)? "rouge" : "vert";
+		?>
+		<tr class="<?= $color?>">
+			<?
+			reset($header_fields);
+			while (list($key, $val) = each($row)) {
+				// echo "$key => $val\n";
+				list($key2, $val2) = each(&$header_fields);
+				echo '<td colspan="'.$val2.'">'.$val.'</td>';
+			}
+			// $c = array_walk($row, 'test_alter');
+			?>
+		</tr>
+	<? endforeach; 
+}
+?>
+</tbody>
+</table>

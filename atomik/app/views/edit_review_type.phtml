@@ -1,0 +1,123 @@
+<div id="page_tabs">
+<div id="type_form" class="<?= A('type_form_highlight')?>">Form</div>
+<div id="checklist" class="<?= A('checklist_highlight')?>">Checklist</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="type_form_c">
+	<form action="" method="post" name="my_form" >
+		<fieldset class="medium">
+            <label for='type'>Type:</label>
+            <input type="text" name="type" value="<?= $review_type->type ?>"/><br/>
+            <label for='scope'>Scope:</label>
+			<select class="combobox" name="scope_id" id="scope_id">
+			<option value="">--All--
+			<? foreach ($list_scope as $row):
+			   echo "<option value='".$row['id']."'";
+			    if ($row['id'] == $review_type->scope_id) {
+			        echo " SELECTED";
+			    }  
+			    echo ">".$row['scope'];
+			endforeach	?>
+			</select><br/> 
+			<?= Company::getSelectCompany($review_type->company_id,"inactive","company_id") ?>
+			<div class="spacer"></div>
+            <h2>Description</h2>
+            <textarea class="ckeditor"cols="<?= $input_width ?>" id="description" name="description" rows="1" ><?= $review_type->description ?></textarea>		
+            <h2>Objectives</h2>
+            <textarea class="ckeditor" cols="<?= $input_width ?>" id="objectives" name="objectives" rows="10" ><?= $review_type->objectives ?></textarea>
+            <h2>Inputs</h2>
+            <textarea class="ckeditor"cols="<?= $input_width ?>" id="inputs" name="inputs" rows="10" ><?= $review_type->inputs ?></textarea>
+            <h2>Activities</h2>
+            <textarea class="ckeditor" cols="<?= $input_width ?>" id="activities" name="activities" rows="10" ><?= $review_type->activities ?></textarea>
+            <h2>Outputs</h2>
+            <textarea class="ckeditor" cols="<?= $input_width ?>" id="outputs" name="outputs" rows="10" ><?= $review_type->outputs ?></textarea>
+            <h2>Schedule</h2>
+            <textarea class="ckeditor" cols="<?= $input_width ?>" id="schedule" name="schedule" rows="10" ><?= $review_type->schedule ?></textarea>
+
+            <dl><dd style="padding-left:65px">
+                <span class="art-button-wrapper" >
+                    <span class="l"> </span>
+                    <span class="r"> </span>
+                    <input class="art-button" type="submit" value="<?= $button ?>"/>
+                </span>
+                <span class="art-button-wrapper" >
+                    <span class="l"> </span>
+                    <span class="r"> </span>
+                    <input class="art-button" type="submit" id="submit_cancel" name="submit_cancel" value="Back"/>
+                </span></dd>				
+				</dd>	
+        </dl>
+        <input type="hidden" name='id_review_type' value="<?= $update_id ?>"/>
+		</fieldset>
+    </form>
+</div>
+<div id="checklist_c">
+<table cellspacing="0" class="pagetable">
+    <thead>
+        <tr class='vert' >
+            <? /* foreach ($header_fields as $value ): */?>
+            <th colspan="2">Id</th><th colspan="2">Checklist</th><th colspan="2">Item</th><th colspan="11">Question</th>
+            </th>
+            <? /* endforeach */?>
+        </tr>
+    </thead>
+    <tbody>
+        <? 
+         foreach ($list_questions as $row_table):
+         	$color = ($fill) ? "rouge" : "vert";?>
+        	<tr class="<?=$color?>">	
+            <td colspan="2"><a href="<?= Atomik::url('edit_checklist', array('question_id' => $row_table['id']))?>"><?= $row_table['acronym']."_"?><? printf("%1$03d",$row_table['item_order'])?></a></td>
+            <td colspan="2"><?= $row_table['description'] ?></td>
+            <td colspan="2"><?= $row_table['tag'] ?></td>
+            <td colspan="10"><?= $row_table['question'] ?></td>
+			<td><a style="float:right" href='<?= Atomik::url('remove_question', array('id' => $row_table['id'],'review_id' => $update_id))?>' >
+			<img style='padding-left:5px;padding-top:5px' border=0 width='20' height='20' src='assets/images/32x32/agt_action_fail.png' alt='remove link' title='remove link' /></a></td>
+        </tr>
+        <? $fill = !$fill;endforeach?>
+    </tbody>
+</table>
+</div>
+</div>  
+<script type="text/javascript">
+//<![CDATA[
+	cms_page_tab_style();
+	CKEDITOR.replace( 'description',
+	{	
+		toolbarStartupExpanded : false,
+		height : '100',
+		width : '700'
+	});
+	CKEDITOR.replace( 'objectives',
+	{	
+		toolbarStartupExpanded : false,
+		height : '400',
+		width : '700'
+	});
+	CKEDITOR.replace( 'inputs',
+	{	
+		toolbarStartupExpanded : false,
+		height : '400',
+		width : '700'
+	});
+	CKEDITOR.replace( 'activities',
+	{	
+		toolbarStartupExpanded : false,
+		height : '400',
+		width : '700'
+	});
+	CKEDITOR.replace( 'outputs',
+	{	
+		toolbarStartupExpanded : false,
+		height : '400',
+		width : '700'
+	});
+	CKEDITOR.replace( 'schedule',
+	{	
+		toolbarStartupExpanded : false,
+		height : '200',
+		width : '700'
+	});
+//]]>
+</script>
+

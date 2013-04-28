@@ -1,0 +1,24 @@
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shCore.js')?>"></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts//shBrushAsm.js')?>"></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushBat.js')?>"></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushCpp.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushPerl.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushPlain.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushJava.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushDelphi.js')?>" ></script>
+<div class="nice_square go_right">
+<div class='eg-image' ><a href="<?= Atomik::url('add', array('id' => $row['id_article'])) ?>">
+		<img class="img_button" src="<?= Atomik::asset('assets/images/64x64/document.png')?>" alt="doc"  /></a>
+		</div>
+<h1><?= $row['titre'] ?></h1>
+<small class="commentmetadata">
+    <span class="calendar"></span><span class="small-dark-font">Published on <strong><?= Date::convert_date($row['date_redac']) ?></strong> by <?= User::getName($row['chapo']) ?></span>
+    </small>
+  <div class="event_descr" style="margin-top:20px">
+    <?= $row['texte'] ?>
+  </div>
+</div>
+<!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+<script type="text/javascript">
+     SyntaxHighlighter.all()
+</script>

@@ -1,0 +1,110 @@
+<div id="page_tabs">
+<div id="system" class="<?= A('system_highlight')?>">System</div>
+<div id="equipments" class="<?= A('equipments_highlight')?>">Equipments</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="system_c">
+<div style="float:right;margin-right:40px;padding:10px">
+<img src="<?= $project->photo_file ?>" alt="" width="200" >
+	<div class="<?= A('css_modify')?>">
+	<p><a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a picture">
+	<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="36" height="32" alt="Add a picture" title="Add a picture" border="no" onclick="new_picture_form.submit()"/> Add a picture</a></p>
+	<form method="post" action="<?= Atomik::url('edit_project')?>" enctype="multipart/form-data" id="new_picture_form" name="new_picture_form" >   
+		<fieldset>
+		<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+		<input type="file" style="width:300px" name="filename" >
+		<input type="hidden" value='<?= $project->id ?>' name='user_id' />
+		<input type="hidden" value='yes' name='upload_data' /><br/>
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		</fieldset>
+	</form>
+	</div>
+</div>
+<div style="margin:10px">
+<form method='POST' action='<?= Atomik::url('list_project', false) ?>'>
+<fieldset class="medium">
+<label for='aircraft_id'>Aircraft:</label>           
+<select class='combobox' onchange_="this.form.submit()" name='aircraft_id' style="width:300px">
+<option value=''/> --All--
+<?php foreach($list_aircraft as $row):?>
+    <option value="<?= $row['id'] ?>"
+    <?php if ($row['id'] == $project->aircraft_id){ print " SELECTED ";}?>
+    ><?= $row['company']." ".$row['aircraft']?>
+<?php endforeach ?>
+</select><br /> 
+<label>Name:</label>    
+<input type='text' name='name' value='<?= $project->getProjectName() ?>' id='name' style="width:300px"><br/>
+<b>Description:</b>
+<textarea class="ckeditor" cols="60" id="description" name="description" rows="5" ><?= $project->description ?></textarea><br/>
+<b>Workspace:</b>
+<input type='text' name='workspace' value='<?= $project->getWorkspace() ?>' id='folder' style="width:700px"><br/>
+<b>Folder:</b>
+<input type='text' name='folder' value='<?= $project->getFolder() ?>' id='folder' style="width:700px"><br/>
+</fieldset>
+<input type='hidden' name='id' value='<?= $id?>'/>
+<input type='hidden' name='page' value="<?= $page?>">
+<input type='hidden' name='limite' value="<?= $limite?>">
+<span class="<?= A('css_admin')?>">
+<span class="art-button-wrapper ">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type='submit' name="submit_project" value='<?= $button?>'>
+</span>
+</span>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<label for='button' style='padding: 0 0 0 0'></label>
+<input class="art-button" type="submit" value="Back" name="cancel" />
+</span>	
+</form>
+</div>
+</div>
+<div id="equipments_c">
+<div  style="width:824px;">
+<a href="<?= Atomik::url('edit_eqpt',array('project_id' => $id))?>" style="width:60%;text-decoration: none;outline-width: medium;outline-style: none;" title="Add new entry">
+<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="32" alt="Add new entry" title="Add new entry" border="no" />Add equipment</a>
+</div>
+<div class="<?= A('css_modify')?>">
+<h3 class="">Equipments list</h3>
+<span id="prr_table"></span>
+<div class="spacer"></div>
+<!--
+<form class="<?= A('css_admin')?>" method='post' action="<?= Atomik::url('user/add_user_project_link')?>" target_="uploadFrame" onsubmit_="document.getElementById('uploadFrame').style.display = 'block'" >
+<fieldset class="medium">
+<label for='project'>Equipment</label>
+<select  class='combobox' name='project_id' >
+<option value=''>--All--
+<?php foreach ($list_data as $eqpt):?>
+	<option value="<?= $eqpt['id']?>"><?= $eqpt['lru'].' '.$eqpt['description']?>
+<? endforeach?>
+</select><br />
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type='submit' value='Add equipment'>
+<input type='hidden' name='project_id' value='<?= $id?>'/>
+</span>
+</fieldset>
+</form>
+-->
+</div>
+<iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none"></iframe>
+<span id="export_data_list_frame"></span>
+</div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    CKEDITOR.replace( 'description',
+    {   
+        toolbarStartupExpanded : false,
+        height : '200',
+        width : '450'
+    });
+	cms_page_tab_style();
+	gestion_prr("<?= Atomik::url('system/display_eqpts_list',array('id'=>$id))?>");
+//]]>
+</script>

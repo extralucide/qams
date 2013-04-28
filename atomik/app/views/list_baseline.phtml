@@ -1,0 +1,52 @@
+<? if ($baseline_list != NULL){
+?>
+<p>
+<table cellspacing="0" class="pagetable" style="float:left;width:350px">
+<thead>
+<tr class='vert'>
+<th>Id</th><th>Baseline</th><th></th>
+</tr>
+</thead>
+<tbody>
+<? foreach ($baseline_list as $baseline => $text):
+        if ($line_counter % 2 == 0) {
+			$color = "rouge";
+        }
+        else {
+			$color = "vert";
+        }
+		?>
+	<tr class="<?= $color?>"><td><?= $baseline?></td>
+	<td><?= $text ?></td>
+	<td><a href="edit_data?id=<?= $data_id?>&submit_remove_baseline=yes&link_id=<?= $baseline?>" >
+		<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src="assets/images/32x32/agt_action_fail.png" alt='remove link' title='remove link' />
+		</a></td>
+	</tr>
+<? $line_counter++;endforeach ?>
+</tbody>
+</table>
+<?php
+}
+?>
+<p><a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a baseline">
+<img src="assets/images/newobject.gif" class="systemicon" width="36" height="32" alt="Add a baseline" title="Add a baseline" border="no" onclick="new_baseline_form.submit()"/> Add a baseline</a></p>
+<form method="POST" action="edit_data" name="new_baseline_form">
+<fieldset>	
+<label for='data_impacted_id'>Baseline</label>
+<select class='combobox' style="width:300px" name='baseline_id'>
+<option value=''>--All--
+<? foreach ($baseline_choice as $row):
+		print "<option value='{$row['id']}'";
+        $description = $row['lru']." ".$row['description'];
+        //if ($row['id'] == $baseline_id) {
+        //    print " SELECTED";
+        //}
+        print ">{$description}";
+endforeach ?>  
+</select>
+</fieldset> 
+<input type="hidden" name='baseline_highlight' value='active'/>
+<input type="hidden" name='data_id' value='<?= $data_id?>'/>
+<input type="hidden" name='add_baseline_link' value='yes'/>
+</form>	
+</p>

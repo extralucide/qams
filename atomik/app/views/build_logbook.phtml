@@ -1,0 +1,39 @@
+<div id="page_tabs">
+<div id="data" >Documents</div>
+<div id="reviews" class="active">Reviews</div>
+<div id="actions" >Actions</div>
+<div id="export">Export</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="data_c">
+<p>
+<?= $count_data ?> documents found<br/>
+</p>
+</div>
+
+<div id="reviews_c">
+Reviews, CCB, Audits ...
+<p>
+<img src="<?= $img_indicator ?>">
+</p>
+</div>
+
+<div id="actions_c">
+<p>
+<img src="<?= $pie_filename ?>">
+</p>
+</div>
+
+<div id="export_c">
+<div class="my_menu" style="margin-left:-40px;width:200px;">
+	<ul>
+		<li class="export_pdf"><h2><a href="<?= Atomik::url('export/export_pdf_logbook_report') ?>" >Export PDF</h2></a></li>
+		<li class="export_word"><h2><a href="<?= Atomik::url('export/export_docx_logbook_report') ?>" >Export Word</h2></a></li>
+		<li class="export_excel"><h2><a href="<?= Atomik::url('export/export_xlsx_logbook_report') ?>" >Export Excel</a></h2></li>
+	</ul>	
+</div> 	
+</div>
+<script type="text/javascript">
+cms_page_tab_style();
+</script>

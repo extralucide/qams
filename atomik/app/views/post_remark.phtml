@@ -1,0 +1,87 @@
+<div class="nice_square go_right">
+<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+Fill this form to input a remark from peer review (Click here to see Peer Review Process overview).
+</li>
+<div>
+<div style="float:right">
+<div class="tundra" id="calendar2" style="margin-right:30px">
+<b>Date of publication:</b>
+<div style="width:250px" dojoType="dijit._Calendar" value='<?= $remark->date_dojo ?>' onChange="dojo.byId('date_opening_formatted').innerHTML=dojo.date.locale.format(arguments[0], {formatLength: 'short', selector:'date'})">
+</div>
+</div>	
+</div>
+<div style="width:500px">
+	<form class='post_' id="copy_remark" name='copy_remark' action="<?= Atomik::url('post_remark')?>" method="POST" >
+    <fieldset class="form_action medium">
+    <label for='subject'>Subject:</label>
+	<textarea cols="40" rows="2" id='subject' name='subject'  ><?= $remark->subject ?></textarea><br/>
+    <?= Project::getSelectProject($remark->project_id,"active") ?><br/>
+	<?= Project::getSelectSubProject(&$project,$remark->sub_project_id) ?><br/>	
+    <?= Data::getSelectData ($remark->project_id,
+						$remark->sub_project_id,
+						$remark->data_id)?><br/>
+	<?= Remark::getSelectCategory ($remark->category_id,"inactive","Hw Design") ?>
+	<span class='down_arrow3' onClick="return display_data_baseline('internal_prr',this)">Help</span><br/>
+	<div class='menu' style="width:100%" id='internal_prr'>
+ 	<label for='cat_explain' style='padding: 10px 0 0 0'></label>
+	<p class='explain' id='cat_explain' name='cat_explain'></p>
+	</div><br/>
+	<?= User::getSelectAssignee (&$project,$remark->assignee_id) ?><br/>
+    <?= Remark::getSelectStatus ($remark->status_id) ?><br/>
+    <label for='paragraph'>Paragraph:</label>
+    <input type=text style='width:200px' name='paragraph' size='5' value="<?= $remark->paragraph?>"/><br />
+    <label for='line'>Line:</label>
+    <input type=text style='width:200px' name='line' size='5' value="<?= $remark->line?>"/><br />
+    <label for='action_id'>Action ID:</label>
+    <input type=text style='width:200px' name='action_id' size='5' value="<?= $remark->action_id?>"/><br />
+    <label for='date_opening_formatted'></label>
+    <textarea cols="11" rows="1" name="date" id='date_opening_formatted' class='no_show' ></textarea>	
+    <label for='project_selected'></label>
+    <textarea class='no_show' cols='60' rows='3' id='project_selected'  >...</textarea><br />
+    <label for='type_appli'></label>
+    <textarea class='no_show' cols='60' rows='3' id='type_appli'  >...</textarea><br />
+    <label for='submit_post'></label>
+	<label for='justification' >Justification:</label>
+	<textarea class='' cols='70' rows='3' name='justification' id='justification'  style="margin-left:130px"><?= $remark->justification?></textarea><br />
+	<input type="hidden" name='page' value='<?=$page ?>' />
+	<input type="hidden" name='limite' value='<?=$limite ?>' />
+	<input type="hidden" name="type" value="<?= A('type')?>">
+	<input type="hidden" name="id" value="<?= A('remark_id')?>">
+	<input type="hidden" name="from" value="<?= $from ?>">
+    </span>
+    </fieldset> 
+    <label>Description:</label><br/>
+    <textarea class="ckeditor" id="description" name="description" ><?= $remark->remark?></textarea>
+	<span class="art-button-wrapper">
+    <span class="l"> </span>
+    <span class="r"> </span>
+    <input class="art-button" type="submit" name="cancel_down" value="Cancel"/>
+    </span>	
+    <span class="art-button-wrapper">
+    <span class="l"> </span>
+    <span class="r"> </span>
+    <input class="art-button" type="submit" id="submit_remark" name="submit_remark" value="Post" />
+    </span>	
+</form>
+</div>
+</div>
+</div>
+<div style="height:20px"></div>
+<script type="text/javascript">
+	CKEDITOR.replace( 'description',
+	{	
+		toolbarStartupExpanded : true,
+		height : '600',
+		width : '800'
+	});
+	function category_explain(obj) {
+		<?php
+		echo( "var tableauFromPHP = new Array();\n" ); 
+		foreach ($remark->getCategoryList("Hw Design") as $row) {
+		  echo( "tableauFromPHP[".$row['id']."] = '{$row['description']}';\n" ); 
+		}	
+		?> 
+		document.getElementById('cat_explain').innerHTML = tableauFromPHP[obj.form.show_category.value];
+	}
+	window.onload = category_explain(document.copy_remark.show_category);	
+</script>

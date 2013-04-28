@@ -1,0 +1,31 @@
+<div class="nice_square go_right">
+<form method="POST" action="">
+<fieldset class="medium">
+<?= Project::getSelectProject($context_array['project_id'],"active")?>
+</fieldset>
+</form>
+<form id="form_description" class="post_" method='post' action="<?= Atomik::url('baseline') ?>">
+	<fieldset class="medium">
+	<?= Project::getSelectSubProject(&$project,$baseline->sub_project_id,"inactive") ?>
+	<br/>
+	<label for="description">Description:</label>
+	<input type="text" name="description" style="width:200px;" value="<?= $baseline->baseline ?>"/>
+	<label for='add'></label>
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class='art-button' type="submit" name="submit_baseline" value="<?= A('button')?>" /></span>
+	<input type="hidden" name='project'       value='<?= $baseline->project_id ?>'/>
+	<input type="hidden" name='baseline_id'   value='<?= $baseline->getId() ?>'/>
+	</fieldset>
+</form>	
+</div>
+<div style="height:20px"></div>
+<script type="text/javascript">
+	CKEDITOR.replace( 'description',
+	{	
+		toolbarStartupExpanded : false,
+		height : '200',
+		width : '700'
+	});
+</script>

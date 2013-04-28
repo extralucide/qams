@@ -1,0 +1,48 @@
+<? if ($baseline_list != NULL){
+	?>
+	<p>
+	<table cellspacing="0" class="pagetable" style="float:left;width:500px">
+	<thead>
+	<tr class='vert'>
+	<th>Id</th><th colspan="10">Baseline</th><th></th>
+	</tr>
+	</thead>
+	<tbody>
+	<? foreach ($baseline_list as $row): ?>
+		<? $data_description = Tool::clean_text($row['description']); ?>
+		<tr class="grey_border"><td><?= $row['link_data_id']?></td>
+		<td colspan="10"><?= $data_description ?></td>
+		<td><a href="#" style="float:right" onclick="document.getElementById('link_id').value=<?=$row['link_data_id']?>;remove_baseline_form.submit()">
+			<img style='padding-left:5px;padding-top:5px' border='0' width='20' height='20' src="assets/images/32x32/agt_action_fail.png" alt='Remove link' title='Remove link' />
+			</a></td>
+		</tr>
+	<? endforeach ?>
+	</tbody>
+	</table>
+	<div class="spacer" ></div>
+	<?php
+}
+?>
+<form method="POST" action="edit_data" name="remove_baseline_form">
+<input type="hidden" name='data_id' value='<?= $data_id?>'/>
+<input type="hidden" name='submit_remove_baseline' value='yes'/>
+<input type="hidden" id='link_id' name='link_id' value=''/>
+</form>
+<p><a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a baseline" onclick="new_baseline_form.submit()">
+<img src="assets/images/newobject.gif" class="systemicon" width="36" height="32" alt="Add a baseline" title="Add a baseline" border="no" /> Tag document with baseline</a></p>
+<form method="POST" action="" name="new_baseline_form">
+<fieldset>	
+<label for='data_impacted_id'>Baseline:</label>
+<select class='combobox' style="width:600px" name='baseline_id' >
+<option value=''>--All--
+<? foreach ($baseline_choice as $row):
+		print "<option value='{$row['id']}'";
+        $description = $row['lru']." ".$row['description'];
+        print ">{$description}";
+endforeach ?>  
+</select>
+</fieldset> 
+<input type="hidden" name='add_baseline_link' value='yes'/>
+<input type="hidden" name='data_id' value='<?= $data_id?>'/>
+</form>	
+</p>

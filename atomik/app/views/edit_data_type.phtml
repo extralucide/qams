@@ -1,0 +1,43 @@
+<form method='POST' action="<?= Atomik::url('data_type', false) ?>">
+<fieldset class="medium">
+<label class="inline_" for='acronym'>Acronym:</label>
+<input type="text" class="box" size='6' id="acronym" name="name" value="<?= $type['name'] ?>"/><br/>
+<label class="inline2_" for='description'>Description:</label>
+<input type="text" class="box" style='width:600px' id="add_type_desc" name="description" value="<?= $type['description'] ?>"/><br/>
+<label for="group_id">Type:</label>
+<select class="combobox" id="group_id" name="group_id">
+<option value=""/> --All--
+<? foreach(Data::getGroup() as $group_id => $group_name):
+	echo "<option value='".$group_id."'";
+	if ($type['group_id'] == $group_id){ 
+		echo " SELECTED ";
+	}
+	echo ">".$group_name;
+endforeach;
+?>
+</select>
+<h2>Comment</h2>
+<textarea class="ckeditor" id="comment" name="comment" style="width:600px;height:300px"><?= $type['comment'] ?></textarea>
+</fieldset >
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="submit_update" id="submit_update" type="submit" value="Update"/>
+</span>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="cancel" id="cancel" type="submit" value="Cancel"/>
+</span>	
+<input type="hidden" name='id' value='<?=$id ?>' />
+</form>
+<script type="text/javascript">
+//<![CDATA[
+    CKEDITOR.replace( 'description',
+    {   
+        toolbarStartupExpanded : false,
+        height : '200',
+        width : '450'
+    }); 
+//]]>
+</script>

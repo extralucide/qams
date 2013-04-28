@@ -1,0 +1,155 @@
+<style type="text/css">
+fieldset.requirement label {
+	width:15%;
+	float:left;
+	text-align:right;
+}
+fieldset.requirement div {
+	width:85%;
+	float:left;
+}
+</style>
+<div style="height:20px;"></div>
+<div class="default_left">
+    <h3 class="data"><?= $title ?></h3>
+    <fieldset class="medium">
+        <dl>
+		    <form action="" method="post" name="requirement_update_form" >
+			<?php if ($update_id != "") {?>
+                <dt><label for="req_id">Requirement ID:  </label></dt>
+                <dd><span style="color:#FFF"><?= $req_id ?></span></dd><br/>	
+			<?php } ?>
+                <dt><label for="derived">Derived</label></dt>
+                <select class='combobox' name='derived' >
+                    <option value=''>--All--
+                        <? foreach ($derived_combobox as $row_derived): ?>
+								<option value="<?= $row_derived['id'] ?>"
+                                <?php if ($row_derived['id'] == $derived_id )print " SELECTED"; ?> >
+                                    <?= $row_derived['attribute'] ?>
+                                <? endforeach; ?>
+                </select>
+                <dt><label for="safety">Safety</label></dt>
+                <select class='combobox' name='safety' >
+                    <option value=''>--All--
+                        <? foreach ($safety_combobox as $row_safety): ?>
+								<option value="<?= $row_safety['id'] ?>"
+                                <?php if ($row_safety['id'] == $safety_id )print " SELECTED"; ?> >
+                                    <?= $row_safety['attribute'] ?>
+                                <? endforeach; ?>
+                </select>
+				 <dt><label for="status">Status</label></dt>
+                <select class='combobox' name='status' >
+                    <option value=''>--All--
+                        <? foreach ($status_combobox as $row_status): ?>
+								<option value="<?= $row_status['id'] ?>"
+                                <?php if ($row_status['id'] == $status_id )print " SELECTED"; ?> >
+                                    <?= $row_status['attribute'] ?>
+                                <? endforeach; ?>
+                </select>
+				 <dt><label for="allocation">Allocation</label></dt>
+                <select class='combobox' name='allocation' >
+                    <option value=''>--All--
+                        <? foreach ($allocation_combobox as $row_allocation): ?>
+								<option value="<?= $row_allocation['id'] ?>"
+                                <?php if ($row_allocation['id'] == $allocation_id )print " SELECTED"; ?> >
+                                    <?= $row_allocation['attribute'] ?>
+                                <? endforeach; ?>
+                </select>	
+				 <dt><label for="validation">Validation</label></dt>
+                <select class='combobox' name='validation' >
+                    <option value=''>--All--
+                        <? foreach ($validation_combobox as $row_validation): ?>
+								<option value="<?= $row_validation['id'] ?>"
+                                <?php if ($row_validation['id'] == $validation_id )print " SELECTED"; ?> >
+                                    <?= $row_validation['attribute'] ?>
+                                <? endforeach; ?>
+                </select>
+                <hr>
+				<?php if ($update_id != "") {?>
+					<label>Traceability with upper stream</label><br/><br/>
+					<?php 
+					$list_table_traca_query = "SHOW TABLES  FROM olivier_appere LIKE '%table_traca_req_".$spec_id."%'";
+					$result = $db->db_query($list_table_traca_query); 
+					$nbtotal=mysql_num_rows($result);
+					if ($nbtotal == 0){
+						// Create table
+						$sql_query = "CREATE TABLE `olivier_appere`.`table_traca_req_".$spec_id."` (`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,".
+									"`req_id` INT NOT NULL ,".
+									"`upper_table_id` INT NOT NULL ,".
+									"`upper_req_id` INT NOT NULL) ENGINE = MYISAM ;";
+						$data_traca_spec = A("db:".$sql_query);
+					}
+					/* find upper link */
+					$test_data_traca_spec = "SELECT table_traca_req_{$spec_id}.id as link_id,req_id,upper_table_id,upper_req_id,bug_applications.application as reference, bug_applications.version, data_cycle_type.name as type FROM table_traca_req_{$spec_id} ".
+											"LEFT OUTER JOIN bug_applications ON bug_applications.id = upper_table_id ".
+											"LEFT OUTER JOIN data_cycle_type ON data_cycle_type.id = bug_applications.type ".
+											"WHERE req_id = {$update_id}";
+					//echo $test_data_traca_spec;
+					$data_traca_spec = A("db:".$test_data_traca_spec);
+					foreach ($data_traca_spec as $row_traca ){
+						echo '<span style="color:#FFF">'.$row_traca['reference']." ".$row_traca['type']." issue ".$row_traca['version']." Req ID ".$row_traca['upper_req_id'].'</span>'.
+							 "<a href='".Atomik::url('remove_upper_traca_link', array('id' => $row_traca['link_id']))."'".
+							 "<img style='padding-left:5px;padding-top:5px' border=0 width='20' height='20' src='../images/32x32/agt_action_fail.png' alt='remove link' title='remove link' /></a><br/>";
+					}
+					//}
+					//else {
+					//	echo "Warning, missing traceability data table.";
+					//}
+				}
+	        ?>	
+
+	        
+<div class="spacer" ></div>
+</div>
+</div>
+<div id="content" style="background-color:#fff;">
+<div style="width:800px;float:left;margin-left:20px;min-height:600px">
+<fieldset>		
+<label for="text"><h3>Text</h3></label><br/>
+<textarea class="ckeditor" cols="60" id="editor1" name="text" rows="5" ><?= $description ?></textarea>
+<label  for="rationale"><h3>Rationale</h3></label><br/>
+<textarea class="ckeditor" cols="60" id="editor2" name="rationale" rows="5" ><?= $rationale ?></textarea>
+    <span class="art-button-wrapper" >
+        <span class="l"> </span>
+        <span class="r"> </span>
+        <input class="art-button" type="submit" value="<?= $button ?>"/>
+    </span></dd>
+<input type="hidden" name='table_req' value="<?= $table_req ?>"/>
+<input type="hidden" name='update' value="<?= $update ?>"/>
+<input type="hidden" name='update_id' value="<?= $update_id ?>"/>
+<input type="hidden" name='project_id' value="<?= $project_id ?>"/>
+<input type="hidden" name='lru_id' value="<?= $lru_id ?>"/>
+<input type="hidden" name='type_id' value="<?= $type_id ?>"/>
+<input type="hidden" name='spec_id' value="<?= $spec_id ?>"/>				
+</form>
+</fieldset>
+<form method='POST' action="<?= Atomik::url('add_upper_traca_link', array('spec_id' => $spec_id,'req_id' => $req_id))?>">
+<fieldset class="medium">
+<label for='link_id'>Add an upper link</label>
+<select  class='combobox' name='link_id' >
+	<option value=''>--All--
+	<? if ($all_req != "") { ?>
+    <? foreach ($all_req as $row_link): ?>
+        <option value="<?= $row_link['req_id'] ?>">
+        <?= $row_link['reference']." ".$row_link['type']." issue ".$row_link['version']." Req ID ".$row_link['req_id']; ?>
+    <? endforeach; ?>
+	<? } ?>
+</select><br />
+<div class="my_menu" style="margin-left:-45px;width:180px;">
+    <ul>
+      <li class="mom">
+        <h2>
+          <a href="<?= Atomik::url('add_upper_traca_link', array('spec_id' => $spec_id,'req_id' => $req_id)) ?>" border="0" >Add upper link</a></h2></li>
+    </ul>
+  </div>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type='submit' value='Add upper link'>
+</span>
+</fieldset>
+</form>
+</div>
+<div style="height:20px;"></div>
+<div class="spacer"></div>
+

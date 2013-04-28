@@ -1,0 +1,132 @@
+<div id="page_tabs">
+<div id="description" class="<?= A('description_highlight')?>">Description</div>
+<div id="projects" class="<?= A('projects_highlight')?>">Projects</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="description_c">
+	<div style="float:right;margin-right:40px">
+	<img style="padding:10px" src="<?= $user_to_edit->photo_file ?>" alt="" width="144" height="192" >
+		<div class="<?= A('css_modify')?>">
+		<p><a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a picture">
+		<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="36" height="32" alt="Add a baseline" title="Add a baseline" border="no" onclick="new_picture_form.submit()"/> Add a picture</a></p>
+		<form method="post" action="<?= Atomik::url('user/add_user_picture')?>" enctype="multipart/form-data" id="new_picture_form" name="new_picture_form" >   
+			<fieldset>
+			<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+			<input type="file" style="width:300px" name="filename" >
+			<input type="hidden" value='<?= $user_to_edit->id ?>' name='user_id' />
+			<input type="hidden" value='yes' name='upload_data' /><br/>
+			<span class="art-button-wrapper">
+			<span class="l"> </span>
+			<span class="r"> </span>
+			</fieldset>
+		</form>
+		</div>
+	</div>
+	<div style="width:400px;margin:10px">
+		<form method='POST' action='<?= Atomik::url('users', false) ?>'>
+		<fieldset class="medium">
+		<label for='first_name'>First Name</label>
+		<input type='text' name='add_user_fname' value='<?= $user_to_edit->fname ?>' id='first_name'><br/>
+		<label for='last_name'>Last Name</label>
+		<input type='text' name='add_user_lname' value='<?= $user_to_edit->lname ?>' id='last_name'><br/>
+		<label for='username'>User Name</label>
+		<input type='text' name='add_user_username' value='<?= $user_to_edit->username ?>' id='username'><br/>
+		<label for='function'>Function</label>
+		<input type='text' name='add_user_function' value='<?= $user_to_edit->user_function ?>' id='function' style="width:350px"><br/>
+		<label for='enterprise'>Company</label>
+		<select class='combobox' name='add_user_enterprise' id='enterprise'>
+		<option value=''>--All--</option>
+		 <? foreach ($companies_list as $row_enterprise) {
+		     print "<option value='{$row_enterprise['id']}'";
+		     if ($row_enterprise['id'] == $user_to_edit->company_id) {
+		         print ' selected="selected"';
+		     }
+		     print ">".$row_enterprise['name']."</option>";
+		 }
+		 print "</select><br />";
+		?>
+		<br />
+		<label for='email'>E-Mail</label>
+		<input type='text' name='add_user_email' value='<?= $user_to_edit->email ?>' id='email'><br/>
+		<label for='telephone'>Telephone</label>
+		<input type='text' name='add_user_tel' value='<?= $user_to_edit->phone ?>' id='telephone'><br/>
+		<label for='password'>Password</label>
+		<input type='text' name='add_user_pass' value='<?= $user_to_edit->password ?>' id='password'><br/>
+		<label for='folder'>Folder</label>
+		<input type='text' name='folder' value='<?= $user_to_edit->folder ?>' id='folder' style="width:350px"><br/>		
+		<label for='add_user_admin'>Admin Rights?</label>
+		<div id="adminright">
+		<input style="margin-left:30px" type="RADIO" name="add_user_admin" VALUE="1" <?= $admin_check?> >Yes
+		<input style="margin-left:10px" type="RADIO" name="add_user_admin" VALUE="0" <?= $admin_no_check?> >No
+		</div><br/>
+		<label for='activity'>Active</label>
+		<div id="adminright">
+		<input style="margin-left:30px" type="RADIO" name="user_activity" VALUE="1" <?= $active_check?> >Yes
+		<input style="margin-left:10px" type="RADIO" name="user_activity" VALUE="0" <?= $active_no_check?> >No
+		</div><br/>
+		<h3>Overview</h3><br/>
+		<textarea class="ckeditor" id="overview" name="overview" col="60"><?= $user_to_edit->getOverview() ?></textarea>
+		</fieldset>
+		<input type='hidden' name='edit_user_id' value='<?= $edit_user_id?>'/>
+		<input type='hidden' name='page' value="<?= $page?>">
+		<input type='hidden' name='limite' value="<?= $limite?>">
+		<span class="<?= A('css_admin')?>">
+		<span class="art-button-wrapper ">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class='art-button' type='submit' name="submit_user" value='<?= $button?>'>
+		</span>
+		</span>
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<label for='button' style='padding: 0 0 0 0'></label>
+		<input class="art-button" type="submit" value="Back" name="cancel_up" />
+		</span>	
+		</form>
+	</div>
+</div>
+<div id="projects_c">
+<div class="<?= A('css_modify')?>">
+<span id="prr_table"></span>
+<div class="spacer"></div>	
+<form class="<?= A('css_admin')?>" method='post' action="<?= Atomik::url('user/add_user_project_link')?>" target_="uploadFrame" onsubmit_="document.getElementById('uploadFrame').style.display = 'block'" >
+<fieldset class="medium">
+<label for='project'>Project</label>
+<select  class='combobox' name='project_id' >
+<option value=''>--All--
+<?php foreach ($project_list as $row_project):?>
+	<option value="<?= $row_project['id']?>"><?= $row_project['company'].' '.$row_project['aircraft'].' '.$row_project['project']?>
+<? endforeach?>
+</select><br />
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type='submit' value='Assign project'>
+<input type='hidden' name='user_id' value='<?= $user_to_edit->id?>'/>
+</span>
+</fieldset>
+</form>
+</div>
+<iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none"></iframe>
+<span id="export_data_list_frame"></span>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+	CKEDITOR.replace( 'overview',
+	{	
+		//toolbarStartupExpanded : 'false'
+		toolbarStartupExpanded : false,
+		toolbar : 'Full',
+		height : '500',
+		width : '800'
+		//uiColor : '#9AB8F3'
+	});
+	cms_page_tab_style();
+	gestion_prr("<?= Atomik::url('user/display_projects_list',array('id'=>$user_to_edit->id))?>");
+//]]>
+</script>

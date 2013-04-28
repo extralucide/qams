@@ -1,0 +1,164 @@
+<? if (count($list_remarks) != 0){ 						
+?>
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead><tr class='vert'>	
+<? foreach( $header_fields as $value => $colpsan):?>
+	<th colspan="<?= $colpsan ?>"><?= $value?></th>
+<? endforeach ?>	
+</tr>
+</thead>
+<tbody>
+    <?php // on balaye les lignes par groupe
+    foreach ($list_remarks as $row) {
+    	$remark->get($row['id']);	
+		$color = ($line_counter++ % 2 == 0)? "rouge" : "vert";
+	?>
+	<tr class="grey_border <?= $color ?>">
+    <td style="width:20px" colspan="2"><a href="<?= Atomik::url('post_remark',array('id'=>$remark->id,'page'=>$page,'limite'=>$limite))?>"><?= $remark->id?></a>
+	<input type='checkbox' class='styled' name='modify_action_id' value="<?= $remark->id?>"  /></td>
+	<td colspan="2" class="small_font"><?= $remark->small_date ?></td>
+	<td colspan="2" class="small_font" style="word-wrap:break-word;max-width:20px" ><?= $remark->poster ?></td>
+	<td colspan="2" class="reference_click_ small_font" style="word-wrap: break-word;max-width:60px"><a href="<?= Atomik::url('edit_data',array('id'=>$remark->data_id))?>"><?= $remark->reference ?></a></td>
+	<td colspan="8" class="subject_click_" style="word-wrap: break-word;max-width:50px"><b><?= $remark->paragraph ?> <?= $remark->line ?></b> <?= $remark->remark ?></td>
+	<td colspan="2" class="small_font"><?= $remark->category ?></td>
+	<td class="<?= $remark->color_status ?>" colspan="3">
+	<a class="remark_status_click" href="<?= Atomik::url('peer_review/select_remarks_status',array('remark_id'=>$remark->id,'status_id'=>$remark->status_id)) ?>" TARGET="popup" onClick="ouvrir(this.href,this.target);return false">
+    <?= $remark->status ?>
+	</a>
+    </td>
+	<td class="<?= $remark->color_action ?>"><a href="<?= Atomik::url('post_action',array('task_on_action'=>'edit','task_on_action_id'=>$remark->action_id)) ?>"><?= $remark->action_id ?><a></td>
+	<td style="max-width:16px;width:16px"><a>
+        <span class='down_arrow' onClick="return openMenu2(<?= $remark->id?>,'reply_<?= $remark->id?>',this)">
+        </span>
+        </a></td>
+        <!-- the class of this line must be menu to be hidden -->
+        <tr class='menu' id="<?= $remark->id?>" style='background:#C4C4C4' >
+        <td colspan="23" style="border: none">
+        <div id="bande_gauche" style="width:350px;float:left">
+			<div class="my_menu">
+			<ul>
+				<li class="write"><h2><a href="<?= Atomik::url('post_remark',array('copy_id'=>$remark->id,'page'=>$page,'limite'=>$limite)) ?>">Copy remark</a></h2></li>
+				<li class="edit"><h2><a href="<?= Atomik::url('post_remark',array('id'=>$remark->id,'page'=>$page,'limite'=>$limite))?>">Edit remark</a></h2></li>
+				<li class="action"><h2><a href_tbd="<?= Atomik::url('post_action',array('remark_id'=>$remark->id,'page'=>$page,'limite'=>$limite))?>" >Open an action</a></h2></li>
+				<li class="delete"><h2><a href="<?= Atomik::url('peer_review/delete_remark',array('id'=>$remark->id,'page'=>$page,'limite'=>$limite))?>" >Delete remark</a></h2></li>
+			</ul>
+			</div>
+		</div>
+		<div class="spacer"></div>
+		<div class="contenue midsize" style="margin-left:20px">
+		<h1><u>Text of the remark</u></h1>
+			<blockquote><h4>Posted by <?= $remark->poster?> on <?= $remark->date?></h4>
+				<p><?= $remark->see_remark?></p><div class="spacer"></div>
+			</blockquote>
+			<div class='indent'></div>
+		<h1><u>Justification</u></h1>
+			<blockquote>
+			<p style="min-height:30px"><?= $remark->justification?></p><div class="spacer"></div>
+			</blockquote>
+			<div class='indent'></div>
+    <div class="reply_under">
+	<h1><u>Replies to the remark</u></h1>
+	<div style='font-size:10pt' >
+	<?
+	$response_list = array();
+	$nb_response = $remark->get_response(&$response_list);
+	if ($nb_response > 0) {
+	?>
+		<form method="POST" action="" onClick="return hideMenu('reply_<?= $remark->reply_id?>')">
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class='art-button' type="submit" name="submit" value='Show/Hide Replies' /></span><br/>
+		</form>
+	<? }
+	else{
+		echo "No reply so far.";
+	}	
+	?>
+		<div class="menu_" id="reply_<?= $remark->id?>" style="background:#D1D1D1">
+		<?foreach( $response_list as $response ):?>
+			<blockquote>
+			<p><?= $response?></p>
+			<div class="spacer"></div>
+			</blockquote>
+			<div class='_indent'></div>		
+		<? endforeach ?>
+	</div>
+	</div>
+	<h1><u>Add a response</u></h1>
+     <form method="POST" class='_post' action="<?= Atomik::url('peer_review/answer_remark')?>" >
+	 <fieldset class="medium">
+	 <?= $remark->getSelectStatus($remark->status_id,null,"reply_status_id")?>
+	 </fieldset>
+	 <fieldset class="medium">
+	 <? Atomik::set('menu',array('assignee' => 'Author'))?>
+	 <?= User::getSelectAssignee(&$project,User::getIdUserLogged())?>
+	</fieldset>
+	<fieldset class="medium">
+    <label for='reply'></label><br />
+	<textarea class="ckeditor" style="width:750px" id="reply" name="description" rows="10"></textarea><br />
+    <input type="hidden" name="name" 		value="<?= User::getIdUserLogged() ?>"/>
+    <input type="hidden" name="doloop" 		value="yes"/>
+    <input type="hidden" name="id"  		value="<?= $remark->id ?>"/>
+    <input type="hidden" name="application" value="<?= $remark->reference?>"/>
+	<input type="hidden" name="date"	    value="<?= $today_date ?>"/>
+    <input type="hidden" name="criticality" value="<?= $remark->criticality?>"/>
+    <input type="hidden" name="category"    value="<?= $remark->category?>"/>
+	<input type="hidden" name="isReply"     value="yes"/>
+	<span class="art-button-wrapper">
+	<span class="l"> </span>
+	<span class="r"> </span>
+    <input class='art-button' type='submit' name="submit_post" value="Reply"/>
+    </fieldset>
+	</form>
+		<h1><u>Action linked</u></h1>
+		<form method="POST" name="multi_modify_action_id" action="<?= Atomik::url('action/set_link_action_remark',array('multi_modify'=>'yes'))?>" >
+		<label for='lru'></label>
+		<select name='action_id' style='width:600px'>
+		<option value=''>--All--
+		<?php
+		foreach ($result_action as $row_action) {
+			print "<option value='{$row_action['id']}'";
+			if ($row_action['id']  == $remark->action_id) {
+				print " SELECTED";
+			}
+			print">".$row_action['id'].":".substr($row_action['description'],0,60)."[...] etc ...";
+		}
+		?>  
+		</select><br /> 
+		<input type="hidden" name="multiple_data_id"    value="<?= $remark->id?>"/>		
+        <span class="art-button-wrapper">
+            <span class="l"> </span>
+            <span class="r"> </span>
+            <label for='button' style='padding: 0 0 0 0'></label>
+			<input class="art-button" type="submit" value="Link action" name="link_action" />
+		</span>			
+		</form>	
+	</div>
+	</div>
+        </td>
+        </tr>
+<?php
+    } //ends while loop ?>
+    <tr><td style="width:60px"><input type='checkbox' class='no_styled' name='checkall' value="Check All" onClick='test()'/></td>
+    <td colspan="10"></td></tr>
+</tbody>
+</table>
+<div class="spacer"></div>
+<?php
+}
+else {
+	echo "<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>";
+    echo "no data !";
+    echo "</li>";
+}?>
+<script type="text/javascript">
+//<![CDATA[
+    CKEDITOR.replace( 'description',
+    {   
+        toolbarStartupExpanded : false,
+        height : '200',
+        width : '450'
+    }); 
+//]]>
+</script>

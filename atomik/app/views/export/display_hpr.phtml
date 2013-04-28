@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7">
+		<link rel="shortcut icon" href="/qams/qams.ico" />
+        <title>Analyse Specification</title>
+                <link rel="stylesheet" type="text/css" href="/qams/atomik/../ckeditor/_samples/sample.css" />
+                <link rel="stylesheet" type="text/css" href="/qams/atomik/assets/css/main.css" />
+
+                <link rel="stylesheet" type="text/css" href="/qams/atomik/assets/css/tundra.css" />
+                <link rel="stylesheet" type="text/css" href="/qams/atomik/../coloration/styles/shCore.css" />
+                <link rel="stylesheet" type="text/css" href="/qams/atomik/../coloration/styles/shThemeDefault.css" />
+         
+		<script type="text/javascript" src="assets/js/libs/dojo/dojo.js" djConfig="parseOnLoad: true , locale: &#39;en&#39;"></script>
+                <script type="text/javascript" src="/qams/atomik/../ckeditor/ckeditor.js"></script>
+                <script type="text/javascript" src="/qams/atomik/../ckeditor/_samples/sample.js"></script>
+                <script type="text/javascript" src="/qams/atomik/assets/js/libs/review.js"></script>
+
+                <script type="text/javascript" src="/qams/atomik/assets/js/libs/home.js"></script>
+                <script type="text/javascript" src="/qams/atomik/assets/js/libs/actions.js"></script>
+                <script type="text/javascript" src="/qams/atomik/assets/js/libs/data.js"></script>
+        		 <script type="text/javascript">
+            dojo.require("dijit.dijit"); // loads the optimized dijit layer
+            dojo.require("dijit._Calendar");
+            dojo.require("dojo.parser");
+        </script>
+    </head>
+<body style="width:1200px">	
+<h3> HPR extraction report </h3>
+<?= A('display')?>
+<a href="<?= '../../result/Traca_'.$today_date.'.xlsx' ?>" >
+<img alt="Export openxml" title="Export openxml" border="0" src="<?=Atomik::asset('assets/images/excel_sheet.png')?>" class='img_button'
+   onmouseover="this.style.margin='0px';this.style.width='64px';this.style.height='64px';"
+   onmouseout="this.style.margin='8px';this.style.width='48px';this.style.height='48px';" />
+</a>                     
+    </body>
+</html>

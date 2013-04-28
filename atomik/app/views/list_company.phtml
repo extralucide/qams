@@ -1,0 +1,25 @@
+<div class="nice_square go_right">
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead>
+<tr><th colspan="3"></th></tr>
+</thead> 
+<tbody> 
+<?php 
+foreach ($list_data as $row) {
+	$table_color= ($fill)?'rouge':'vert';?>
+	<tr class="<?= $table_color ?>">
+	<td><a href="<?= Atomik::url('edit_company',array('id'=>$row['id']))?>"><?= $row['name'] ?></a></td><td></td><td> 
+         <a style="float:right"><span class='down_arrow' style="margin-left:0px" onClick="return display_action_comment('do178b_data_<?= $row['id'] ?>',this)"></span></a><br/>
+	</td>
+        </tr>
+	<tr class="menu" id="do178b_data_<?= $row['id']?>" >
+	<td colspan="3">
+	</td>
+	</tr> 	
+    <?php
+	$fill=!$fill;
+}
+?>
+</tbody> 
+</table>
+</div>

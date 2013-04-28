@@ -1,0 +1,20 @@
+<table class="art-article">
+ <thead>
+   <tr class='vert' > 
+	<th >Paragraph</th><th >Section</th><th >Description</th> 
+   </tr>
+   </thead>
+   <tbody>
+   <? foreach ($table as $row_table): ?>  
+   		<? $color = ($fill)?'rouge':'vert';
+		$fill = !$fill; ?>
+		<tr class="<?= $color?>">
+	   <? foreach ($column as $row_header => $value ): ?>
+		<td> 
+		  <?= $row_table[$column[$row_header][0]] ?>
+		</td> 
+	   <? endforeach; ?>
+	   </tr>
+   <? endforeach; ?>
+  </tbody>
+ </table>

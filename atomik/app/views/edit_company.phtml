@@ -1,0 +1,62 @@
+<div class="nice_square go_right">
+<div style="float:right;margin-right:40px;padding:10px">
+<img src="<?= $company->photo_file ?>" alt="" width="200" >
+	<div class="<?= A('css_modify')?>">
+	<p><a href="#" style="text-decoration: none;outline-width: medium;outline-style: none;" title="Add a picture">
+	<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="36" height="32" alt="Add a picture" title="Add a picture" border="no" onclick="new_picture_form.submit()"/> Add a picture</a></p>
+	<form method="post" action="<?= Atomik::url('edit_company')?>" enctype="multipart/form-data" id="new_picture_form" name="new_picture_form" >   
+		<fieldset>
+		<input type="hidden" name="MAX_FILE_SIZE" value="30000000">   
+		<input type="file" style="width:300px" name="filename" >
+		<input type="hidden" value='<?= $company->id ?>' name='user_id' />
+		<input type="hidden" value='yes' name='upload_data' /><br/>
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		</fieldset>
+	</form>
+	</div>
+</div>
+<div style="margin:10px">
+<form method='POST' action="<?= Atomik::url('list_company', false) ?>">
+<fieldset class="medium">
+<label>Name</label>
+<input type='text' name='name' value="<?= $company->getName() ?>" id='name'><br/>
+<fieldset class="medium">
+<?= Company::getSelectCompanyType($company->getType(),"inactive") ?>
+</fieldset >
+Description
+<textarea class="ckeditor" cols="60" id="description" name="description" rows="5" ><?= $company->getDescription() ?></textarea><br/>
+</fieldset>
+<input type='hidden' name='id' value='<?= $company->id?>'/>
+<input type='hidden' name='page' value="<?= $page?>">
+<input type='hidden' name='limite' value="<?= $limite?>">
+<span class="<?= A('css_admin')?>">
+<span class="art-button-wrapper ">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class='art-button' type='submit' name="submit" value='<?= $button?>'>
+</span>
+</span>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<label for='button' style='padding: 0 0 0 0'></label>
+<input class="art-button" type="submit" value="Back" name="cancel" />
+</span>	
+</form>
+</div>
+<iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none"></iframe>
+<span id="export_data_list_frame"></span>
+</div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    CKEDITOR.replace( 'description',
+    {   
+        toolbarStartupExpanded : false,
+        height : '200',
+        width : '450'
+    }); 
+//]]>
+</script>

@@ -1,0 +1,152 @@
+<span style="float:right">Add a new SPR
+<a href="<?= Atomik::url('add_spr') ?>" ><img alt='add a new SPR' title='add a new SPR' src='../images/64x64/edit.png' class='img_button'
+   onmouseover="this.style.margin='0px';this.style.width='64px';this.style.height='64px';"
+   onmouseout="this.style.margin='8px';this.style.width='48px';this.style.height='48px';" />
+</a>
+</span>
+<h1>SPRs</h1>
+<table class="art-article" style="width:60%">
+    <thead>
+        <tr class="vert">
+            <th>
+                <a href="<?php echo $location ?>">
+                    <img height='32' width='32' alt="project" border=0 src='../images/256x256/OldPlane.png' title='Project' /></a>
+            </th>
+            <th>
+                <form id="form_project" method=post action="<?= $location ?>">
+                    <select style='width:160px;' onchange="this.form.submit()" name='select_project'>";
+                        <option value=''>--All--
+                            <? foreach ($projects as $row_projects): ?>
+                        <option value="<?= $row_projects['id'] ?>"
+                                    <?php if ($row_projects['id'] == $select_project )print " SELECTED"; ?> >
+                                        <?= $row_projects['project'] ?>
+                                    <? endforeach; ?>
+                    </select>
+                </form>
+            </th>
+    <form id="form_equipment" class="post" method='post' action="<?= $location ?>">
+        <th>
+            <a href="<?= $location ?>">
+                <img height='32' alt='equipment' width='32' border=0 src='../images/256x256/circuit.png' title='LRU'/>
+            </a>
+        </th>
+        <th class='sort_menu' >
+            <select class='style' style='width:80px;' name='select_equipment' onchange="this.form.submit()">
+                <option value=''>--All--
+                    <? foreach ($equipment as $row_equipments): ?>
+                        <?php $id_equipment = $row_equipments['id']; ?>
+                <option value="<?= $id_equipment ?>"
+                            <?php if ($id_equipment == $select_equipment )print " SELECTED"; ?> >
+                                <?= $row_equipments['lru'] ?>
+                            <? endforeach; ?>
+            </select>
+            <input type=hidden name='select_project'    value='<?= $select_project ?>'/>
+            <input type=hidden name='project_id'        value='<?= $select_project ?>'/>
+            <input type=hidden name='lru_id'            value='<?= $select_equipment ?>'/>
+        </th>
+        </form>
+        <form id="form_severity" class="post" method='post' action="<?= $location ?>">
+        <th>
+            <a href="<?= $location ?>">
+                <img height='32' alt='severity' width='32' border=0 src='../images/32x32/agt_update_critical.png' title='severity'/>
+            </a>
+        </th>
+        <th class='sort_menu' >
+            <select class='style' style='width:80px;' name='select_severity' onchange="this.form.submit()">
+                <option value=''>--All--
+                    <? foreach ($severity as $row_severity): ?>
+                        <?php $id_severity = $row_severity['level']; ?>
+                <option value="<?= $id_severity ?>"
+                            <?php if ($id_severity == $select_severity )print " SELECTED"; ?> >
+                                <?= $row_severity['name'] ?>
+                            <? endforeach; ?>
+            </select>
+            <input type=hidden name='select_project'    value='<?= $select_project ?>'/>
+            <input type=hidden name='project_id'        value='<?= $select_project ?>'/>
+            <input type=hidden name='lru_id'            value='<?= $select_equipment ?>'/>
+            <input type=hidden name='select_equipment'  value='<?= $select_equipment ?>'/>
+            <input type=hidden name='select_status'     value='<?= $select_status ?>'/>
+        </th>
+        </form>
+        <form id="form_status" class="post" method='post' action="<?= $location ?>">
+        <th>
+            <a href="<?= $location ?>">
+                <img height='32' alt='status' width='32' border=0 src='../images/32x32/agt_start_here.png' title='status'/>
+            </a>
+        </th>
+        <th class='sort_menu' >
+            <select class='style' style='width:80px;' name='select_status' onchange="this.form.submit()">
+                <option value=''>--All--
+                    <? foreach ($status as $row_status): ?>
+                        <?php $id_status = $row_status['id']; ?>
+                <option value="<?= $id_status ?>"
+                            <?php if ($id_status == $select_status )print " SELECTED"; ?> >
+                                <?= $row_status['status'] ?>
+                            <? endforeach; ?>
+            </select>
+            <input type=hidden name='select_project'    value='<?= $select_project ?>'/>
+            <input type=hidden name='project_id'        value='<?= $select_project ?>'/>
+            <input type=hidden name='lru_id'            value='<?= $select_equipment ?>'/>
+            <input type=hidden name='select_equipment'  value='<?= $select_equipment ?>'/>
+            <input type=hidden name='select_severity'   value='<?= $select_severity ?>'/>
+        </th>
+    </form>
+    <form id="form_file" enctype="multipart/form-data" class="post"  method='post' action="<?= Atomik::url('import_spr') ?>">
+        <th>
+            <input type="file"  style='width:300px;' name='import_file_spr' 	value="">
+        </th>
+        <th >
+            <label for='add'></label>
+            <span class="art-button-wrapper">
+                <span class="l"> </span>
+                <span class="r"> </span>
+                <input class='art-button' type=submit value='Import SPRs' /></span>
+            <input type=hidden name='project_id'   value='<?= $select_project ?>'/>
+            <input type=hidden name='lru_id'       value='<?= $select_equipment ?>'/>
+        </th></form>
+</tr>  
+</thead>
+</table>
+<table class="art-article">
+    <thead>
+        <tr class='vert' >
+            <? foreach ($header_fields as $value ): ?>
+            <th>
+                    <?= $value ?>
+            </th>
+            <? endforeach; ?>
+        </tr>
+    </thead>
+    <tbody>
+        <? $fill = 0; ?>
+        <? $count = 0; ?>
+        <? foreach ($sprs as $row_table): ?>
+        <tr class=
+            <? if ($fill) {
+                echo "'rouge'";
+            }
+            else {
+                echo "'vert'";
+            }
+                $fill = !$fill; ?>>
+            <td><?= $row_table['project'] ?></td>
+            <td><?= $row_table['lru'] ?></td>
+            <td><?= $row_table['epr_id'] ?></td>
+            <td><?= $row_table['cr_id'] ?></td>
+            <td><?= $row_table['synopsis'] ?></td>
+            <td><?= $row_table['description'] ?></td>
+            <td><?= $row_table['impact_analysis'] ?></td>
+            <td><?= $row_table['severity'] ?></td>
+            <td><?= $row_table['status'] ?></td>
+            <td><a href="<?= Atomik::url('add_spr', array('id' => $row_table['id'])) ?>">
+                  <img border=0 width="32" height="32" src='../images/64x64/easymoblog.png' alt="edit" title='edit' />
+            </a></td>
+            <? $count++; ?>
+        </tr>
+        <? endforeach; ?>
+    </tbody>
+</table>
+<table class="art-article"><thead><tr><td>
+<?= $count ?> responses found<td/></tr></thead></table>
+
+

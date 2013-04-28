@@ -1,0 +1,41 @@
+<table>
+<thead>
+<tr class='vert'>
+<th >Objective</th>
+<th >Description</th>
+<th colspan=2 >
+<form method="POST" id="newsletterform" action="" >DAL<select onchange="this.form.submit()" name='dal' style='width:40px'>
+<option value='A'
+	<?php
+    if ($do178_objectives->dal == "A") {
+        /* selection of previous choice */
+        print " SELECTED";
+    }
+    print ">A".
+            "<option value='B'";
+    if ($do178_objectives->dal == "B") {
+        print " SELECTED";
+    }
+    print ">B".
+            "<option value='C'";
+    if ($do178_objectives->dal == "C") {
+        print " SELECTED";
+    }
+    print ">C".
+            "<option value='D'";
+    if ($do178_objectives->dal == "D") {
+        print " SELECTED";
+    }?>
+>D
+</select>
+</form>
+</th>
+</tr></thead>
+<tbody>
+<?php
+    foreach ($list_objectives as $row) {
+		Objectives::create_objective_line ($row['table_a'],$row['objective'],$row['description'],$row[$do178_objectives->dal_column]);
+    } 
+?>
+</tbody>
+</table>

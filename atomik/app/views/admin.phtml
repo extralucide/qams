@@ -1,0 +1,88 @@
+<div id="page_tabs">
+	<div id="admin" class="active">Administration</div>
+	<div id="backup">Backup</div>
+	<div id="update">Update</div>
+	<div id="log">Log</div>
+	<!-- <div id="misc">Misc</div> -->
+	</div><!-- EndTabHeaders -->
+	<div class="clearb"></div>
+	<div class="nice_square go_right">
+	<div id="admin_c">
+	<p>
+	<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+	<blockquote>
+	This section is for administration. 
+	You can add or modify:
+	<ul>
+		<li>Company</li>
+		<li>Aircraft</li>
+		<li>System</li>
+		<li>Equipment</li>
+		<li>User</li>
+		<li>Status (for documents, actions, review, remarks and PR)</li>		
+	</ul>
+	</blockquote>
+	The client OS is:<?= $clientOS ?><br/>
+	The server OS is:<?= $systemOS ?>
+	</li>	
+	</p>
+	<form method='POST' action='<?= Atomik::url('admin', false) ?>'>
+	<fieldset>
+	<label for='all_data_seen'>See all documents ?</label>
+	<div id="alldata">
+	<input style="margin-left:30px" type="RADIO" name="all_data_seen" VALUE="1" <?= $all_data_yes?> >Yes
+	<input style="margin-left:10px" type="RADIO" name="all_data_seen" VALUE="0" <?= $all_data_no?> >No
+	</div><br/>
+	<span class="art-button-wrapper ">
+	<span class="l"> </span>
+	<span class="r"> </span>
+	<input class='art-button' type='submit' name="submit" value='OK'>
+	</span>	
+	</fieldset>
+	</form>
+	</div>
+	<div id="backup_c">
+		<div style="width:350px">
+		<h2>Backup the MySQL database</h2>
+		<div class="my_menu" style="margin:25px;">
+		<ul>
+			<!-- <li class="db_backup"><h2><a href="../backup/db_backup.php" >DB Backup</a></h2></li> -->
+			<li class="db_backup"><h2><a href="#" onclick="get_qams_backup('<?= Atomik::url('backup/db_backup')?>');return false">DB Backup</a></h2></li>
+			<li class="db_backup"><h2><a href="#" onclick="get_qams_backup('<?= Atomik::url('backup/qams_backup')?>');return false" >QAMS Backup</a></h2></li>
+		</ul>
+		</div>	
+		</div>	
+		<div class="spacer" ></div>
+		<p id="qams_backup"></p>
+		<!-- <iframe id="qams_backup" name="qams_backup" src="../blank.php" style="display:none_:border:none;width:600px;height:200px"></iframe> -->
+	</div>
+	<div id="update_c">
+		<h2>Update the MySQL database</h2>
+        <form name="update_db" id="update_db" class='post_' method="post" action="" enctype="multipart/form-data">
+		<fieldset>
+          <input type="hidden" name="MAX_FILE_SIZE" value="10000000">
+          <input type="file" name="filename">
+          <input type="submit" value="Envoyer"><br />
+		</fieldset>
+		</form>
+	</div>	
+	<div id="log_c">
+		<div style="overflow:scroll">
+		<?= $log_txt ?>
+		</div>
+		<form method="POST" action="<? Atomik::url('admin')?>">  
+		<fieldset class="medium">		
+		<span class="art-button-wrapper">
+		<span class="l"> </span>
+		<span class="r"> </span>
+		<input class="art-button" type="submit" name="submit_reset" value="Reset"/>				
+		</fieldset>
+		</form>
+	</div>
+	<!--<div id="misc_c">
+	<?= phpinfo(INFO_GENERAL) ?>
+	</div>-->
+</div>
+<script type="text/javascript">
+	cms_page_tab_style();
+</script>

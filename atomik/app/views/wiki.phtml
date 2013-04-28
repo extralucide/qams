@@ -1,0 +1,26 @@
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shCore.js')?>"></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts//shBrushAsm.js')?>"></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushBat.js')?>"></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushCpp.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushPerl.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushPlain.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushJava.js')?>" ></script>
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/coloration/scripts/shBrushDelphi.js')?>" ></script>
+<div class="nice_square go_right">
+  <? foreach ($posts as $row): ?>
+		<div class="nice_square" style="padding:20px;margin-top:10px;width:760px">
+		<div class='eg-image'><a href="<?= Atomik::url('add', array('id' => $row['id_article'])) ?>">
+		<img class="img_button" src="<?= Atomik::asset('assets/images/64x64/document.png')?>" alt="doc"  /></a>
+		</div>
+		<h2><b><?= $row['titre'] ?></b></h2>
+		<small class="commentmetadata">
+			<span class="calendar"></span>
+			<span>published on <strong><?= Date::convert_date($row['date_redac']) ?></strong> by <?= User::getName($row['chapo']) ?></span>, last modified on <strong><?= Date::convert_date($row['date_modif']) ?></strong>
+			</small>
+		  <p><?= $row['texte'] ?></p>
+		</div>   
+  <? endforeach ?>
+</div>
+<script type="text/javascript">
+     SyntaxHighlighter.all()
+</script>

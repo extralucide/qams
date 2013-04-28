@@ -1,0 +1,40 @@
+ <div id="atomik-wrapper_oap" style="background-color:#999;">
+  <div id="atomik_oap" >
+<li class="alt"  id="comment-217" style="list-style-type:none;">
+<a href="<?= Atomik::url('add_event', array('id' => $events['id'])) ?>">
+<div class='eg-image'><img class='img_button' src="../images/64x64/document.png" alt="doc"/>
+</a>
+<p class="adroite"></p></div><h1><?= $events['title'] ?></h1>
+
+<small class="commentmetadata">
+    <!-- <img width=24 height=24 src="../images/64x64/date.png" alt="Date" /> -->
+    <?php /* Convert date to display nicely */
+        require_once("../includes/calendrier/calendrier.php");
+        $cut_text = substr($events['date'],0,10);
+        $date_expected=PrettyDate ($cut_text);
+    ?>
+    <span class="calendar"></span><span class="small-grey-font">
+    <?php
+    if ($events['date'] < $today_date) $time='perfomed on '; else $time='planned on ';
+     ?>
+    <?= $time ?>
+    <strong>
+    <?= $date_expected ?></strong> by
+    <? foreach ($users as $row_user): ?>
+     <?php if  ($row_user['id'] == $events['attendee'])$poster=$row_user['fname']." ".$row_user['lname']; ?>
+    <? endforeach; ?>
+    <?php if ($poster == "")$poster="Anonymous" ?>
+    <?= $poster ?>
+    </span>
+    </small>
+
+  <div class="event_descr">
+    <?= $events['description'] ?>
+  </div>
+
+</li>
+<!-- Finally, to actually run the highlighter, you need to include this JS on your page -->
+<script type="text/javascript">
+     SyntaxHighlighter.all()
+</script>
+</div></div>

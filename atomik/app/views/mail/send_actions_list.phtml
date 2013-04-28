@@ -1,0 +1,22 @@
+<style type="text/css">
+li.box {
+	margin: 2px 2px 5px 2px;
+	padding: 10px 10px 10px 35px;
+	border: 1px solid #E8EFDE;
+	color: #000;
+	width: auto;
+	background: #F9FBF7;
+	/* height: 1%; */ /*IE6*/
+}
+</style>
+<ul>
+<li class="box" style="list-style-type: none;">
+<?= $excel_filename?> report has been generated.<br/>
+<?= $html;?>
+</li>
+</ul>
+<script type="text/javascript">
+<!-- 
+window.top.window.ActionExportEnd("OK");
+//-->
+</script>

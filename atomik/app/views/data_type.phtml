@@ -1,0 +1,34 @@
+<div class="nice_square go_right">
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead>
+<tr><th></th><th colspan="10"><a href="<?= Atomik::url('data_type',array('order'=>'type'))?>" >Types</a></th><th colspan="3"><a href="<?= Atomik::url('data_type',array('order'=>'group'))?>" >Group</a></th></tr>
+</thead> 
+<tbody> 
+<?php 
+foreach ($list_data_type as $row) {
+	$color = ($fill)?"rouge":"vert";
+?>
+	<tr class="<?= $color ?>">
+	<td><a href="<?= Atomik::url('edit_data_type',array('id'=>$row['id']))?>"><b><?= $row['name'] ?></b></a></td>
+	<td colspan="10"><?= $row['description'] ?></td>
+	<td colspan="2"><?= $row['group_name'] ?></td>
+	<td> 
+	<? $id_type = $row['id'] ?>
+         <a style="float:right"><span class='down_arrow' style="margin-left:0px" onClick="return display_action_comment('do178b_data_<?= $id_type ?>',this)"></span></a><br/>
+	</td>
+        </tr>
+	<tr class="menu" id="do178b_data_<?= $id_type ?>" >
+	<td colspan="13">
+	<?= $row['comment'] ?>
+	<?= write_data_chapters ($id_type) ?>
+	<?= write_data_do254_chapters ($id_type) ?>
+    <?= write_data_abd0100_chapters ($id_type) ?>
+	</td>
+	</tr> 	
+ <?php
+	$fill=!$fill;
+}
+?>
+</tbody> 
+</table>
+</div>

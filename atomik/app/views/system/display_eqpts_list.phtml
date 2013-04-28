@@ -1,0 +1,36 @@
+<? if ($list_data != NULL) {?>
+<table cellspacing="0" class="pagetable" style="float:left;width:500px">
+<thead>
+<tr class='vert'>
+<th colspan="10">Equipments embedded</th><th colspan="4">Part Number</th><th colspan="2">DAL</th><th colspan="4">Scope</th><th colspan="4">Manager</th><th></th>
+</tr>
+</thead>
+<tbody>
+<?php
+if ($list_data != null){
+	foreach( $list_data as $row):
+		$color = ($counter%2)?"vert":"rouge";?>	
+		<? if ($row['parent_lru'] == $row['lru']){
+				$name = $row['lru'];
+			}
+			else{
+				$name = $row['parent_lru']." ".$row['lru'];
+			}
+		?>		
+		<tr class='<?= $color?>'><td colspan="4"><span style='color:#000'><a href="<?= Atomik::url('edit_eqpt',array('id'=> $row['id']))?>"><?= "<b>".$name."</b>"?></a></span></td>
+		<td colspan="6"><?= $row['description']?></td>
+		<td colspan="4"><?= $row['part_number']?></td>
+		<td colspan="2"><?= $row['dal']?></td>
+		<td colspan="4"><?= $row['scope']?></td>
+		<td colspan="4"><a href="<?= Atomik::url('edit_user',array('edit_user_id'=> $row['manager_id']))?>"><?= $row['manager']?></a></td>		
+		<td><a class="<?= A('css_admin')?>" href="<?= Atomik::url('user/remove_project_assign',array('parent_id'=>$project_id,'id'=>$row['id']))?>" >
+		<img style='padding-left:5px;padding-top:5px;float:right' border="0" width='20' height='20' src='<?= Atomik::asset("assets/images/32x32/agt_action_fail.png")?>' alt='remove link' title='remove link' /></a></td>
+		</tr>
+		<? $counter++;
+	endforeach;
+}
+?>
+</tbody>
+</table>
+<?
+}?>

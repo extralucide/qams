@@ -1,0 +1,14 @@
+<script type="text/javascript" src="<?= Atomik::asset('assets/js/libs/edit_data.js')?>"></script>
+<script type="text/javascript">
+//<![CDATA[
+	function uploadEnd(sError, user_id) {
+		if(sError == 'OK') {
+				/* document.getElementById("messages").innerHTML = "<li class=\"success\" style=\"list-style-type: none;\">Project added.</li>"; */
+		} else {
+				/* document.getElementById("messages").innerHTML = "<li class=\"failed\" style=\"list-style-type: none;\">" + sError + "/li>"; */
+		}
+	}
+	uploadEnd("<?= $sError ?>","<?= $user_id ?>");
+	gestion_prr("<?= Atomik::url('user/display_projects_list',array('id'=>$user_id))?>");
+//]]>
+</script>

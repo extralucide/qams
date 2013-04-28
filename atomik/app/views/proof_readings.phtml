@@ -1,0 +1,84 @@
+
+<h1>Airbus Proof reading import</h1>
+<div style="width:30%">
+<form id="form_project" method="post" action="<?= $location ?>">
+    <fieldset>
+        <label for='select_project' ><a href="<?php echo $location ?>">
+                <img height='32' width='32' alt="project" border=0 src='../images/256x256/OldPlane.png' title='Project' /></a></label>
+        <select style='width:160px;' onchange="this.form.submit()" name='select_project'>";
+            <option value=''>--All--
+                <? foreach ($projects as $row_projects): ?>
+            <option value="<?= $row_projects['id'] ?>"
+                        <?php if ($row_projects['id'] == $select_project )print " SELECTED"; ?> >
+                            <?= $row_projects['project'] ?>
+                        <? endforeach; ?>
+        </select>
+    </fieldset>
+</form>
+<form id="form_equipment" method='post' action="<?= $location ?>">
+    <fieldset>
+        <label for='select_equipment' ><a href="<?= $location ?>">
+                <img height='32' alt='equipment' width='32' border=0 src='../images/256x256/circuit.png' title='LRU'/>
+            </a></label>
+        <select class='style' style='width:80px;' name='select_equipment' onchange="this.form.submit()">
+            <option value=''>--All--
+                <? foreach ($equipment as $row_equipments): ?>
+                    <?php $id_equipment = $row_equipments['id']; ?>
+            <option value="<?= $row_equipments['id'] ?>"
+                        <?php if ($id_equipment == $select_equipment )print " SELECTED"; ?> >
+                            <?= $row_equipments['lru'] ?>
+                        <? endforeach; ?>
+        </select>
+        <input type=hidden name='select_project'    value='<?= $select_project ?>'/>
+        <input type=hidden name='project'        value='<?= $select_project ?>'/>
+        <input type=hidden name='lru'            value='<?= $select_equipment ?>'/>
+    </fieldset>
+</form>
+<form id="form_application" method='post' action="<?= $location ?>">
+    <fieldset>
+        <label for='select_application' ><a href="<?= $location ?>">
+                <img height='32' alt='data' width='32' border=0 src='../images/32x32/folder_documents.png' title='data'/>
+            </a></label>
+        <select class='style' style='width:160px;' name='select_application' onchange="this.form.submit()">
+            <option value=''>--All--
+                <? foreach ($application as $row_applications): ?>
+                    <?php $id_application = $row_applications['id']; ?>
+            <option value="<?= $id_application ?>"
+                        <?php if ($id_application == $select_application )print " SELECTED"; ?> >
+                            <?= $row_applications['application']." ".$row_applications['name']." ".$row_applications['version'] ?>
+                        <? endforeach; ?>
+        </select>
+        <input type=hidden name='select_equipment'  value='<?= $select_equipment ?>'/>
+        <input type=hidden name='select_project'    value='<?= $select_project ?>'/>
+        <input type=hidden name='project'        value='<?= $select_project ?>'/>
+        <input type=hidden name='lru'            value='<?= $select_equipment ?>'/>
+    </fieldset>
+</form>
+<form id="form_file" enctype="multipart/form-data" method='post' action="<?= Atomik::url('import_proof_readings') ?>">
+    <fieldset>
+        <label for='posted_by' ><a href="<?= $location ?>">
+                <img height='32' alt='poster' width='32' border=0 src='../images/32x32/identity.png' title='poster '/>
+            </a></label>
+        <select class='style' name='posted_by' >
+            <option value=''>--All--
+                <? foreach ($poster as $row_posters): ?>
+                    <?php $id_poster = $row_posters['id']; ?>
+            <option value="<?= $id_poster ?>"
+                        <?php if ($id_poster == $select_poster )print " SELECTED"; ?> >
+                            <?= $row_posters['fname']." ".$row_posters['lname'] ?>
+                        <? endforeach; ?>
+        </select><br /><br />
+        <label for='import_proof_readings' ></label>
+        <input type="file"  style='width:200px;margin-left:70px' name='import_proof_readings' 	value=""><br />
+        <label for='add'></label>
+        <span class="art-button-wrapper" style="float:right">
+            <span class="l"> </span>
+            <span class="r"> </span>
+            <input class='art-button' type=submit value='Import remarks' name="add"/></span>
+        <input type=hidden name='application'   value='<?= $select_application ?>'/><br />
+    </fieldset>
+</form>
+</div>
+
+
+

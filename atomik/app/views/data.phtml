@@ -1,0 +1,36 @@
+<div id="page_tabs">
+<div id="all_tab" class="<?= A('session/highlight/all') ?>" onclick="document.getElementById('nbr_clics').style.display = 'block';if (document.getElementById('submit_group').value != 99){document.getElementById('submit_group').value = 99;select_data_group.submit()}">All</div>
+<div id="plans_tab" class="<?= A('session/highlight/plan') ?>" onclick="document.getElementById('submit_group').value = 2;select_data_group.submit()" >Plans</div>
+<div id="cert_tab" class="<?= A('session/highlight/cert') ?>" onclick="document.getElementById('submit_group').value = 5;select_data_group.submit()">Certification</div>
+<div id="conf_tab" class="<?= A('session/highlight/conf') ?>" onclick="document.getElementById('submit_group').value = 9;select_data_group.submit()">Configuration</div>
+<div id="specification_tab" class="<?= A('session/highlight/spec') ?>" onclick="document.getElementById('submit_group').value = 1;select_data_group.submit()">Specifications</div>
+<div id="design_tab" class="<?= A('session/highlight/design') ?>" onclick="document.getElementById('submit_group').value = 8;select_data_group.submit()">Design</div>
+<div id="test_tab" class="<?= A('session/highlight/test') ?>" onclick="document.getElementById('submit_group').value = 4;select_data_group.submit()">Test</div>
+<div id="prod_tab" class="<?= A('session/highlight/prod') ?>" onclick="document.getElementById('submit_group').value = 7;select_data_group.submit()">Production</div>
+<div id="notes_tab" class="<?= A('session/highlight/note') ?>" onclick="document.getElementById('submit_group').value = 10;select_data_group.submit()">Notes</div>
+<div id="peer_review_summary_tab" class="<?= A('session/highlight/review') ?>" onclick="document.getElementById('nbr_clics').style.display = 'none';gestion_prr('<?= Atomik::url('peer_review/display_internal_peer_review',array('context'=>$serial_context))?>')">Peer Reviews</div>
+</div><!-- EndTabHeaders -->
+<div class="clearb"></div>
+<div class="nice_square go_right">
+<div id="all_tab_c"></div>
+<div id="plans_tab_c"></div>
+<div id="cert_tab_c"></div>
+<div id="conf_tab_c"></div>
+<div id="specification_tab_c"></div>
+<div id="design_tab_c"></div>
+<div id="test_tab_c"></div>
+<div id="prod_tab_c"></div>
+<div id="notes_tab_c"></div>
+<span id="nbr_clics"></span>
+<form method="POST" id="select_data_group" name="select_data_group" action="<?= Atomik::url('data') ?>" >
+<input type="hidden" name='submit_group' id='submit_group'/>
+</form>
+<div id="peer_review_summary_tab_c">
+<span id="prr_table"></span>
+</div>
+</div>
+<script type="text/javascript">
+gestionClic('<?= $table_data ?>',<?= $nb_data?>);
+cms_page_tab_style();
+</script>
+<?php Atomik::flash(A('nb_entries'), 'success') ?>

@@ -1,0 +1,25 @@
+<style type="text/css">
+li.box {
+	margin: 2px 2px 5px 2px;
+	padding: 10px 10px 10px 35px;
+	border: 1px solid #E8EFDE;
+	color: #000;
+	width: auto;
+	background: #F9FBF7;
+	/* height: 1%; */ /*IE6*/
+}
+</style>
+<ul>
+<li class="box" style="list-style-type: none;">
+<?= $excel_filename?> report has been generated.<br/>
+Click here to open the worksheet:
+<a href="<?= "../../result/".$excel_filename ?>" >
+<img alt="Export openxml" title="Export openxml" border="0" src="<?= Atomik::asset('assets/images/32x32/Excel2007.png')?>" class='no_img_button' width="32" height="32"style="margin='8px';width='48px';height='48px';" />
+</a>
+</li>
+</ul>
+<script type="text/javascript">
+<!-- 
+window.top.window.ActionExportEnd("OK");
+//-->
+</script>

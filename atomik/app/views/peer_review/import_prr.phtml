@@ -1,0 +1,45 @@
+<br/>Found<b> <?= $nb_remarks?></b> remarks from <b><?= $filename?></b> for data <b><?= $data_ref?></b> on <?= $date_display?><br/>
+<?= $html ?>
+<?php if ($remarks->amount_remarks > 0){
+?>	
+	<img class="bar" src="<?= $bar_filename ?>" alt="Remarks graph" style="float:right" />
+	<img class="pie" src="<?= $pie_filename ?>" alt="Peer reviewers graph" />
+	<div class="spacer"></div>
+<?php
+}
+?>
+<table cellspacing="0" class="pagetable" style="width:812px">
+<thead>
+<tr>
+<?php foreach( $header_fields as $value ):?>
+	<th ><?= $value?></th>
+<?php endforeach ?>			
+</tr>
+</thead>	
+<tbody>	
+<?php 
+if ($list_remarks != null){
+	foreach ($list_remarks as $row):
+		$color = ($line_counter++ % 2 == 0)? "rouge" : "vert";
+		$color_found = ($row['qams_id'] !== false)? "green" : "";
+		$color_paragraph = ($row['paragraph_check'])? "" : "yellow";
+		$color_response = ($row['response_check'])? "" : "yellow";
+		$color_description = ($row['description_check'])? "" : "orange";
+		?>
+		<tr class="<?= $color?>">	
+		<td><?= $row['id'] ?></td>
+		<td><?= $row['author'] ?></td>
+		<td class="<?= $color_paragraph ?>"><?= $row['paragraph'] ?></td>
+		<td><?= $row['line'] ?></td>
+		<td colspan="4" class="<?= $color_description ?>"><?= $row['description'] ?></td>
+		<td colspan="4" class="<?= $color_response ?>"><?= $row['author_response'] ?></td>
+		<td><?= $row['defect_class'] ?></td>
+		<td><?= $row['status'] ?></td>
+		<td><?= $row['justification'] ?></td>
+		<td  class="<?= $color_found?>"><?= $row['qams_id'] ?></td>
+		</tr>
+	<?php endforeach; 
+}
+?>
+</tbody>
+</table>
