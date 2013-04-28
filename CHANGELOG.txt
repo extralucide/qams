@@ -1,0 +1,9 @@
+== CHANGELOG ==
+
+* = New feature
+! = Modification to existing feature
+# = Fixed bug
+
+----------- QAMS 0.1 --------------
+
+First version.
