@@ -17,14 +17,23 @@ else{
 <h2><?= $item['qualification'] ?></h2>
 <div class="cv_nice_square go_right" style="background-color:#FFF">
 <p style="float:right;width:200px;min-height:200px;background-color:#FFF;border: 1px solid #000;padding:5px;margin:5px;word-wrap: break-word;">
-<?  $keywords_array = getKeywords($item['keywords']);
-	foreach($keywords_array as $keywords):
-		echo $keywords."<br/>";
+<?  
+$keywords_array = getKeywords($item['keywords']);
+$tools_array = getKeywords($item['tools']);
+$languages_array = getKeywords($item['languages']);
+	echo "<b>Mots clefs</b><br/>";
+	foreach($keywords_array as $items):
+		echo $items."<br/>";
+	endforeach;
+	echo "<b>Outils</b><br/>";
+	foreach($tools_array as $items):
+		echo $items."<br/>";
+	endforeach;
+	echo "<b>Langages</b><br/>";
+	foreach($languages_array as $items):
+		echo $items."<br/>";
 	endforeach ?>
-<?  $languages_array = getKeywords($item['languages']);
-	foreach($languages_array as $keywords):
-		echo $keywords."<br/>";
-	endforeach ?></p>
+</p>
 <?= $item['description'] ?>
 </div>
 <? endforeach?>
