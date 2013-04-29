@@ -7,7 +7,7 @@ function getKeywords($text){
 Atomik::needed('Date.class');
 Atomik::needed('User.class');
 $id = isset($_GET['id']) ? $_GET['id'] : "";
-$sql_query = "SELECT enterprises.name as company, cv.qualification, cv.description,cv.keywords,cv.languages,date_start,date_end FROM cv LEFT OUTER JOIN enterprises ON enterprises.id = company_id ORDER BY date_start DESC";
+$sql_query = "SELECT enterprises.name as company, cv.qualification, cv.description,cv.keywords,cv.languages,cv.tools,date_start,date_end FROM cv LEFT OUTER JOIN enterprises ON enterprises.id = company_id ORDER BY date_start DESC";
 $list_items = A('db:'.$sql_query);
 $user = new User;
 $user->get_user_info(User::getIdUserLogged()); 
