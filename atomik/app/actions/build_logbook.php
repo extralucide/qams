@@ -26,7 +26,8 @@ $actions_closed = $action->countActions("closed");
 $actions_open = $action->countActions("open");
 $count_actions = $action->countActions();
 $actions = array('closed'=>$actions_closed,'open'=>$actions_open);
-$pie_filename = "../result/actions_pie.png";
+$pie_filename = "../result/actions_pie_".uniqid().".png";
+$indicators_filename = "../result/indicators_".uniqid().".png";
 $action->new_drawPie($actions,
 					$pie_filename,
 					"Status of ".$count_actions." actions");
@@ -38,7 +39,7 @@ $review_list = $review->getReviewList(PDO::FETCH_OBJ);
 $count_reviews = count($review_list);
 
 $img_indicator = $review->createIndicator(&$review_list,
-											$count_reviews." reviews held since selected review");
+											$count_reviews." reviews held since selected review",$indicators_filename);
 
 $header_fields = array("project", "LRU", "Baseline","Actions", "PDF", "XLS","DOC"); 
 /* menu project */
