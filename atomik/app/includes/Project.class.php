@@ -308,6 +308,7 @@ class Project {
 							$which_aircraft.
 							$which_company.
 							" ORDER BY `aircrafts`.`name` ASC,`projects`.`project` ASC,`list_lrus`.`parent_id` ASC,`list_lrus`.`lru` ASC";					
+		// echo $sql_query."<br/>";
 		$result = A('db:'.$sql_query);
 		if ($result !== false){
 			$list   = $result->fetchAll(PDO::FETCH_ASSOC);
