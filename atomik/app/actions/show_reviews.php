@@ -39,6 +39,7 @@ $review_list = $review->getReviewList();
 $baseline_list = $review->getBaseline();
 $project = new Project(&$context_array);
 $count_review = count($review_list);
+Atomik::set('nb_entries',$count_review);
 $sql_query = A('db:show columns from reviews ');
 $column=$sql_query->fetchall();
 $header_fields = array("id", "managed by", "project","component" ,"type","description", "status","date","MoM",""); 
