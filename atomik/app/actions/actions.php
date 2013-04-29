@@ -4,6 +4,8 @@ Atomik::needed('Project.class');
 Atomik::needed('Review.class');
 Atomik::needed("Date.class");
 Atomik::needed("User.class");
+Atomik::needed("Tool.class");
+
 $page = isset($_REQUEST['page']) ? (int)$_REQUEST['page'] : 1;  
 $limite = isset($_REQUEST['limite']) ? (int)$_REQUEST['limite'] : 8;
 // var_dump($_GET);
@@ -45,15 +47,15 @@ $status_list = Action::getStatusList();
 $line_counter = 0;
 $nb_actions = $action->new_count_actions();
 Atomik::set('nb_entries',$nb_actions);
-Atomik::needed("Tool.class");
 $nbpage = Tool::compute_pages($nb_actions,&$page,&$debut,$limite);						
 Atomik::set('nb_pages',$nbpage);
 $action->prepare();
 $list_actions_lite = $action->execute($debut,$limite);
 if (($nb_actions > 0)&&($context_array['action_search']=="")) {
-	$pie_filename = '../result/actions_pie.png';
-	$bar_filename = '../result/actions_bar.png';
-	$spline_filename = '../result/actions_spline.png';
+	$pie_filename = '../result/actions_pie_'.uniqid().'.png';
+	$bar_filename = '../result/actions_bar_'.uniqid().'.png';
+	$spline_filename = '../result/actions_spline_'.uniqid().'.png';
+	Atomik::set('session/actions_graph',urlencode(serialize(array('actions_pie'=>$pie_filename,'actions_bar'=>$bar_filename,'actions_spline'=>$spline_filename))));
 	/* draw pie chart */
 	$actions_closed = $action->new_count_actions("closed");
 	$actions_open = $action->new_count_actions("open");
@@ -153,7 +155,7 @@ Atomik::set('menu',array('assignee' => 'Assignee',
 /* menu project */
 $html=  '<form method="POST" action="'.Atomik::url('actions', false).'">';
 $html.= '<fieldset class="medium">';
-$html.= Project::getSelectProject($context_array['project_id'],"active");
+$html.= Project::getSelectProject($context_array['project_id'],"active",$context_array['aircraft_id']);
 $html.= '</fieldset >';
 $html.= '</form>';
 
