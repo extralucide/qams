@@ -895,7 +895,7 @@ class Review {
 	public function setId($id){
 		$this->id = $id;
 	}
-	public function createIndicator($review_list,$title="Reviews held"){
+	public function createIndicator($review_list,$title="Reviews held",$filename="indicators.png"){
 		/* pChart library inclusions */
 		require_once("pChart2.1.3/class/pData.class.php");
 		require_once("pChart2.1.3/class/pDraw.class.php");  
@@ -1030,10 +1030,9 @@ class Review {
 		// $myPicture->drawFilledRectangle(20,60,400,170,$RectangleSettings);
 
 		/* Render the picture */
-		$bar_filename="../result/test.png";
-		$myPicture->Render($bar_filename);			
-		$gdImage_poster = @imagecreatefrompng($bar_filename);
-		return($bar_filename);
+		$myPicture->Render($filename);			
+		$gdImage_poster = @imagecreatefrompng($filename);
+		return($filename);
 	}
 }
 
