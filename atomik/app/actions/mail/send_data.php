@@ -65,6 +65,7 @@ else{
 	$html_abstract .= '</tr></table>';
 }
 $env_context['user_logged_id']=User::getIdUserLogged();
+$env_context['aircraft_id']= Atomik::has('session/current_aircraft_id')?Atomik::get('session/current_aircraft_id'):"";
 $env_context['project_id'] = isset($context['project_id']) ? $context['project_id'] : "";
 $env_context['sub_project_id'] = isset($context['sub_project_id']) ? $context['sub_project_id'] : "";
 $mail = new Mail(&$env_context);
