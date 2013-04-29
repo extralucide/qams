@@ -302,22 +302,16 @@ $pdf->AddPage();
 if ($nb_actions > 0) {
 	$htmltable = "<h1 style='padding-left:30px'>".$nb_actions_closed." actions closed from ".$nb_actions."</h1>";
 	$pdf->writeHTML($htmltable, true, 0, true, 0);
-	$pdf->Image('../result/actions_pie.png', 15, 50, 0, 0, 'PNG');
-	$pdf->Image('../result/actions_bar.png', 15, 120, 160, 90, 'PNG');
+	if (Atomik::has('session/actions_graph')){
+		$graphs_encoded = Atomik::get('session/actions_graph');
+		$graphs_file_list=unserialize(urldecode(stripslashes(stripslashes($graphs_encoded))));
+	
+	$pdf->Image($graphs_file_list['actions_pie'], 15, 50, 0, 0, 'PNG');
+	$pdf->Image($graphs_file_list['actions_bar'], 15, 120, 160, 90, 'PNG');
 	// add a page
 	$pdf->AddPage();
-	$pdf->Image('../result/actions_spline.png', 15, 50, 180, 90, 'PNG');
-	/*
-	$cheese_actions_closed = ($nb_actions_closed * 360)/$nb_actions;
-	$cheese_actions_opened = ($nb_actions_open * 360)/$nb_actions;
-	$xcenter = 105;
-	$ycenter = 100;
-	$radius = 40;
-	$pdf->SetFillColor(120, 120, 255);
-	$pdf->PieSector($xcenter, $ycenter, $radius, 0, $cheese_actions_closed);
-	$pdf->SetFillColor(120, 255, 120);
-	$pdf->PieSector($xcenter, $ycenter, $radius, $cheese_actions_closed, 360);
-	*/
+	$pdf->Image($graphs_file_list['actions_spline'], 15, 50, 180, 90, 'PNG');
+	}
 }
 else {
 	$htmltable = "<h1 style='padding-left:30px'>No actions available.</h1>";
