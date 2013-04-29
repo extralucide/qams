@@ -9,8 +9,8 @@ Atomik::needed("PeerReviewer.class");
 Atomik::needed("Baseline.class");
 
 $line_counter = 0;
-$bar_filename = '../result/remarks_bar.png';
-$pie_filename = '../result/peer_reviewers_pie.png';
+$bar_filename = '../result/remarks_bar_'.uniqid().'.png';
+$pie_filename = '../result/peer_reviewers_pie._'.uniqid().'png';
 
 if (isset($_GET['context'])){
 	$context = $_GET['context'];
