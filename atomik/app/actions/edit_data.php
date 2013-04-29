@@ -8,7 +8,7 @@ Atomik::needed("Data.class");
 Atomik::needed("Remark.class");
 Atomik::needed("Project.class");
 Atomik::needed("PeerReviewer.class");
-include "../display_rtf.php";
+//include "../display_rtf.php";
 require_once "../phpuploader/include_phpuploader.php"; 
 $db = new Db;
 $line_counter = 0;
