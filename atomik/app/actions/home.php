@@ -138,6 +138,15 @@ if ((isset($_SESSION['current_project_id']))&&($_SESSION['current_project_id'] !
 }
 else if (isset($_SESSION['current_aircraft_id'])){
 	$current_project_id="";
+	if (isset($_SESSION['current_project_id'])){
+		unset($_SESSION['current_project_id']);
+	}
+	if (isset($_SESSION['project_id'])){
+		unset($_SESSION['project_id']);
+	}
+	if (isset($_SESSION['previous_project_id'])){
+		unset($_SESSION['previous_project_id']);
+	}	
 	$current_project = "None";
 	$current_aircraft_id = $_SESSION['current_aircraft_id'];
 	$current_aircraft = $_SESSION['current_aircraft'];
@@ -156,7 +165,7 @@ else if (isset($_SESSION['current_aircraft_id'])){
 	$html_project.= "<div style='color:#FFF;background-color:#000;min-height:800px;width:390px;margin-left:400px;opacity:0.7;padding-top:10px'>";
 	$html_project.= "<h3>Aircraft</h3>";
 	$html_project.= "<p style='padding-left:20px'>".$aircraft->description."</p>";	
-	$html_project.= "</div></div>";			
+	$html_project.= "</div></div>";	
 }
 else {
 	Tool::resetSession();
@@ -191,39 +200,6 @@ $html.='<ul>
 				$html.='<li class="noarrow"><a href="'.Atomik::url('home',array('current_aircraft_id' => $aircraft['id'])).'">'.$aircraft['company']." ".$aircraft['aircraft'].'</a></li>';
 			endforeach;
 			$html.='</ul>';
-			if (0==1){
-			foreach ($companies_list as $company):
-				echo "TEST3.1: ".date('H:i:s')."<br/>";
-				$aircrafts_list = Aircraft::getAircrafts($company['id'])->fetchall();
-				if (count($aircrafts_list) > 0){		
-					$html.='<li><a href="'.Atomik::url('home',array('current_company_id' => $company['id'])).'">'.$company['name'].'</a>';
-					$html.='<ul class="li_below">';					
-					foreach ($aircrafts_list as $aircraft):
-						echo "TEST3.2: ".date('H:i:s')."<br/>";
-						$projects_list = $project->getProject($aircraft['id']);
-                        if ($projects_list){
-                            // $list = $projects_list->fetchall();
-                            if (count($projects_list) > 0){
-                                $show_arrow="";
-                            }
-                            else{ 
-                                $show_arrow="noarrow";
-                            }	
-                            $html.='<li class="'.$show_arrow.'" ><a href="'.Atomik::url('home',array('current_aircraft_id' => $aircraft['id'])).'">'.$aircraft['company']." ".$aircraft['aircraft'].'</a>';
-                            $html.='<ul class="li_below">';
-                            foreach ($projects_list as $row):
-								echo "TEST3.3: ".date('H:i:s')."<br/>";
-                                $html.='<li class="noarrow"><a href="'.Atomik::url('home',array('current_project_id' => $row['id'])).'">'.$row['project'].' '.Tool::cleanDescription($row['description']).'</a></li>';
-                            endforeach;
-                            $html.='</ul>';
-                            $html.='</li>';
-                        }
-					endforeach;
-					$html.='</ul>';
-					$html.='</li>';
-				}
-			endforeach;	
-				}
 		$html.='</ul></li>';	
 		$html.='</ul>';
 $html .= <<<____HTML
