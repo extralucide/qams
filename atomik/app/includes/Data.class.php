@@ -1,7 +1,7 @@
 <?php
 /**
- * Qams Framework
- * Copyright (c) 2009-2010 Olivier Appere
+ * Quality Assurance Management System
+ * Copyright (c) 2009-2013 Olivier Appere
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -11,16 +11,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package     Qams
+ * @package     Data.class
  * @author      Olivier Appere
- * @copyright   2009-2010 (c) Olivier Appere
+ * @copyright   2009-2013 (c) Olivier Appere
  * @license     http://www.opensource.org/licenses/mit-license.php
  * @link        
  */
 /**
  * Handle data
  *
- * @package Qams
+ * @package Data
  */
 define('Specification', 1);
 define('Design', 8);
@@ -1123,7 +1123,7 @@ class Data {
 		if($this->which_reference == ""){
 			$sub_query = "SELECT application, MAX(date_published) AS max_sup FROM bug_applications ".
 						"LEFT OUTER JOIN baseline_join_data ON baseline_join_data.data_id = bug_applications.id ".
-						"LEFT OUTER JOIN projects ON projects.id = bug_applications.project ".
+						"LEFT OUTER JOIN projects ON (projects.id = bug_applications.project OR bug_applications.project=0) ".
 						"WHERE bug_applications.id IS NOT NULL ".
 					   $this->which_id.
 					   $this->which_assignee.
