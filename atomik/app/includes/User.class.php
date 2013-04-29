@@ -170,7 +170,7 @@ class User {
 					   " ORDER BY lname ASC" ;
 		$result = $this->db->db_query($sql_query);
 		$list   = $result->fetchAll(PDO::FETCH_OBJ); 			   
-		 return($list);
+		return($list);
   } 
  	public function get_list_poster (){
 		 $sql_query = "SELECT DISTINCT (bug_users.id),".
@@ -224,6 +224,9 @@ class User {
 					// $this->poster_nb_tab[$poster]=$nb[$this->index_poster];	
 					// $poster.= ": ".$row->function;	
 			 endforeach;
+			 if ($data == null){
+				$this->name = array();
+			 }
 			 $this->name = $data;
 			 $this->nb_actions = $nb;
 			 $this->nb_closed = $nb_closed;	
