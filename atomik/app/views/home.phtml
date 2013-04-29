@@ -117,7 +117,8 @@ else{
                 <th>Date</th>
             </tr>
         </thead>
-                <? foreach ($all_posts as $events):    
+                <? foreach ($all_posts as $events):
+					$color = Date::compute_expired($events['date']);				
 					$row_color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";
 					/* Convert date to display nicely */
 					if (strtotime($events['date']) < strtotime($today_date)) $color='rouge'; else $color='vert';
@@ -137,7 +138,7 @@ else{
 						<td><?= $events['type'] ?></td>
 						<td><?= $events['managed_by']?></td>
 						<td><p><?= $events['type_description']?><a/></p></td>
-						<td><?= Date::convert_date($events['date']) ?></td>
+						<td class="<?= $color[($line_counter % 2)]?>"><?= Date::convert_date($events['date']) ?></td>
                         </tr>
 				<? endforeach ?>		
 </table>
@@ -170,7 +171,6 @@ else{
 	</thead>
 <tbody>
 <? foreach ($actions_list as $action):
-	/* $date = new Date; */
 	$color = Date::compute_expired($action['date_expected']);
 	$row_color = ($line_counter++ % 2 == 0) ? "rouge" : "vert";
 	?>    
@@ -231,7 +231,7 @@ else{
 							echo $data['description'];
 						?></p></td>
 						<td><?= Date::convert_date($data['date_published']) ?></td>
-						<td class="<?= $color[($line_counter % 2)]?>"><?= Date::convert_date($data['date_review']) ?></td>
+						<td class="<?= $color[0]?>"><?= Date::convert_date($data['date_review']) ?></td>
 				</tr>
 			<? endforeach ?>		
 </table>
@@ -327,13 +327,6 @@ if($message != null){
 	Atomik::flash($message,$label);
 }
 ?>
-<!-- <script type="text/javascript" src="assets/js/libs/jquery.min.js" ></script> -->
-<!-- <script type="text/javascript" src="assets/js/libs/jquery.cycle.all.js" ></script> -->
-<!-- <script type="text/javascript" src="assets/js/libs/slideshow.js" ></script> -->
 <script type="text/javascript">
-	/* get_user_guide('../users_guide/user_guide_fr.php'); */
 	cms_page_tab_style();
-	/* dojo.require("dojo.data.ItemFileReadStore"); */
-	/* dojo.require("dojox.image.Gallery"); */ /* For gallery */
-	/* dojo.require("dojox.image.SlideShow"); */ /* For slideshow */
 </script>
