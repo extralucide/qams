@@ -16,7 +16,7 @@ $from = isset($_GET['from']) ? $_GET['from'] : "";
 $copy_id = isset($_REQUEST['copy_id']) ? $_REQUEST['copy_id'] : "";
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;  
 $limite = isset($_GET['limite']) ? (int)$_GET['limite'] : 8;
-
+$context_array['aircraft_id']= isset($_GET['show_aircraft']) ? $_GET['show_aircraft'] :(Atomik::has('session/current_aircraft_id')?Atomik::get('session/current_aircraft_id'):"");
 if(isset($_REQUEST['context'])) {
   //$env_context = $_REQUEST['context'];
   $context_array=unserialize(urldecode(stripslashes((stripslashes($_REQUEST['context'])))));
@@ -79,11 +79,21 @@ else {
 		$date_expected = $date_open;
 	}	
 	$date_closure   		= "";
+	Atomik::set('css_date_publication',"no_show");
+	Atomik::set('css_status',"no_show");
 }
-//Atomik::set('select_menu',$html);
 Atomik::set('menu',array('assignee' => 'Submitter',
 						 'equipment' => 'Equipment'));
 Atomik::set('css_title',"inspection");
 Atomik::set('css_reset',"no_show");
 Atomik::set('css_add',"no_show");
 Atomik::set('css_page',"no_show");
+Atomik::set('css_subject',"no_show");
+Atomik::set('css_action',"no_show");
+/* Status of the remark is postponed ?*/
+if ($remark->status_id == 6){
+	Atomik::set('css_justification',"_no_show");
+}
+else{
+	Atomik::set('css_justification',"no_show");
+}
