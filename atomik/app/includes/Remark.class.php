@@ -1,7 +1,7 @@
 <?php
 /**
- * Qams Framework
- * Copyright (c) 2009-2010 Olivier Appere
+ * Quality Assuance Management System
+ * Copyright (c) 2009-2013 Olivier Appere
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -11,7 +11,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package     Qams
+ * @package     Remark.class
  * @author      Olivier Appere
  * @copyright   2009-2013 (c) Olivier Appere
  * @license     http://www.opensource.org/licenses/mit-license.php
@@ -21,7 +21,7 @@
 /**
  * Handle remarks
  *
- * @package Qams
+ * @package Remark.class
  */
 /* Data status */ 
 define('REVIEWED', 10);
@@ -437,7 +437,7 @@ class Remark {
 				break;				
 			case SUBMITTED:
 				if (!Remark::remark_response_exist ($this->id)) {
-					$color = "pastel_grey";
+					$color = "pastel_red";
 				}
 				else{
 					$color = "white";	
@@ -593,7 +593,6 @@ class Remark {
 			$html .= 'onchange="category_explain(this)"';
 		}
 		$html.= ' name="show_category">';
-		$html.='<option value=""/> --All--';
 		foreach(Remark::getCategoryList($type) as $row):
 			$html .= '<option value="'.$row['id'].'"';
 			if ($row['id'] == $selected){ 
@@ -2417,10 +2416,12 @@ class Remark {
 						'To be reviewed',
 						'Accepted',
 						'Corrected',
-						'Validated',
+						'Closed',
 						'Postponed',
 						'Entered'
-		);		
+		);	
+		var_dump($labels);
+		exit();
 		$DataSet->AddPoint($labels,"Labels");
 		$DataSet->AddAllSeries();
 		$DataSet->RemoveSerie("Labels");
@@ -2686,9 +2687,9 @@ class StatRemarks {
     	$this->data_id = $data_id;
 		$this->version = $document->version;
 		$this->reference = $document->reference;	
-		$this->project_id = "";//$data->project_id;
-		$this->lru_id = "";//$data->sub_project_id;
-		$this->poster_id = "";//$data->author_id;
+		$this->project_id = "";
+		$this->lru_id = "";
+		$this->poster_id = "";
 		$this->category_id = "";
 		$this->criticality_id ="";
 		$this->data_type = $document->type;
@@ -2733,24 +2734,11 @@ class StatRemarks {
 												$this->remark_tab['validated'] -
 												$this->remark_tab['postponed'];
 										
-			// $data[0] = $this->remark_tab['rejected'];
-			// $data[1] = $this->remark_tab['to be reviewed'];
-			// $data[2] = $this->remark_tab['accepted'];
-			// $data[3] = $this->remark_tab['corrected'];
-			// $data[4] = $this->remark_tab['validated'];
-			// $data[5] = $this->remark_tab['postponed'];
-			// $data[6] = $this->remark_tab['entered'];
-
-			// $this->name_serial = urlencode(serialize($this->remark_tab));
 			$this->stats = $this->remark_tab;
-			// $this->nb_serial = urlencode(serialize($this->amount_remarks));
 	    }
 		else {
-			$this->remark_tab = array();
-			// $this->name_serial = "";
-			// $this->nb_serial = "";		
+			$this->remark_tab = array();	
 		}
-		//var_dump($this->remark_tab);
 	}
 	/**
 	 * function to count remarks
@@ -2888,7 +2876,7 @@ class StatRemarks {
 						'To be reviewed',
 						'Accepted',
 						'Corrected',
-						'Validated',
+						'Closed',
 						'Postponed',
 						'Entered'
 		);		
