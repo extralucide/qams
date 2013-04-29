@@ -1,0 +1,2 @@
+<?
+Atomik::noRender();
