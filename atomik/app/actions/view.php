@@ -13,7 +13,8 @@ if (Atomik::has('request/id')) {
 	Atomik::setView("view");
 	$row = Atomik_Db::find('spip_articles', array('id_article' => A('request/id')));
 	if ($row === false){
-		Atomik::redirect('home');
+		Atomik::flash('Article not found.','failed');
+		Atomik::redirect('wiki',false);
 	}
 	$html ='<a href="#" onclick="send_wiki('.A('request/id') .')"><img alt="Send article" title="Send article" width="32" height="32" border="0" src="assets/images/32x32/mail_send.png"></a><br/>';
 	$html .='<a href="'.Atomik::url("wiki",false).'" ><img src="'.Atomik::asset('assets/images/pages/sommaire.png').'" border="0" alt="Back" title="Back"><h2>Back</h2></a>';
