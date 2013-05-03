@@ -99,7 +99,7 @@
 			<li class="write"><h2><a href="<?= Atomik::url('post_remark',array('id'=>$document->id)) ?>">Write a remark</a></h2></li>
 			<li class="see"><h2><a href="<?= Atomik::url('inspection',array('data_id'=>$document->id)) ?>">See remarks</a></h2></li>
 			<li class="export"><h2><a href="<?= Atomik::url('export/export_xlsx_peer_review_report',array('id'=>$document->id))?>">Export remarks</a></h2></li>
-			<li class="delete"><h2><a href="peer_review/delete_remarks.php?delete_app=<?= $document->id ?><?= $filter_param;?>" >Delete all remarks</a></h2></li>
+			<li class="delete"><h2><a href="<?= Atomik::url('peer_review/delete_all_remarks.php',array('delete_app'=>$document->id))?>" >Delete all remarks</a></h2></li>
 			<li class="tag"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id,'baseline_tag'=>'yes'))?>" >Tag data with baseline</a></h2></li>
 			<li class="email"><h2><a href="#" onclick="send_mail(<?= $document->id ?>)">Send by mail</a></h2></li>
 		</ul>	

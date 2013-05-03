@@ -359,7 +359,7 @@ class Tool{
 		require_once('class.html2text.inc'); 
 		$h2t = new html2text($text);
 		$plain_text = $h2t->get_text(); 
-		$plain_text = html_entity_decode($plain_text, ENT_COMPAT, 'iso-8859-1');
+		$plain_text = html_entity_decode($plain_text, ENT_COMPAT, $compat);
 		return ($plain_text);
 	}	
 	/* Ne fonctionne pas correctement */

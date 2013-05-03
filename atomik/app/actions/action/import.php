@@ -120,7 +120,7 @@ else{
 }
 
 
-/* create temporary remarks table */
+/* create temporary action items table */
 $sql_query = <<<____SQL
 			CREATE TEMPORARY TABLE IF NOT EXISTS `actions` (
 			  `id` smallint(6) NOT NULL AUTO_INCREMENT,
@@ -287,11 +287,8 @@ for ($index=0;$index < $res['nb_items'];$index++){
 store_cmd("",true);
 if ($list_items != null){
 	for($index=0;$index < $res['nb_items'];$index++){
-		// $index = ++$max_id;
 		/* insert */
 		/* Cannot use PDO here because we store MySQL command */
-		// echo "Insert remarks";
-		// var_dump($value);
 		/* Patch: Date expected is equal to closure date */
 		$date_expected = $date_closure[$index];
 		$sql_query = "INSERT INTO `actions` (`review`,`project`,`lru`,`posted_by`, `assignee`, `Description`, `criticality`,`status`, `date_open`, `date_expected`, `date_closure`, `comment`) ".

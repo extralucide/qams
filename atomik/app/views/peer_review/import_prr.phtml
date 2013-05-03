@@ -22,13 +22,14 @@ if ($list_remarks != null){
 	foreach ($list_remarks as $row):
 		$color = ($line_counter++ % 2 == 0)? "rouge" : "vert";
 		$color_found = ($row['qams_id'] !== false)? "green" : "";
+		$color_author = ($row['poster_id'] !="")? "green" : "orange";
 		$color_paragraph = ($row['paragraph_check'])? "" : "yellow";
 		$color_response = ($row['response_check'])? "" : "yellow";
 		$color_description = ($row['description_check'])? "" : "orange";
 		?>
 		<tr class="<?= $color?>">	
 		<td><?= $row['id'] ?></td>
-		<td><?= $row['author'] ?></td>
+		<td class="<?= $color_author?>" ><?= $row['author'] ?></td>
 		<td class="<?= $color_paragraph ?>"><?= $row['paragraph'] ?></td>
 		<td><?= $row['line'] ?></td>
 		<td colspan="4" class="<?= $color_description ?>"><?= $row['description'] ?></td>

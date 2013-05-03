@@ -690,16 +690,37 @@ class User {
 		$where_company .=")";
 		/* This gets the poster's id  from name */
 		$result = preg_match("#[\w|é|è|\(|\)]+$#", $reader,$reader_lite);
-		// var_dump($reader);
-		// var_dump($reader_lite);
 		if ($result) {
-			/* select reader in priority from a company */
-	  		$sql_get_id = "SELECT id,fname,lname FROM bug_users WHERE (lname LIKE '%".$reader_lite[0]."%' OR fname LIKE '%".$reader_lite[0]."%')".$where_company;
-	  		$sql_get_id.= " UNION SELECT id,fname,lname FROM bug_users WHERE (lname LIKE '%".$reader_lite[0]."%' OR fname LIKE '%".$reader_lite[0]."%')";
-	  		//echo $sql_get_id."<BR>";
-	  		$list = A('db:'.$sql_get_id)->fetch();
-	  		/* amount of rows */
-	  		$found_poster=count($list);
+			/* Is this a digram ? */
+			$result = preg_match("#^([A-Z])([A-Z])$#", $reader,$match);
+			if ($result) {
+				/* Yes */
+				/* select reader in priority from a company */
+				$sql_get_id = "SELECT id,fname,lname FROM bug_users WHERE (lname LIKE '%".$match[2]."%' OR fname LIKE '%".$match[1]."%')".$where_company;
+				$sql_get_id.= " UNION SELECT id,fname,lname FROM bug_users WHERE (lname LIKE '%".$match[2]."%' OR fname LIKE '%".$match[1]."%')";					
+			}
+			else{
+				/* No - La recherche est sensible à la casse il faudrait la rendre insensible */
+				/* select reader in priority from a company */
+				$sql_get_id = "SELECT id,fname,lname FROM bug_users WHERE (lname LIKE '%".$reader_lite[0]."%' OR fname LIKE '%".$reader_lite[0]."%')".$where_company;
+				$sql_get_id.= " UNION SELECT id,fname,lname FROM bug_users WHERE (lname LIKE '%".$reader_lite[0]."%' OR fname LIKE '%".$reader_lite[0]."%')";			
+			}
+	  		// echo $sql_get_id."<BR>";
+			$result = A('db:'.$sql_get_id);
+			if ($result !== false){
+				$list = $result->fetch();
+				if ($list !== false){
+					/* amount of rows */
+					$found_poster=count($list);
+				}
+				else{
+					$found_poster = false;
+				}				
+			}
+			else{
+				$list = false;
+				$found_poster = false;
+			}
 		}
 		else {
 			if(preg_match("#(^\w)(\w)(\w?)$#", $reader,$reader_lite))
@@ -710,8 +731,20 @@ class User {
 			}
 			if ((isset($reader_lite[1]))&&($reader_lite[1] != "")) {
 				$sql_get_id = "SELECT id,fname,lname FROM bug_users WHERE fname REGEXP '^".$reader_lite[1]."' AND lname REGEXP '^".$reader_lite[2]."'".$where_company;
-				$list = A('db:'.$sql_get_id)->fetch();
-				$found_poster=count($list);
+				if ($result !== false){
+					$list = $result->fetch();		
+					if ($list !== false){
+						/* amount of rows */
+						$found_poster=count($list);
+					}
+					else{
+						$found_poster = false;
+					}
+				}
+				else{
+					$list = false;
+					$found_poster = false;
+				}
 			}
 			else {
 				$found_poster = false;

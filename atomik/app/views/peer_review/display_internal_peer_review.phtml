@@ -17,7 +17,7 @@
 		<td colspan="10"><?= $row['name'] ?></td>
 		<td><?= $row['nb_remarks']?></td>
 		<td colspan="3">
-			<form method="POST" action="<?= Atomik::url('export/export_xlsx_peer_review_report')?>" onsubmit="uploadRun('Exporting Peer Review Report ... Please wait ...');document.getElementById('export_data_list_frame').style.display = 'block'" target="export_data_list_frame">  		
+			<form method="POST" action="<?= Atomik::url('export/export_xlsx_peer_review_report')?>" onsubmit="uploadRun('Exporting Peer Review Report ... Please wait ...')" target="export_data_list_frame">  		
 				<span class="art-button-wrapper">
 				<span class="l"> </span>
 				<span class="r"> </span>

@@ -593,6 +593,7 @@ class Remark {
 			$html .= 'onchange="category_explain(this)"';
 		}
 		$html.= ' name="show_category">';
+		$html.='<option value=""/> --All--';
 		foreach(Remark::getCategoryList($type) as $row):
 			$html .= '<option value="'.$row['id'].'"';
 			if ($row['id'] == $selected){ 
@@ -1099,6 +1100,7 @@ class Remark {
 		require_once("pChart/pChart.class");  
 		
 		Atomik::needed("Data.class");
+		Atomik::needed("PeerReviewer.class");
 		$data = new Data;
 		$list_remarks = $this->getRemarks();
 		$amount_remarks=count($list_remarks);
@@ -1125,7 +1127,7 @@ class Remark {
 							DIRECTORY_SEPARATOR."SAQ225_3.xlsx";
 			if (!file_exists($file_template)) {
 				echo "Warning: Excel peer review template is missing.<br/>".$file_template;
-				exit();
+				// exit();
 				$objPHPExcel = new PHPExcel;
 				$objPHPExcel->getActiveSheet()->setTitle('Header');
 				$objWorksheet = $objPHPExcel->createSheet();
@@ -1138,7 +1140,6 @@ class Remark {
 								'Action list'=>1,
 								'Summary'=>3);
 			}
-			Atomik::needed("PeerReviewer.class");
 			$peer_reviewers = new PeerReviewer;
 			//$remarks = new StatRemarks;
 			$bar_filename = '../result/remarks_bar.png';
@@ -1388,8 +1389,11 @@ class Remark {
 			// chmod($result_path.DIRECTORY_SEPARATOR.$filename_tmp, 0777);
 			// var_dump(stat($result_path.DIRECTORY_SEPARATOR.$filename_tmp));
 			$objWriter->save($filename);	
-			$html ='<p>Peer review report for <b>'.$reference.'</b> document:<a href="../'.$filename.
-			'" ><img alt="Export openxml" title="Export openxml" border="0" src="../assets/images/32x32/Excel2007.png" class="img_button" style="margin:8px;width:48px;height:48px" /></a></p>';
+			$html ='<p>Peer review report for <b>'.$reference.'</b> document:<a href="'.$filename.
+			'" ><img alt="Export openxml" title="Export openxml" border="0" src="'.Atomik::asset("assets/images/32x32/Excel2007.png").'" class="img_button" style="margin:8px;width:48px;height:48px" /></a></p>';
+			$html .= '<script type="text/javascript">';
+			$html .= "document.getElementById('export_data_list_frame').style.display = 'block'";
+			$html .= '</script>';
 		}
 		else {
 			$html ="No internal remarks found for <b>{$reference}</b> document.";
@@ -1667,9 +1671,9 @@ class Remark {
     public static function read_ece_prr(&$objWorksheet,
 										$remarks=array(),
 										$data_id="") {
-	    $test_stat = new Status;
+	    Atomik::needed('PeerReviewer.class');
+		$test_stat = new Status;
 		$test_defect_class = new Defect_Class;
-		Atomik::needed('PeerReviewer.class');
 		$test_poster = new User;
         /*
         * Read each lines
@@ -1710,7 +1714,8 @@ class Remark {
                 $remarks[$nb_remarks]['author_response'] 	= $author_response;
                 $remarks[$nb_remarks]['defect_class'] 		= $objWorksheet->getCellByColumnAndRow($col++, $row)->getValue();/* get defect class */
                 $remarks[$nb_remarks]['status'] 			= $objWorksheet->getCellByColumnAndRow($col++, $row)->getValue();/* get status */
-                $remarks[$nb_remarks]['justification'] 		= $objWorksheet->getCellByColumnAndRow($col++, $row)->getValue();/* get justification */
+				$justification 								= $objWorksheet->getCellByColumnAndRow($col++, $row)->getValue();/* get justification */
+                $remarks[$nb_remarks]['justification'] 		= $justification;
                 $remarks[$nb_remarks]['qams_id'] 			= $objWorksheet->getCellByColumnAndRow($col++, $row)->getValue();/* get qams_id */
                 $test_stat->get_status ($remarks[$nb_remarks]['status']);			
                 $status_id = $test_stat->id;
@@ -1737,9 +1742,12 @@ class Remark {
 				$remarks[$nb_remarks]['status_id'] = $status_id;
 				/* check poster */
 				$customer = array(1);
-				$test_poster->find_poster ($author,$customer);
-				$poster_id = $test_poster->id;
-				$reader = $test_poster->name;	
+				$found_poster = $test_poster->find_poster ($author,$customer);
+				// if ($found_poster){
+					$poster_id = $test_poster->id;
+					$author = $test_poster->name;
+				// }
+	
 				/* check defect class */
 				$test_defect_class->get_defect_class ($remarks[$nb_remarks]['defect_class']);
 				$remarks[$nb_remarks]['category_id'] = $test_defect_class->id;
@@ -2166,6 +2174,7 @@ class Remark {
 		return($objWorksheet);
 	}
     public static function scanPeerReview($uploadName,$type){
+		Atomik::needed("User.class");
 		$res = array();
         if ((file_exists($uploadName))&&(preg_match("/xls/i", $type))){
 			/* Check type of peer review register and amount of remarks */
@@ -2194,12 +2203,34 @@ class Remark {
 			foreach($worksheet_names as $id => $sheet):
 				if (preg_match("/Validation Matrix/i", $sheet)){
 					$proof_reading_type = SYSTEM_VALIDATION;
+					break;
 				}
 				else if(preg_match("/REMARKS/", $sheet)){
 					$proof_reading_type = SOFTWARE_INSPECTION;
+					break;					
+				}
+				else if(preg_match("/Register/", $sheet)){
+					$proof_reading_type = PEER_REVIEW;
+					break;					
 				}				
 			endforeach;
 			switch ($proof_reading_type){
+				case PEER_REVIEW:
+					/* Read only Register sheet */  
+					$objWorksheet = Remark::getWorksheet($uploadName,$type,array($sheet));
+					$current_cell = $objWorksheet->getCellByColumnAndRow(1, 8)->getValue(); /* B8 */
+					if (preg_match("/Document title/i", $current_cell))
+					{
+						/* ECE Peer review register */  
+						$res = Remark::read_ece_prr ($objWorksheet);                
+					}
+					$current_cell = $objWorksheet->getCellByColumnAndRow(0, 13)->getValue(); /* A13 */
+					if (preg_match("/Derived Requirements details/i", $current_cell))
+					{
+						/* Derived requirement analysis */
+						$res = Remark::read_ece_derived ($objWorksheet);                 
+					}   				
+					break;
 				case SYSTEM_VALIDATION:
 					$objWorksheet = Remark::getWorksheet($uploadName,$type,array("Validation Matrix"));
 					$res = Remark::read_ece_validation_matrix ($objWorksheet);
@@ -2216,7 +2247,6 @@ class Remark {
 					unset($res);
 					$data= array();
 					/* check poster */
-					Atomik::needed("User.class");
 					$poster = new User;
 					$customer = array(1);
 					for ($row = 2; $row <= $highestRow; ++$row) {				
@@ -2260,7 +2290,7 @@ class Remark {
 						$remarks[$nb_remarks]['description_check'] = "";
 						$remarks[$nb_remarks]['response_check'] = "";
 						$remarks[$nb_remarks]['line'] = "";				
-						$remarks[$nb_remarks]['description'] = $description;
+						$remarks[$nb_remarks]['description'] = mysql_real_escape_string($description);
 						$remarks[$nb_remarks]['qams_id'] = "";						
 						$nb_remarks++;
 					}
@@ -2268,7 +2298,7 @@ class Remark {
 					$res['nb_remarks']=$nb_remarks; 
 					$res['open_remarks']=$open_remarks;
 					$res['type_id']=2;
-					var_dump($remarks);
+					//var_dump($remarks);
 					// exit();
 					break;
 				default:				
@@ -2278,22 +2308,22 @@ class Remark {
 				$objWorksheet = Remark::getWorksheet($uploadName,$type,array("Validation - Req"));
 				$res = Remark::read_ece_eqpt_validation_matrix ($objWorksheet);             
 			}
-			else if (preg_match("/Register/i", $worksheet_names[1])) {
-				/* Read only Register sheet */  
-				$objWorksheet = Remark::getWorksheet($uploadName,$type,array($worksheet_names[1]));
-				$current_cell = $objWorksheet->getCellByColumnAndRow(1, 8)->getValue(); /* B8 */
-				if (preg_match("/Document title/i", $current_cell))
-				{
-					/* ECE Peer review register */  
-					$res = Remark::read_ece_prr ($objWorksheet);                
-				}
-				$current_cell = $objWorksheet->getCellByColumnAndRow(0, 13)->getValue(); /* A13 */
-				if (preg_match("/Derived Requirements details/i", $current_cell))
-				{
-					/* Derived requirement analysis */
-					$res = Remark::read_ece_derived ($objWorksheet);                 
-				}               
-			}
+			// else if (preg_match("/Register/i", $worksheet_names[1])) {
+				// /* Read only Register sheet */  
+				// $objWorksheet = Remark::getWorksheet($uploadName,$type,array($worksheet_names[1]));
+				// $current_cell = $objWorksheet->getCellByColumnAndRow(1, 8)->getValue(); /* B8 */
+				// if (preg_match("/Document title/i", $current_cell))
+				// {
+					// /* ECE Peer review register */  
+					// $res = Remark::read_ece_prr ($objWorksheet);                
+				// }
+				// $current_cell = $objWorksheet->getCellByColumnAndRow(0, 13)->getValue(); /* A13 */
+				// if (preg_match("/Derived Requirements details/i", $current_cell))
+				// {
+					// /* Derived requirement analysis */
+					// $res = Remark::read_ece_derived ($objWorksheet);                 
+				// }               
+			// }
 			else if (preg_match("/REMARKS/i", $worksheet_names[2])) {
 				/* New software peer review*/
 			}
@@ -2336,24 +2366,11 @@ class Remark {
 												$this->remark_tab['validated'] -
 												$this->remark_tab['postponed'];
 										
-			// $data[0] = $this->remark_tab['rejected'];
-			// $data[1] = $this->remark_tab['to be reviewed'];
-			// $data[2] = $this->remark_tab['accepted'];
-			// $data[3] = $this->remark_tab['corrected'];
-			// $data[4] = $this->remark_tab['validated'];
-			// $data[5] = $this->remark_tab['postponed'];
-			// $data[6] = $this->remark_tab['entered'];
-
-			// $this->name_serial = urlencode(serialize($this->remark_tab));
 			$this->stats = $this->remark_tab;
-			// $this->nb_serial = urlencode(serialize($this->amount_remarks));
 	    }
 		else {
-			$this->remark_tab = array();
-			// $this->name_serial = "";
-			// $this->nb_serial = "";		
+			$this->remark_tab = array();	
 		}
-		//var_dump($this->remark_tab);
 	}
 	/**
 	 * function to count remarks
@@ -2419,9 +2436,7 @@ class Remark {
 						'Closed',
 						'Postponed',
 						'Entered'
-		);	
-		var_dump($labels);
-		exit();
+		);
 		$DataSet->AddPoint($labels,"Labels");
 		$DataSet->AddAllSeries();
 		$DataSet->RemoveSerie("Labels");
