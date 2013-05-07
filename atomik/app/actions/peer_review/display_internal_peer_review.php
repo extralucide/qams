@@ -25,11 +25,9 @@ else if (isset($_GET['id'])){
 	$data_id = $_GET['id'];
 	$remarks = new StatRemarks;
 	$remarks->setDocument($data_id);
-	// $remarks->get($data_id);
 	$peer_reviewers = new PeerReviewer;
 	$peer_reviewers->get($data_id);
 }	
-// var_dump($remarks);
 if ($remarks->amount_remarks > 0){
 	$remarks->count_all_remarks();
 	$remarks->drawBar($bar_filename);
