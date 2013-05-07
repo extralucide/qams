@@ -58,7 +58,6 @@
 				echo '<img alt="Document attached" title="Open document" width="16" height="16" border="0" src="'.$document->link_mime.'" />';
 				echo '</a>';
 		   }
-
 		}
 		?>
 		</td>
@@ -95,11 +94,11 @@
 		<ul>
 			<li class="edit"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id)) ?>">Edit data</h2></a></li>
 			<li class="copy"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id,'copy_data'=>'yes')) ?>">Copy data</h2></a></li>
-			<li class="delete"><h2><a href="#" onclick="confime_delete_data(<?= $document->id ?>);" >Delete data</a></h2></li>
+			<li class="delete"><h2><a href="#" onclick="confirme_delete_data(<?= $document->id ?>);" >Delete data</a></h2></li>
 			<li class="write"><h2><a href="<?= Atomik::url('post_remark',array('id'=>$document->id)) ?>">Write a remark</a></h2></li>
 			<li class="see"><h2><a href="<?= Atomik::url('inspection',array('data_id'=>$document->id)) ?>">See remarks</a></h2></li>
 			<li class="export"><h2><a href="<?= Atomik::url('export/export_xlsx_peer_review_report',array('id'=>$document->id))?>">Export remarks</a></h2></li>
-			<li class="delete"><h2><a href="<?= Atomik::url('peer_review/delete_all_remarks.php',array('delete_app'=>$document->id))?>" >Delete all remarks</a></h2></li>
+			<li class="delete"><h2><a href="#" onclick="confirme_delete_remarks(<?= $document->id ?>);" >Delete all remarks</a></h2></li>
 			<li class="tag"><h2><a href="<?= Atomik::url('edit_data',array('id'=>$document->id,'baseline_tag'=>'yes'))?>" >Tag data with baseline</a></h2></li>
 			<li class="email"><h2><a href="#" onclick="send_mail(<?= $document->id ?>)">Send by mail</a></h2></li>
 		</ul>	

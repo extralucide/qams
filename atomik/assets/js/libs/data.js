@@ -375,10 +375,18 @@ function PRR_computeEnd(sError,data_id) {
 	}
 	gestion_prr("peer_review/display_peer_review.php?id="+data_id);	
 }
-function confime_delete_data(data_id){
-	var agree=confirm("Are you sure you want to delete this data ?");
+function confirme_delete_data(data_id){
+	var agree=confirm("Are you sure you want to delete this document ?");
 	if (agree)
 		document.location='data/remove_data?id=' + data_id;
+	else
+		return false ;
+}
+
+function confirme_delete_remarks(data_id){
+	var agree=confirm("Are you sure you want to delete all remarks on this document ?");
+	if (agree)
+		document.location='peer_review/delete_all_remarks?delete_app=' + data_id;
 	else
 		return false ;
 }
