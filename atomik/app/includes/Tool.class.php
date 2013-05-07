@@ -358,7 +358,8 @@ class Tool{
 	public static function convert_html2txt ($text,$compat="iso-8859-1") {
 		require_once('class.html2text.inc'); 
 		$h2t = new html2text($text);
-		$plain_text = $h2t->get_text(); 
+		$plain_text = $h2t->get_text();
+		// echo "<pre>$plain_text</pre>";
 		$plain_text = html_entity_decode($plain_text, ENT_COMPAT, $compat);
 		return ($plain_text);
 	}	
@@ -375,6 +376,30 @@ class Tool{
 		$replace = array ('','','$1','     ','>','"');
 		return preg_replace($search, $replace, $author_response);	
 	}
+	public static function convert2ascii ($input_text) {
+		/* This function convert unicode to windows-1250 format. Works better than utf8_decode */
+		$string=iconv('utf-8','windows-1250',$input_text);
+		if (0==0){
+			/* Replace all characters with hexa code upper 0x7F */
+			$search = array ('/\x95/',					/* bullets */
+							'/(\x82|\x8B|\x91|\x92)/', 	/* single quotes */
+							'/(\x84|\x93|\x94)/', 		/* double quotes */
+							'/(\x96|\x97)/',			/* dash */
+							'/(\xA7)/',					/* section */
+							'/[\x80-\xFF]/');		 	/* others */
+			$replace = array ('.',
+							"'",
+							'"',
+							'-',
+							'§',
+							' ');
+			$text = preg_replace($search, $replace, $string);
+		}
+		else{
+			$text = $string;
+		}
+		return($text);
+	}
 	public static function remove_space($input){
 		// $output = preg_replace("/(?:\s|&nbsp;)+/", "", $input, -1);
 		// $output = preg_replace("/&nbsp;/","",$input);
@@ -383,8 +408,8 @@ class Tool{
 	}
 	
 	public static function filter($in) {
-		$search = array ('@[éèêëÊË]@i','@[àâäÂÄ]@i','@[îïÎÏ]@i','@[ûùüÛÜ]@i','@[ôöÔÖ]@i','@[ç]@i','@[§]@i','@[&]@i');
-		$replace = array ('e','a','i','u','o','section','section','and');
+		$search = array ('@[éèêëÊË]@i','@[àâäÂÄ]@i','@[îïÎÏ]@i','@[ûùüÛÜ]@i','@[ôöÔÖ]@i','@[ç]@i','@[§]@i','@[&]@i','@[“”]@i','@[•]@i');
+		$replace = array ('e','a','i','u','o','section','section','and','"','.');
 		return preg_replace($search, $replace, $in);
 	}	
 	public static function base64_encode_image ($imagefile,$raw=false) {
