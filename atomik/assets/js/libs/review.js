@@ -3,7 +3,7 @@ function review_delete_query ()
 {
      var query_string;
 
-   query_string = "../review/remove_review.php?multi_modify=yes";
+   query_string = "review/remove_review.php?multi_modify=yes";
 
    return query_string;
 }
@@ -11,7 +11,7 @@ function review_word_data_create_query ()
 {
      var query_string;
 
-   query_string = "../create_straight_mom.php?multi_modify=yes";//&page=<?php echo $page ?>&limite=<?php echo $limite ?>";
+   query_string = "export/export_docx_review_template";
 
    return query_string;
 }
@@ -19,7 +19,7 @@ function review_pdf_data_create_query ()
 {
      var query_string;
 
-   query_string = "../export/export_review_pdf_tcpdf.php?multi_modify=yes";
+   query_string = "export/export_review_pdf_tcpdf.php?multi_modify=yes";
 
    return query_string;
 }
@@ -27,7 +27,7 @@ function review_full_word_data_create_query ()
 {
      var query_string;
 
-   query_string = "../export_docx_review.php?multi_modify=yes";//&page=<?php echo $page ?>&limite=<?php echo $limite ?>";
+   query_string = "export/export_docx_review.php?multi_modify=yes";//&page=<?php echo $page ?>&limite=<?php echo $limite ?>";
    //if (my_orderform.show_project.value != undefined) {
       //query_string = query_string + "&show_project=<?php echo $show_project ?>";
    //}
@@ -37,7 +37,7 @@ function review_excel_data_create_query ()
 {
      var query_string;
 
-   query_string = "../create_full_excel_mom.php?multi_modify=yes";
+   query_string = "export/export_xlsx_review";
    return query_string;
 }
 function review_word_get_checkbox_value()
@@ -180,10 +180,10 @@ function review_html_data_create_query (type)
    var query_string;
    
    if (type == "display") {
-	query_string = "../review/display_mom.php?multi_modify=yes";
+	query_string = "review/display_mom";
    }
    else {
-	query_string = "../mail/send_minutes.php?m=y";
+	query_string = "mail/send_minutes.php?m=y";
    }
    return query_string;
 }
