@@ -11,11 +11,8 @@ else {
 	$copy = 0;
 }
 $update_review = $_POST['update_review_attendee'];
-//echo "TEST OK:".$update_review."<br>";
 $sql_query = "INSERT INTO user_join_review (`user_id`, `review_id`,`copy`) VALUES('{$user_id}','{$review_id}','{$copy}')";
-//echo "TEST:".$sql_query."<br>";
 $result = $db->db_query($sql_query);
-//echo "Project is assigned";
 $_SESSION['add_attendee']="yes";
 $_SESSION['update_review']=$update_review;
 $_SESSION['attendee_highlight']="active";
@@ -25,4 +22,4 @@ if ($result !== false){
 else{
 	Atomik::Flash("Adding attendee failed.","failed");	
 }
-Atomik::redirect('../post_review?tab=attendee&id='.$review_id,false);
+Atomik::redirect('post_review?tab=attendee&id='.$review_id,false);

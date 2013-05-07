@@ -13,10 +13,8 @@
 	  <div class="event_descr_ review_nice_square" style='margin-left:0px;margin-top:18px;padding-bottom:5px;background-color:#FFF'>
 		<div style="float:left"><h2><input  type='checkbox' class='styled' name='modify_action_id' value="<?= $review->id?>">
 		<?= $events['company']." ".$events['type_description']." ".$review->project." ".$review->lru ?> </h2>
-	  	<small class="commentmetadata">
-		  <img class='calendar' src="" alt=""/><?= $review->getPerfomedOn() ?>
-		  <? echo ($review->managed_by !="") ?'by '.$review->managed_by:""?>
-		 </small>
+		  <div class='calendar'><?= $review->getPerfomedOn() ?>
+		  <?= ($review->managed_by !="") ?'by '.$review->managed_by:""?></div>
 		</div>		 
 		<div class='eg-image_' style="margin-left:400px">
 		<a href="<?= Atomik::url('post_review',array('id' => $review->id)) ?>">
@@ -107,14 +105,14 @@
 <div class="subnav">
 <h1 >Export Minutes</h1>
 </div>  		
-	<div class="my_menu" style="width:600px">
+	<div class="my_menu" style="width:300px">
 	<br/><p>Select minutes to generate by checking checkbox in <b>Meetings</b> folder.</p>
 	<ul>   
-		<li class="export_word"><h2><a href="#" onclick="return review_word_get_checkbox_value();" border="0" >MoM basic</a></h2></li>
-		<li class="export_word"><h2><a href="#" onclick="return review_full_word_get_checkbox_value();" border="0" >Full MoM Word</a></h2></li>
-		<li class="export_excel"><h2><a href="#" onclick="return review_excel_get_checkbox_value();" border="0" >Full MoM Excel</a></h2></li>
-		<li class="export_pdf"><h2><a href="#" onclick="return review_html_get_checkbox_value('display');" border="0" >Display MoM html</a></h2></li>
-		<li class="email"><h2><a href="#" onclick="return review_html_get_checkbox_value();" border="0" >Mail MoM html</a></h2></li>
+		<li class="export_word"><h2><a href="#" onclick="return review_word_get_checkbox_value();" border="0" >Word MoM with template</a></h2></li>
+		<li class="export_word"><h2><a href="#" onclick_="return review_full_word_get_checkbox_value();" border="0" >Word MoM</a></h2></li>
+		<li class="export_excel"><h2><a href="#" onclick="return review_excel_get_checkbox_value();" border="0" >Excel workbook</a></h2></li>
+		<li class="export_pdf"><h2><a href="#" onclick="return review_html_get_checkbox_value('display');" border="0" >HTML</a></h2></li>
+		<li class="email"><h2><a href="#" onclick="return review_html_get_checkbox_value();" border="0" >Mail MoM HTML</a></h2></li>
 	</ul>
   </div>  
 </div>
