@@ -124,7 +124,7 @@ if (isset($_POST['submit_import'])){
 	else{
 		Atomik::Flash('Importation of '.$nb_remarks.' failed.','failed');	
 	}
-	Atomik::redirect('edit_data');
+	Atomik::redirect('edit_data?tab=peer_review');
     // Atomik::redirect('peer_review/import_prr?import=answer');
 }
 else{
@@ -162,8 +162,7 @@ else{
 		Atomik::redirect('edit_data?tab=peer_review');	
 	}
 }
-$header_fields = array("Ref","Peer", "Section", "Line", "Remarks","","","", "Response","","","", "Defect","Status","Justif","Id" ); 
-
+$header_fields = array("Ref"=>1,"Peer"=>2,"Section"=>2, "Line"=>2,"Remarks"=>4,"Response"=>4, "Defect"=>2,"Status"=>2,"Justif"=>2,"Id"=>1 );
 		/* create temporary remarks table */
 $sql_query = <<<____SQL
 			CREATE TEMPORARY TABLE IF NOT EXISTS bug_messages (
@@ -629,19 +628,12 @@ else{
 // foreach ($statement as $row){
 	// echo $row['id']."<br/>";
 // };
-$remarks = new StatRemarks($data->id,&$db);
-$peer_reviewers = new PeerReviewer();
+$remarks = new StatRemarks(null,&$db);
+$remarks->get($data->id);
+$peer_reviewers = new PeerReviewer(null,&$db);
 $peer_reviewers->get($data->id);
 // $remarks->set();
 /* graph */
-if ($remarks->amount_remarks > 0){
-	$bar_filename = '../result/remarks_bar.png';
-	$pie_filename = '../result/peer_reviewers_pie.png';
-	$remarks->drawBar($bar_filename);
-	$peer_reviewers->drawPie($pie_filename,"Authors of remarks");
-	$bar_filename = '../'.$bar_filename;
-	$pie_filename = '../'.$pie_filename;	
-}
 $left = '<form id="import_prr" name="import_prr" method="POST" action="'.Atomik::url('peer_review/import_prr').'" enctype="multipart/form-data">';  
 $left .= '<input type="hidden" name="type_remark" value="'.$type_remark.'"/>';
 $left .= '<input type="hidden" name="format_remark" value="'.$type.'"/>';
@@ -664,3 +656,34 @@ $left .= '<span class="r"> </span>';
 $left .= '<input class="art-button" name="submit_cancel" type="submit" value="Cancel"></span>';
 $left .= '</form>';
 Atomik::set('select_menu',$left);
+if ($remarks->amount_remarks > 0){
+	$bar_filename = '../result/remarks_bar_'.uniqid().'.png';
+	$pie_filename = '../result/peer_reviewers_pie_'.uniqid().'.png';
+	$remarks->drawBar($bar_filename);
+	$peer_reviewers->drawPie($pie_filename,"Authors of remarks");
+	// $bar_filename = '../'.$bar_filename;
+	// $pie_filename = '../'.$pie_filename;	
+	Atomik::disableLayout();
+	Atomik::noRender();
+	$vars = array('list_remarks'=> $list_remarks,
+				'bar_filename'=>$bar_filename,
+				'pie_filename'=>$pie_filename,
+				'html'=>$html,
+				'header_fields'=>$header_fields,
+				'line_counter'=>$line_counter,
+				'type_remark'=>$type_remark,
+				'type'=>$type,
+				'uploadName'=>$uploadName,
+				'uploadSize'=>$uploadSize,
+				'application'=>$application,
+				'date_dojo'=>$date_dojo,
+				'nb_remarks'=>$nb_remarks);
+	$view_output = Atomik::render("peer_review/import_prr",$vars);
+	$content = Atomik::renderLayout("_layout_anonymous",$view_output);
+	echo $content;
+}
+else{
+	echo $html;
+	echo "<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>No remarks found.</li>";
+	Atomik::noRender();
+}

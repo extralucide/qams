@@ -1324,12 +1324,12 @@ class Remark {
 				else {
 					$remark= $row['remark'];
 				}
-				$text= Tool::convert_html2txt($remark,"UTF-8");
-				//if ($counter == 21){
+				$text= Tool::convert_html2txt($remark,"iso-8859-1");
+				// if ($counter == 13){
 					// var_dump($row['remark']);
-					//var_dump($text);
-				//	exit();
-				//}
+					// var_dump($text);
+					// exit();
+				// }
 				$text = Tool::filter($text);
 
 				$objPHPExcel->getActiveSheet()->setCellValue('E'.$row_counter, $text);
@@ -1812,7 +1812,7 @@ class Remark {
 				$remarks[$nb_remarks]['description_check'] = (isset($res['description_check'])?$res['description_check']:"");
 				$remarks[$nb_remarks]['response_check'] = (isset($res['response_check'])?$res['response_check']:"");
                 $remarks[$nb_remarks]['line'] = $line;				
-				$remarks[$nb_remarks]['description'] = $description;
+				$remarks[$nb_remarks]['description'] = Tool::convert2ascii($description);
 				$remarks[$nb_remarks]['qams_id'] = $qams_id;
 				$nb_remarks++;			
             }
@@ -2661,7 +2661,7 @@ class StatRemarks {
 	 * constructor
 	 * TBD: Passage par référence de l'objet $document	 
 	 */	
-	public function __construct($context=null){
+	public function __construct($context=null,$db=null){
 		if ($context != null){
 			$this->aircraft_id = isset($context['aircraft_id'])? $context['aircraft_id'] : "";
 			$this->project_id = isset($context['project_id'])? $context['project_id'] : Atomik::get('session/current_project_id');;
@@ -2690,6 +2690,12 @@ class StatRemarks {
 			$this->which_baseline 		= "";
 			$this->which_group 			= "";
 			$this->amount_remarks = 0;
+		}
+		if ($db != null){
+			$this->db = $db;
+		}
+		else{
+			$this->db = null;
 		}
 	}
 	public function setBaseline($baseline_id){

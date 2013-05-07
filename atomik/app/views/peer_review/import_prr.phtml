@@ -1,19 +1,32 @@
-<br/>Found<b> <?= $nb_remarks?></b> remarks from <b><?= $filename?></b> for data <b><?= $data_ref?></b> on <?= $date_display?><br/>
+<img class="bar" src="<?= $bar_filename ?>" alt="Remarks graph" style="float:right" />
+<img class="pie" src="<?= $pie_filename ?>" alt="Peer reviewers graph" />
+<div class="spacer"></div>
 <?= $html ?>
-<?php if ($remarks->amount_remarks > 0){
-?>	
-	<img class="bar" src="<?= $bar_filename ?>" alt="Remarks graph" style="float:right" />
-	<img class="pie" src="<?= $pie_filename ?>" alt="Peer reviewers graph" />
-	<div class="spacer"></div>
-<?php
-}
-?>
-<table cellspacing="0" class="pagetable" style="width:812px">
+<form id="import_prr" name="import_prr" method="POST" action="<?= Atomik::url('peer_review/import_prr')?>" enctype="multipart/form-data">
+<fieldset>
+<input type="hidden" name="type_remark" value="<?= $type_remark ?>"/>
+<input type="hidden" name="format_remark" value="<?= $type ?>"/>
+<input type="hidden" name="filename" value="<?= $uploadName ?>"/>
+<input type="hidden" name="filesize" value="<?= $uploadSize ?>"/>
+<input type="hidden" name="data" value="<?= $application ?>"/>
+<input type="hidden" name="remark_date" value="<?= $date_dojo ?>"/>
+<input type="hidden" name="nb_remarks" value="<?= $nb_remarks ?>"/>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="submit_import" type="submit" value="Import" ></span>
+<span class="art-button-wrapper">
+<span class="l"> </span>
+<span class="r"> </span>
+<input class="art-button" name="submit_cancel" type="submit" value="Cancel"></span>
+</fieldset>
+</form>
+<table cellspacing="0" class="pagetable">
 <thead>
 <tr>
-<?php foreach( $header_fields as $value ):?>
-	<th ><?= $value?></th>
-<?php endforeach ?>			
+<? foreach( $header_fields as $value => $colpsan):?>
+	<th colspan="<?= $colpsan ?>"><?= $value?></th>
+<? endforeach ?>		
 </tr>
 </thead>	
 <tbody>	
@@ -29,17 +42,29 @@ if ($list_remarks != null){
 		?>
 		<tr class="<?= $color?>">	
 		<td><?= $row['id'] ?></td>
-		<td class="<?= $color_author?>" ><?= $row['author'] ?></td>
-		<td class="<?= $color_paragraph ?>"><?= $row['paragraph'] ?></td>
-		<td><?= $row['line'] ?></td>
+		<td colspan="2" class="<?= $color_author?>" ><?= $row['author'] ?></td>
+		<td colspan="2" class="<?= $color_paragraph ?>"><?= $row['paragraph'] ?></td>
+		<td colspan="2"><?= $row['line'] ?></td>
 		<td colspan="4" class="<?= $color_description ?>"><?= $row['description'] ?></td>
 		<td colspan="4" class="<?= $color_response ?>"><?= $row['author_response'] ?></td>
-		<td><?= $row['defect_class'] ?></td>
-		<td><?= $row['status'] ?></td>
-		<td><?= $row['justification'] ?></td>
+		<td colspan="2"><?= $row['defect_class'] ?></td>
+		<td colspan="2"><?= $row['status'] ?></td>
+		<td colspan="2"><?= $row['justification'] ?></td>
 		<td  class="<?= $color_found?>"><?= $row['qams_id'] ?></td>
 		</tr>
-	<?php endforeach; 
+	<?php 
+		// if ($line_counter == 13){
+			// var_dump($row['description']);
+			// $text = Tool::convert2ascii($row['description']);
+			// var_dump($text);
+			// $search = array ('/[\x80-\xFF]/');
+			// $replace = array ('&nbsp;');
+			// $result = preg_replace($search, $replace, $row['description']);	
+			// var_dump($result);
+			// exit();
+		// }	
+	
+	endforeach; 
 }
 ?>
 </tbody>
