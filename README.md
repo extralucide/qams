@@ -28,6 +28,10 @@ atomik
               |____dojo.css
               |____SyntaxHighlighter.css
         |____images
+              |____aircrafts
+              |____photos
+              |____systems
+              |____pages
         |____js
               |____libs
                     |____coloration
