@@ -11,7 +11,7 @@ This tool enables to produce and control all Quality Assurance Records during Qu
 Based on Atomik Framework version 2.2
 
 The project tree is the following showing the files and folder to add:
-
+<pre>
 atomik
   |____ app
         |____actions
@@ -48,4 +48,4 @@ docs
   |____actions
   |____peer_reviews
   |____reviews
-  
+</pre>  
