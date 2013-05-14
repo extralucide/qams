@@ -18,7 +18,7 @@ Project:
 </label>
 <select class='combobox' onchange_="this.form.submit()" name='show_project'>
 <option value=''/> --All--
-<? foreach($project->getProject($aircraft_id=$context['aircraft_id']) as $row):?>
+<? foreach($project->getProject($aircraft_id=$context['aircraft_id'],'',$nb_projects) as $row):?>
 	<option value="<?= $row['id'] ?>"
 	<? if ($row['id'] ==$context['project_id']){ print " SELECTED ";}?>
 	><?= $row['aircraft']." ".$row['project']?>

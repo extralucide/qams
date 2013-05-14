@@ -20,7 +20,7 @@
 		<a href="<?= Atomik::url('post_review',array('id' => $review->id)) ?>">
 		  <img class='button' src="<?= Atomik::asset('assets/images/32x32/edit.png')?>" alt="doc" title="Edit Review"/>Edit review</a>
 		<a href="<?= Atomik::url('export/export_docx_review_template',array('id' => $review->id)) ?>">
-		  <img class='button' src="<?= Atomik::asset('assets/images/32x32/OfficeWord.png')?>" alt="doc" title="Edit Review"/>Export minutes</a>		  
+		  <img class='button' src="<?= Atomik::asset('assets/images/32x32/OfficeWord.png')?>" alt="doc" title="Export Review"/>Export minutes</a>		  
 		<a href="#" onclick="send_minutes(<?= $events['id']?>)">
 		<img class='button' alt="Send MoM" title="Send MoM" src="<?= Atomik::asset('assets/images/32x32/mail_send.png')?>" />Send Minutes</a>		  
 		  <? $review_id = 'review_'.$review->id?>

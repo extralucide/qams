@@ -9,10 +9,10 @@ foreach ($list_data as $row) {
 	$table_color= ($fill)?'rouge':'vert';?>
 	<tr class="<?= $table_color ?>">
 	<? if ($row['parent_lru'] == $row['lru']){
-			$name = $row['aircraft']." ".$row['project']." ".$row['lru'];
+			$name = $row['scope']." ".$row['aircraft']." ".$row['project']." ".$row['lru'];
 		}
 		else{
-			$name = $row['aircraft']." ".$row['project']." ".$row['parent_lru']." ".$row['lru'];
+			$name = $row['scope']." ".$row['aircraft']." ".$row['project']." ".$row['parent_lru']." ".$row['lru'];
 		}
 	?>
 	<td colspan="5" style="padding:10px"><a href="<?= Atomik::url('edit_eqpt',array('id'=> $row['id']))?>"><b><?= $name."</b>: ".Tool::cleanDescription($row['description']) ?></a></td>

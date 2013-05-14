@@ -17,7 +17,7 @@ if ($nb_actions != 0){
     <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $id_down?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow1.png')?>" width="16" height="16" border="0"></a>
     <a href="<?= Atomik::url('actions',false)?>&order_action=<?= $id_up?>" ><img src="<?= Atomik::asset('assets/images/16x16/1downarrow.png')?>"  width="16" height="16" border="0"></a>
     </th>
-    <th colspan="2">Project</th>
+    <th colspan="2">Item</th>
     <th colspan="3">Who</th>
     <th colspan="7">Description</th>
     <th colspan="2">Status</th>
@@ -158,12 +158,15 @@ if ($nb_actions != 0){
 <?php
 }
 else {
-	echo "<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>";
+	echo "<li class='warning' style='list-style-type: none;margin-top:5px;margin-right:10px'>";
     echo "no data !";
     echo "</li>";
 }?>
 </div>
 <div id="metrics_c">
+<li class='warning' style='list-style-type: none;margin-top:5px;margin-right:10px'>
+Choose below the granularity and the iterations to display actions items follow-up graph 
+</li>
 <form method="POST" action="" >
 <fieldset >
 <? if (($nb_actions > 0)&&(A('session/search')=="")) {?>
@@ -209,10 +212,10 @@ else {
 	<li class="email"><h2><a href="#" onclick="ActionExportRun();send_mail_form.submit()">Send mail</a></h2></li>
 </ul>
 </div>
-<iframe id="export_actions_list_frame" name="export_actions_list_frame" src="../blank.php" style="display:none;border:none;width:100%;min-height:400px;overflow:scroll"></iframe>
+<iframe id="export_actions_list_frame" name="export_actions_list_frame" src="<?= Atomik::url('blank')?>" style="display:none;border:none;width:100%;min-height:400px;overflow:scroll"></iframe>
 </div>
 <li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
-Create an action list for the team using the "Add an action" button above. 
+To create an action item click the "Add an action" button above. 
 </li>
 </div>
 <? Atomik::flash(A('nb_entries')." entries found", 'success'); ?>

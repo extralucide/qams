@@ -6,7 +6,7 @@
 <div class="nice_square go_right">
 <div id="action_form_c">
 <?= $msg?>
-<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+<li class='warning' style='list-style-type: none;margin-top:5px;margin-right:10px'>
 Fill this form to input an action. <br/>Go to the folder Attach to attached a document to this action afterward.
 </li>
 <form method="POST" action="<?= Atomik::url('post_action', false) ?>" name='copy_action' >
@@ -87,12 +87,14 @@ Fill this form to input an action. <br/>Go to the folder Attach to attached a do
 <?php endforeach ?>
 </select>
 <span class='down_arrow3' onClick="return display_data_baseline('internal_prr',this)">Help</span><br/>
-<div class='menu' style="width:100%" id='internal_prr'>
+<div class='menu' style="width:100%;height:220px" id='internal_prr'>
 <label for='crit_explain' style='padding: 10px 0 0 0'></label>
 <textarea class='explain' cols='60' rows='2' id='crit_explain' name='crit_explain' readonly='readonly' disabled='disabled' ></textarea>
 </div><br/>
+<!--
 <label for='action_context'><?= A('menu/action_context')?>:</label>
 <textarea cols=60 rows=1 name='action_context' ><?= $context?></textarea><br />
+-->
 <label for='action_type_selected'></label>
 <textarea class='no_show' cols=3 rows=1 id='action_type_selected'  >...</textarea><br />
 <label for='description'><?= A('menu/description')?>:</label>
@@ -139,7 +141,7 @@ Fill this form to input an action. <br/>Go to the folder Attach to attached a do
 <div id="upload_form_c">
 <div style="padding-bottom:20px">
 <h2>Upload document</h2>
-<li class='warning' style='list-style-type: none;margin-top:40px;margin-right:10px'>
+<li class='warning' style='list-style-type: none;margin-top:5px;margin-right:10px'>
 A document can be attached to this action.
 </li>
 <form method="post" action="<?= Atomik::url('post_action')?>" enctype="multipart/form-data" name="upload_data_form" style="padding-left:44px;">   

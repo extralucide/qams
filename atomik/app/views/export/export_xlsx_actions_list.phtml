@@ -11,9 +11,9 @@ li.box {
 </style>
 <ul>
 <li class="box" style="list-style-type: none;">
-<?= $excel_filename?> report has been generated.<br/>
-Click here to open the worksheet:
-<a href="<?= "../../result/".$excel_filename ?>" >
+<b><?= $excel_filename?></b> report has been generated.<br/>
+Click here to open the Microsoft Excel workbook:
+<a href="<?= "../result/".$excel_filename ?>" >
 <img alt="Export openxml" title="Export openxml" border="0" src="<?= Atomik::asset('assets/images/32x32/Excel2007.png')?>" class='no_img_button' width="32" height="32"style="margin='8px';width='48px';height='48px';" />
 </a>
 </li>

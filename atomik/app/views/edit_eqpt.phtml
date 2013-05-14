@@ -17,7 +17,7 @@
 	</form>
 	</div>
 </div>
-<div style="margin:10px">
+<div style="margin:10px;width:400px">
 <form method='POST' action="<?= Atomik::url('edit_eqpt', false) ?>">
 <fieldset class="medium">
 <label for='aircraft_id'>Aircraft:</label>           
@@ -38,7 +38,7 @@
     ><?= $row['project']?>
 <? endforeach ?>
 </select><br />
-<?= Project::getSelectSubProject(&$project,$project->parent) ?><br/>
+<?= $list_items ?><br/>
 <label>Name:</label>    
 <input type='text' name='name' value='<?= $project->getSubProjectName() ?>' id='name'><br/>
 <label>PN:</label>
@@ -57,7 +57,7 @@
 </select><br />
 <?= User::getSelectAssignee(&$project,$project->manager_id) ?><br/>
 <b>Description:</b>
-<textarea class="ckedito" cols="60" id="description" name="description" rows="5" ><?= $project->description ?></textarea><br/>
+<textarea class="ckedito" cols="50" id="description" name="description" rows="5" style="300px"><?= $project->description ?></textarea><br/>
 <b>Abstract:</b>
 <textarea class="ckeditor" cols="60" id="abstract" name="abstract" rows="5" ><?= $project->abstract ?></textarea><br/>
 </fieldset>
