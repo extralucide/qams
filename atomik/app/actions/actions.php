@@ -28,6 +28,7 @@ $context_array['sub_project_id'] = Atomik::has('session/sub_project_id')?Atomik:
 $context_array['review_id'] = Atomik::has('session/review_id')?Atomik::get('session/review_id'):"";
 $context_array['action_status_id'] = Atomik::has('session/action_status_id')?Atomik::get('session/action_status_id'):"";
 $context_array['user_id'] = Atomik::has('session/user_id')?Atomik::get('session/user_id'):"";
+$context_array['submitter_id'] = Atomik::has('session/submitter_id')?Atomik::get('session/submitter_id'):"";
 $context_array['assignee_id'] = Atomik::has('session/user_id')?Atomik::get('session/user_id'):"";
 $context_array['criticality_id']=Atomik::has('session/severity_id')?Atomik::get('session/severity_id'):"";
 $context_array['action_search']=isset($_GET['search']) ? $_GET['search'] :(Atomik::has('session/search')?Atomik::get('session/search'):"");
@@ -51,10 +52,11 @@ $nbpage = Tool::compute_pages($nb_actions,&$page,&$debut,$limite);
 Atomik::set('nb_pages',$nbpage);
 $action->prepare();
 $list_actions_lite = $action->execute($debut,$limite);
+$dir_path_result = "../result/";
 if (($nb_actions > 0)&&($context_array['action_search']=="")) {
-	$pie_filename = '../result/actions_pie_'.uniqid().'.png';
-	$bar_filename = '../result/actions_bar_'.uniqid().'.png';
-	$spline_filename = '../result/actions_spline_'.uniqid().'.png';
+	$pie_filename = $dir_path_result.'actions_pie_'.uniqid().'.png';
+	$bar_filename = $dir_path_result.'actions_bar_'.uniqid().'.png';
+	$spline_filename = $dir_path_result.'actions_spline_'.uniqid().'.png';
 	Atomik::set('session/actions_graph',urlencode(serialize(array('actions_pie'=>$pie_filename,'actions_bar'=>$bar_filename,'actions_spline'=>$spline_filename))));
 	/* draw pie chart */
 	$actions_closed = $action->new_count_actions("closed");
@@ -71,51 +73,9 @@ if (($nb_actions > 0)&&($context_array['action_search']=="")) {
 		$action->new_drawBar(&$user,$bar_filename);
 	}
 	
-	/* draw spline chart */
-	$date = date("Y-m-d");
-	$open = count($action->getActionsOpen($date)); /* Closed */
-	$closed = count($action->getActionsClosed($date)); /* Open */
-	$deadline_over = count($action->getActionsDeadline($date)); /* Deadline over */
-	
-	$stats_open[] = $open - $deadline_over;
-	$stats_closed[] = $closed;
-	$stats_total[] = $open + $closed;
-	$stats_deadline[] = $deadline_over;	
-	if ($granularity_selected == 1){
-		$gran = "W";
-		$sub = "week";
-		$abscissa = "Weeks";
-	}
-	else{
-		$gran = "M";
-		$sub = "month";
-		$abscissa = "Months";
-	}
-	$stats_week[] = date($gran);
-	$store_date = $date;
-	for ($index=0;$index<$iterations_selected;$index++){
-		$date = strtotime ( '-1 '.$sub , strtotime ( $store_date ) ) ;
-		$stats_week[] = date($gran,$date);
-		$date = date ( 'Y-m-j' , $date );
-		$store_date = $date;
-		try{
-			$open = count($action->getActionsOpen($date)); /* Closed */
-			$closed = count($action->getActionsClosed($date)); /* Open */
-			$deadline_over = count($action->getActionsDeadline($date)); /* Deadline over */
-		}
-		catch (PDOException $erreur){
-			echo 'Erreur : '.$erreur->getMessage();
-		}
-		$stats_open[] = $open - $deadline_over;
-		$stats_closed[] = $closed;
-		$stats_total[] = $open + $closed;
-		$stats_deadline[] = $deadline_over;
-		
-		// echo $store_date."<br/>";
-	}
-	$stats = array('deadline'=>array_reverse($stats_deadline),'open'=>array_reverse($stats_open),'closed'=>array_reverse($stats_closed),'week'=>array_reverse($stats_week));
-	// var_dump($stats);		
-	$action->drawArea($stats,$abscissa,$spline_filename);
+	/* draw aera chart */
+	$action->getAeraStats($spline_filename,$granularity_selected,$iterations_selected);	
+	// $action->drawArea($stats,$abscissa,$spline_filename);
 }
 else {
 	$pie_filename = "";
@@ -151,7 +111,7 @@ Atomik::set('url_previous',Atomik::url('actions',array('page'=>$page-1)));
 Atomik::set('url_next',Atomik::url('actions',array('page'=>$page+1)));
 Atomik::set('url_last',Atomik::url('actions',array('page'=>$nbpage)));
 Atomik::set('menu',array('assignee' => 'Assignee',
-						'equipment' => 'Equipment'));
+						'equipment' => 'Item'));
 /* menu project */
 $html=  '<form method="POST" action="'.Atomik::url('actions', false).'">';
 $html.= '<fieldset class="medium">';
@@ -177,6 +137,28 @@ $html .='</form>';
 $html.='<form method="POST" action="'.Atomik::url('actions', false).'">';
 $html.='<fieldset class="medium">';
 $html.= $action->getSelectStatus($context_array['action_status_id'],"active");
+$html.='</fieldset >';
+$html.='</form>';
+
+/* menu submitter */
+$list_users_pdo_statement = $project->getUsers();
+if ($list_users_pdo_statement != false){
+	$list_users = $list_users_pdo_statement->fetchAll();
+}
+else{
+	$list_users = array();
+}
+$html.='<form method="POST" action="'.Atomik::url('actions', false).'">';
+$html.='<fieldset class="medium">';
+$html.='<label for="submitter_id">Submittter:</label>';
+$html.='<select class="combobox" name="submitter_id" onchange="submit()">';
+$html.='<option value=""/> --All--';
+foreach($list_users as $row):
+	$html.='<option value="'.$row['id'].'"';
+	if ($row['id'] == $context_array['submitter_id']){ $html.=' SELECTED ';}
+	$html.='>'.$row['lname'].' '.$row['fname'];
+endforeach;
+$html.='</select><br />';
 $html.='</fieldset >';
 $html.='</form>';
 

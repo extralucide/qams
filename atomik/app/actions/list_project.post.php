@@ -30,10 +30,10 @@ if (isset($_POST['submit_project'])) {
 											'folder'=>$data['folder']),
 											$where);
         if($result){
-            Atomik::Flash("Project updated successfully.","success");
+            Atomik::Flash("System updated successfully.","success");
         }
         else{
-            Atomik::Flash("Project update failed.","failed");
+            Atomik::Flash("System update failed.","failed");
         }
     }
     else{

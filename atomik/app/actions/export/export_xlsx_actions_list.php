@@ -15,6 +15,7 @@ Atomik::needed("Remark.class");
 Atomik::needed("Baseline.class");
 Atomik::needed("PeerReviewer.class");
 
+$env_context['aircraft_id']= isset($_GET['show_aircraft']) ? $_GET['show_aircraft'] :(Atomik::has('session/current_aircraft_id')?Atomik::get('session/current_aircraft_id'):"");
 $env_context['project_id']= isset($_GET['show_project']) ? $_GET['show_project'] : (Atomik::has('session/current_project_id')?Atomik::get('session/current_project_id'):Atomik::get('session/project_id'));
 $env_context['sub_project_id'] = Atomik::has('session/sub_project_id')?Atomik::get('session/sub_project_id'):"";
 $env_context['review_id'] = Atomik::has('session/review_id')?Atomik::get('session/review_id'):"";

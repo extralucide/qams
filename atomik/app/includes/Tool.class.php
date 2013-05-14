@@ -836,5 +836,61 @@ class Tool{
 		}
 	    // In case of failure return empty string
 	    return "error no archive file received from ".$archiveFile;
-	}  
+	}
+    /**
+     * This method checks to see if the request is secured via HTTPS
+     *
+     * @return bool true if https, false otherwise
+     */
+    private static function _isHttps()
+    {
+        if ( isset($_SERVER['HTTPS'])
+            && !empty($_SERVER['HTTPS'])
+            && $_SERVER['HTTPS'] == 'on'
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }	
+    /**
+     * Try to figure out the phpCas client URL with possible Proxys / Ports etc.
+     *
+     * @return string Server URL with domain:port
+     */
+    public static function getClientUrl()
+    {
+		// remove the ticket if present in the URL
+		$url = (self::_isHttps()) ? 'https' : 'http';
+		$url .= '://';	
+        $server_url = '';
+        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+            // explode the host list separated by comma and use the first host
+            $hosts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
+            $server_url = $hosts[0];
+        } else if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
+            $server_url = $_SERVER['HTTP_X_FORWARDED_SERVER'];
+        } else {
+            if (empty($_SERVER['SERVER_NAME'])) {
+                $server_url = $_SERVER['HTTP_HOST'];
+            } else {
+                $server_url = $_SERVER['SERVER_NAME'];
+            }
+        }
+        if (!strpos($server_url, ':')) {
+            if (empty($_SERVER['HTTP_X_FORWARDED_PORT'])) {
+                $server_port = $_SERVER['SERVER_PORT'];
+            } else {
+                $server_port = $_SERVER['HTTP_X_FORWARDED_PORT'];
+            }
+
+            if ( (self::_isHttps() && $server_port!=443)
+                || (!self::_isHttps() && $server_port!=80)
+            ) {
+                $server_url .= ':';
+                $server_url .= $server_port;
+            }
+        }
+        return $url.$server_url;
+    }	
 }

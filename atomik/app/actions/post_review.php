@@ -46,7 +46,7 @@ $minutes_highlight="";
 $add_app_author="";
 $param = "";	
 $fill = false;
-
+$nb_projects = 0;
 $review = new Review(&$context); 
 $project = new Project(&$context);
 $baseline = new Baseline;

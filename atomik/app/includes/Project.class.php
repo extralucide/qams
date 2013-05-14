@@ -1,6 +1,6 @@
 <?php
 /**
- * Qams Framework
+ * QAMS Framework
  * Copyright (c) 2009-2010 Olivier Appere
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -11,7 +11,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package     Qams
+ * @package     Project.class
  * @author      Olivier Appere
  * @copyright   2009-2013 (c) Olivier Appere
  * @license     http://www.opensource.org/licenses/mit-license.php
@@ -21,7 +21,7 @@
 /**
  * Handle project
  *
- * @package Qams
+ * @package Project.class
  */
 class Project {
 	private $db;
@@ -49,7 +49,7 @@ class Project {
     public $photo_file;
     public $thumbnail;
     public $list;
-    public $parent;  
+    public $parent;
 	
 	public function getWorkspace(){
 		return($this->workspace);
@@ -94,7 +94,7 @@ class Project {
 				$this->id=$id;
 				$this->folder=$row['folder'];
 				$this->workspace=$row['workspace'];
-				$this->project_name=$row['project'];
+				$this->project_name=$row['aircraft']." ".$row['project'];
 				$this->aircraft_id=$row['aircraft_id'];
 				$this->aircraft_name=$row['aircraft'];
 				$this->company=$row['company'];
@@ -191,11 +191,13 @@ class Project {
 		}
 		else {
 			$this->company_id = "";
-			$this->aircraft_id = "";
+			$this->aircraft_id = (Atomik::has('session/current_aircraft_id')?Atomik::get('session/current_aircraft_id'):"");
 			$this->project_id = "";
 			$this->sub_project_id = "";
 			$this->review_id = "";
 		}
+		$this->photo_file=Atomik::asset("assets/images/systems/coeur.png");	
+		$this->thumbnail=Atomik::asset("assets/images/systems/coeur_tb.png");		
 	}
 	public function getUsers(){
 		Atomik::needed('Tool.class');
@@ -213,7 +215,8 @@ class Project {
 		return($list);
 	}
 	public static function getProject($aircraft_id="",
-										$company_id=""){
+										$company_id="",
+										$nb_projects=0){
 		Atomik::needed('Tool.class');
         $which_company = Tool::setFilter("aircrafts.id",$aircraft_id);
 		$which_aircraft = Tool::setFilter("enterprises.id",$company_id);
@@ -234,6 +237,7 @@ class Project {
 
 		$list_data = A("db:".$sql_query);
         $list = $list_data->fetchAll(PDO::FETCH_ASSOC);
+		$nb_projects = count($list);
 		$system_w_photo = new Project;
         foreach($list as $id => $system):
             $system_w_photo->get($system['id']);
@@ -291,13 +295,15 @@ class Project {
 							"list_lrus.part_number, ".
 							"list_lrus.dal, ".
 							"list_lrus.manager_id, ".
-							"scope.scope, ".
+							"scope.abrvt as scope, ".
 							"bug_users.lname as manager, ".
 							"list_lrus.description_lru as description, ".
 							"projects.project, ".
 							"aircrafts.name as aircraft, ".
 							"parent_id ".
-							"FROM lrus list_lrus INNER JOIN (SELECT id,lru FROM lrus) t2 ON t2.id = list_lrus.parent_id ".
+							"FROM lrus list_lrus INNER JOIN (".
+							"SELECT id,lru FROM lrus".
+							") t2 ON t2.id = list_lrus.parent_id ".
 							"LEFT OUTER JOIN projects ON projects.id = list_lrus.project ".
 							"LEFT OUTER JOIN aircrafts ON projects.aircraft_id = aircrafts.id ".
 							"LEFT OUTER JOIN enterprises ON enterprises.id = aircrafts.company_id ".
@@ -307,7 +313,7 @@ class Project {
 							$which_project.
 							$which_aircraft.
 							$which_company.
-							" ORDER BY `aircrafts`.`name` ASC,`projects`.`project` ASC,`list_lrus`.`parent_id` ASC,`list_lrus`.`lru` ASC";					
+							" ORDER BY `aircrafts`.`name` ASC,`scope` ASC,`projects`.`project` ASC,`list_lrus`.`parent_id` ASC,`list_lrus`.`lru` ASC";					
 		// echo $sql_query."<br/>";
 		$result = A('db:'.$sql_query);
 		if ($result !== false){
@@ -319,21 +325,30 @@ class Project {
 		return($list);
 	}		
 	public static function getSelectProject($selected,$onchange="inactive",$aircraft_id="",$company_id=""){
-		$html='<label for="show_project">Project:</label>';
+		$html='<label for="show_project">System:</label>';
 		$html.='<select class="combobox"';
 		if ($onchange=="active") {
 			$html .= 'onchange="this.form.submit()"';
 		}
 		$html .= ' name="show_project">';
-		$html .= '<option value=""/> --All--';
-		
-		foreach(Project::getProject($aircraft_id,$company_id) as $row):
-			$html .= '<option value="'.$row['id'].'"';
+		$html_tmp = "";
+		$nb_projects = 0;
+		$list_project = Project::getProject($aircraft_id,$company_id,&$nb_projects);
+		foreach($list_project as $row):
+			$html_tmp .= '<option value="'.$row['id'].'"';
 			if ($row['id'] == $selected){ 
-				$html .= " SELECTED ";
+				$html_tmp .= " SELECTED ";
 			}
-			$html .="/>".$row['aircraft']." ".$row['project'];
+			$html_tmp .="/>".$row['aircraft']." ".$row['project'];
 		endforeach;
+		if ($nb_projects > 1){
+			$html .= '<option value=""/> --All--';
+			$html .= $html_tmp;
+		}
+		else{
+			/* do not display -- All -- because only one project exists */
+			$html .= $html_tmp;
+		}
 		$html .='</select>';
 		return($html);
 	}
@@ -370,10 +385,10 @@ class Project {
 				$html .= " SELECTED ";
 			}
 			if ($row['parent_lru'] == $row['lru']){			
-				$html .= ">".$row['lru'];
+				$html .= ">".$row['scope']." ".$row['lru'];
 			}
 			else{
-				$html .= ">".$row['parent_lru']." ".$row['lru'];
+				$html .= ">".$row['scope']." ".$row['parent_lru']." ".$row['lru'];
 			}
 		endforeach;
 		$html .='</select>';

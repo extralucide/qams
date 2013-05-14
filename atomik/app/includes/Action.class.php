@@ -1,6 +1,6 @@
 <?php
 /**
- * Qams Framework
+ * QAMS Framework
  * Copyright (c) 2009-2012 Olivier Appere
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -11,9 +11,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package     Qams
+ * @package     Action.class
  * @author      Olivier Appere
- * @copyright   2009-2012(c) Olivier Appere
+ * @copyright   2009-2013(c) Olivier Appere
  * @license     http://www.opensource.org/licenses/mit-license.php
  * @link        
  */
@@ -21,7 +21,7 @@
 /**
  * Handle action
  *
- * @package Qams
+ * @package Action.class
  */
 class Action {
 	private static $id_deadline;
@@ -64,7 +64,6 @@ class Action {
 	public $date_closure;
 	private $attendee;
 	private $poster;
-    public $crit;
     public $status;
     public $project;
     public $lru;
@@ -75,6 +74,7 @@ class Action {
 	public $link_mime;
 	public $attachment_name;
 	private $prepare;
+	private $review_type;
 	
 	function compute_deadline () {
 	    /* remove time */
@@ -109,7 +109,8 @@ class Action {
 			$this->sub_project_id = isset($context['sub_project_id'])? $context['sub_project_id'] : "";	
 			$this->status_id= isset($context['action_status_id'])? $context['action_status_id'] : "";		
 			$this->criticality_id= isset($context['criticality_id'])? $context['criticality_id'] : "";			
-			$this->assignee_id= isset($context['user_id'])? $context['user_id'] : "";			
+			$this->assignee_id= isset($context['user_id'])? $context['user_id'] : "";
+			$this->submitter_id= isset($context['submitter_id'])? $context['submitter_id'] : "";			
 			$this->review_id= isset($context['review_id'])? $context['review_id'] : "";	
 			$this->baseline_id= isset($context['baseline_id'])? $context['baseline_id'] : "";	
 			$this->search= isset($context['action_search'])? $context['action_search'] : "";
@@ -121,6 +122,7 @@ class Action {
 			$this->which_status 	   	= Tool::setFilter("actions.status",$this->status_id);
 			$this->which_criticality 	= Tool::setFilter("criticality",$this->criticality_id);
 			$this->which_assignee 		= Tool::setFilter("posted_by",$this->assignee_id);
+			$this->which_submitter 		= Tool::setFilter("assignee",$this->submitter_id);
 			$this->which_review 		= Tool::setFilter("review",$this->review_id);
 			$this->which_baseline 		= Tool::setFilter("baselines.id",$this->baseline_id);
 			if ($this->search != ""){
@@ -130,7 +132,7 @@ class Action {
 			self::$id_close 	= "cid:id_close";
 			self::$id_open 		= "cid:id_open";
 			self::$id_propose	= "cid:id_propose";
-			$this->today_date 	= date("d").' '.date("M").' '.date("Y");	
+			$this->today_date 	= date("d M Y");	
 			$this->env_context 	= $context;
 		}
 		else{
@@ -192,6 +194,7 @@ class Action {
 			   $this->which_aircraft.
 			   $this->which_project.
 			   $this->which_assignee.
+			   $this->which_submitter.
 			   $this->which_sub_project.
 			   $this->which_review.
 			   $this->which_criticality.
@@ -228,6 +231,7 @@ class Action {
 			   $this->which_aircraft.
 			   $this->which_project.
 			   $this->which_assignee.
+			   $this->which_submitter.
 			   $this->which_sub_project.
 			   $this->which_review.
 			   $this->which_criticality.
@@ -265,6 +269,7 @@ class Action {
 			   $this->which_aircraft.
 			   $this->which_project.
 			   $this->which_assignee.
+			   $this->which_submitter.
 			   $this->which_sub_project.
 			   $this->which_review.
 			   $this->which_criticality.
@@ -344,6 +349,7 @@ class Action {
 				   $this->which_aircraft.
 				   $this->which_project.
 				   $this->which_assignee.
+				   $this->which_submitter.
 				   $this->which_sub_project.
 				   $this->which_review.
 				   $this->which_criticality.
@@ -393,6 +399,7 @@ class Action {
 				   $this->which_aircraft.
 				   $this->which_project.
 				   $this->which_assignee.
+				   $this->which_submitter.
 				   $this->which_sub_project.
 				   $which_date.
 				   $this->which_criticality.
@@ -411,6 +418,23 @@ class Action {
 	}
 	public function getReviewId(){
 		return($this->review_id);
+	}
+	public static function getMinutes($id){
+		$sql_query = "SELECT application as reference FROM bug_applications LEFT OUTER JOIN data_join_review ON bug_applications.id = data_join_review.data_id LEFT OUTER JOIN reviews ON reviews.id = data_join_review.review_id  LEFT OUTER JOIN actions ON actions.review = reviews.id WHERE actions.id = {$id}";
+		$result = A('db:'.$sql_query);
+		if ($result != false){
+			$row = $result->fetch(PDO::FETCH_OBJ);
+			if ($row){
+				$minutes = $row->reference;
+			}
+			else{
+				$minutes = "";
+			}
+		}
+		else{
+			$minutes = "";
+		}
+		return($minutes);		
 	}
 	public function getSeverityId(){
 		return($this->criticality_id);
@@ -498,7 +522,19 @@ class Action {
 	}
 	public function getSubmitterId(){
 		return($this->submitter_id);
-	}		
+	}
+	public function getSubmitter(){
+		$sql_query = "SELECT fname,lname FROM bug_users WHERE id = {$this->submitter_id} LIMIT 1";
+		$result = A("db:".$sql_query);
+		if ($result != false){
+			$row = $result->fetch(PDO::FETCH_OBJ);
+			$submitter = $row->fname." ".$row->lname;
+		}
+		else{
+			$submitter = "";
+		}
+		return($submitter);
+	}			
 	public function getDateOpen(){
 		return($this->date_open_sql);
 	}	
@@ -583,6 +619,7 @@ class Action {
 				   $this->which_aircraft.
 				   $this->which_project.
 				   $this->which_assignee.
+				   $this->which_submitter.
 				   $this->which_sub_project.
 				   $this->which_review.
 				   $this->which_criticality.
@@ -618,7 +655,8 @@ class Action {
 			$this->sub_project_id = $row['sub_project_id'];	
 			$this->lru = $row['lru'];
 			//$this->review = $row['review'];
-			$this->review_id = $row['review_id'];		
+			$this->review_id = $row['review_id'];
+			$this->review_type = $row['type'];
 			$this->description = $row['Description'];
 			$this->response = $row['comment'];
 			/* date */
@@ -680,6 +718,7 @@ class Action {
 			   $this->which_aircraft.
 			   $this->which_project.
 			   $this->which_assignee.
+			   $this->which_submitter.
 			   $this->which_sub_project.
 			   $this->which_review.
 			   $this->which_criticality.
@@ -945,35 +984,26 @@ class Action {
 		Atomik::needed('Tool.class');
 		$today_date_underscore = date("Y_M_d");
 		$logbook = new Logbook(&$this->env_context);
-		$filename = $logbook->board."_Actions_list_".$today_date_underscore.".xlsx";		
-		// if($this->env_context != null){
-			// $project = new Project($this->env_context);
-			// $project_name = $project->get_project_name($this->project_id);
-			// if($this->review_id != ""){
-				// $review = Atomik_Db::find("reviews",array("id"=>$this->review_id));
-				// $sub_project_id = $review['lru'];
-				// $sub_project_name = $project->get_sub_project_name($sub_project_id);
-			// }
-			// else{
-				// $sub_project_name = $project->get_sub_project_name($this->sub_project_id);
-			// }
-			// $filename = $project_name."_".$sub_project_name."_Actions_list_".$today_date_underscore.".xlsx";
-		// }
-		// else {
-			// $filename = $logbook->board."_Actions_list_".$today_date_underscore.".xlsx";
-		// }
+		$filename = $logbook->board."Action_Items_List_".$today_date_underscore."_".uniqid().".xlsx";		
+
 		return(Tool::cleanFilename($filename));
 	}
 	public function getExportTitle(){
+		Atomik::needed('Tool.class');
+		$today_date_underscore = date("Y_M_d");
+		$logbook = new Logbook(&$this->env_context);
+		$title = $logbook->board."Actions List";
+		/*
 		if($this->env_context != null){
-			$project = new Project($this->context);
-			$project_name = $project->get_project_name($this->project_id);
-			$sub_project_name = $project->get_sub_project_name($this->sub_project_id);
-			$title = $project_name." ".$sub_project_name." Actions List";
+			$project = new Project($this->env_context);
+			$aircraft_name = $project->getAircraft();
+			$project_name = $project->getProjectName();
+			$sub_project_name = $project->getSubProjectName();
+			$title = $aircraft_name.' '.$project_name." ".$sub_project_name." Actions List";
 		}
 		else {
 			$title = "Actions_list_".$this->today_date.".xlsx";
-		}
+		}*/
 		return($title);
 	}		
 	public function getSelectReview($review,$selected,$onchange="inactive"){
@@ -989,7 +1019,7 @@ class Action {
 			if ($row['id'] == $selected){ 
 				$html .= " SELECTED ";
 			}
-			$html .=">".$row['managed_by']." ".$row['lru']." ".$row['type']." ".Date::convert_date($row['date']);
+			$html .=">".$row['reference']." ".$row['managed_by']." ".$row['lru']." ".$row['type']." ".Date::convert_date($row['date']);
 		endforeach;
 		$html .='</select>';
 		return($html);
@@ -1033,7 +1063,11 @@ class Action {
 	}
 	public function getPlainContext(){
 		Atomik::needed('Tool.class');
-		return(Tool::convert_html2txt($this->context));
+		$minutes = self::getMinutes($this->id);
+		// $context = '<a href="'.Atomik::url('post_review',array('id'=>$this->review_id)).'">'.$this->review_type;
+		// $context = $minutes." ".Tool::convert_html2txt($this->context);		
+		$context = $minutes." ".$this->review_type;
+		return($context);
 	}
 	public function getPlainDescription(){
 		Atomik::needed('Tool.class');	
@@ -1086,7 +1120,7 @@ class Action {
 		$MyData->setAbscissa("Labels");
 		
 		/* Create the pChart object */
-		$x_canvas = 550;
+		$x_canvas = 650;
 		$y_canvas = 230;
 		$myPicture = new pImage($x_canvas,$y_canvas,$MyData,TRUE);
 
@@ -1110,14 +1144,14 @@ class Action {
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>20));
 		/* Draw the right area */
 		$RectangleSettings = array("R"=>189,"G"=>130,"B"=>221,"Alpha"=>100,"Surrounding"=>20,"Ticks"=>2);
-		$myPicture->drawFilledRectangle(310,10,540,219,$RectangleSettings);
+		$myPicture->drawFilledRectangle(390,10,640,219,$RectangleSettings);
 		/* Write the legend */
 		$TextSettings = array("R"=>255,"G"=>255,"B"=>255,"Align"=>TEXT_ALIGN_MIDDLEMIDDLE);
-		$myPicture->drawText(400,30,"Actions Chart",$TextSettings);
+		$myPicture->drawText(435,30,"Actions Chart",$TextSettings);
 		$TextSettings = array("R"=>106,"G"=>125,"B"=>3,"Align"=>TEXT_ALIGN_TOPLEFT,"FontSize"=>11);
-		$myPicture->drawText(320,45,"The  actions  shown  here  has b een",$TextSettings);
-		$myPicture->drawText(320,60,"collected from reviews.",$TextSettings);
-		$myPicture->drawFromPNG(340,90,'assets/images/64x64/kchart.png');
+		$myPicture->drawText(400,45,"The  actions  shown  here  has been",$TextSettings);
+		$myPicture->drawText(400,60,"collected from reviews or audits.",$TextSettings);
+		$myPicture->drawFromPNG(420,90,'assets/images/64x64/kchart.png');
 		
 		/* Set the default font properties */ 
 		$myPicture->setFontProperties(array("FontName"=>$dir_font."tahoma.ttf","FontSize"=>10,"R"=>80,"G"=>80,"B"=>80));
@@ -1130,40 +1164,74 @@ class Action {
 		$PieChart->setSliceColor(1,array("R"=>97,"G"=>77,"B"=>63));
 
 		/* Draw a splitted pie chart */ 
-		$PieChart->draw3DPie(120,125,array("WriteValues"=>TRUE,"DrawLabels"=>TRUE,"DataGapAngle"=>10,"DataGapRadius"=>6,"Border"=>TRUE));
+		$PieChart->draw3DPie(170,125,array("WriteValues"=>TRUE,"DrawLabels"=>TRUE,"DataGapAngle"=>10,"DataGapRadius"=>6,"Border"=>TRUE));
 
 		/* Write the legend */
 		$myPicture->setFontProperties(array("FontName"=>$dir_font."tahoma.ttf","FontSize"=>6));
 		$myPicture->setShadow(TRUE,array("X"=>1,"Y"=>1,"R"=>0,"G"=>0,"B"=>0,"Alpha"=>20));
-		// $myPicture->drawText(120,200,"Single AA pass",array("DrawBox"=>TRUE,"BoxRounded"=>TRUE,"R"=>0,"G"=>0,"B"=>0,"Align"=>TEXT_ALIGN_TOPMIDDLE));
-		// $myPicture->drawText(440,200,"Extended AA pass / Splitted",array("DrawBox"=>TRUE,"BoxRounded"=>TRUE,"R"=>0,"G"=>0,"B"=>0,"Align"=>TEXT_ALIGN_TOPMIDDLE));
 
-		/* Write the legend box */ 
-		// $myPicture->setFontProperties(array("FontName"=>$dir_font."Silkscreen.ttf","FontSize"=>6,"R"=>255,"G"=>255,"B"=>255));
-		// $PieChart->drawPieLegend(600,8,array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL));
-
-		/* Render the picture (choose the best way) */
-		// $myPicture->autoOutput($pie_filename);
 		/* Do the mirror effect */
 		$myPicture->drawAreaMirror(0,174,550,48); 
 		$myPicture->Render($pie_filename);	
 	}
-	private static function test_print($item, $key)
-	{
-		echo "$key holds $item\n";
+
+	public function getAeraStats($filename="actions_aera.png",$granularity_selected=1,$iterations_selected=20){
+		/* draw aera chart */
+		$date = date("Y-m-d");
+		$open = count($this->getActionsOpen($date)); /* Closed */
+		$closed = count($this->getActionsClosed($date)); /* Open */
+		$deadline_over = count($this->getActionsDeadline($date)); /* Deadline over */
 		
-	}	
-	public function drawArea($stat_data,$abscissa="Weeks",$filename="actions_spline.png"){
-		 /* CAT:Spline chart */ 
-		// array_walk_recursive($stat_data, 'Action::test_print');
-		// var_dump($stat_data);
+		$stats_open[] = $open - $deadline_over;
+		$stats_closed[] = $closed;
+		$stats_total[] = $open + $closed;
+		$stats_deadline[] = $deadline_over;	
+		if ($granularity_selected == 1){
+			$gran = "W";
+			$sub = "week";
+			$abscissa = "Weeks";
+		}
+		else{
+			$gran = "M";
+			$sub = "month";
+			$abscissa = "Months";
+		}
+		$stats_week[] = date($gran);
+		$store_date = $date;
+		for ($index=0;$index<$iterations_selected;$index++){
+			$date = strtotime ( '-1 '.$sub , strtotime ( $store_date ) ) ;
+			$stats_week[] = date($gran,$date);
+			$date = date ( 'Y-m-j' , $date );
+			$store_date = $date;
+			try{
+				$open = count($this->getActionsOpen($date)); /* Closed */
+				$closed = count($this->getActionsClosed($date)); /* Open */
+				$deadline_over = count($this->getActionsDeadline($date)); /* Deadline over */
+			}
+			catch (PDOException $erreur){
+				echo 'Erreur : '.$erreur->getMessage();
+			}
+			$stats_open[] = $open - $deadline_over;
+			$stats_closed[] = $closed;
+			$stats_total[] = $open + $closed;
+			$stats_deadline[] = $deadline_over;
+			
+			// echo $store_date."<br/>";
+		}
+		$stats = array('deadline'=>array_reverse($stats_deadline),
+						'open'=>array_reverse($stats_open),
+						'closed'=>array_reverse($stats_closed),
+						'week'=>array_reverse($stats_week));	
+		$this->drawArea($stats,$abscissa,$filename);
+	}
+	
+	public function drawArea($stat_data,$abscissa="Weeks",$filename="actions_aera.png"){
 		 /* pChart library inclusions */ 
  		require_once("pChart2.1.3/class/pData.class.php");
 		require_once("pChart2.1.3/class/pDraw.class.php"); 
 		require_once("pChart2.1.3/class/pImage.class.php"); 
 		
 		$dir_font = "app/includes/pChart/Fonts/";
-		// $dir_palette = "app/includes/pChart2.1.3/palettes/";
 		 /* Create and populate the pData object */
 		$MyData = new pData(); 		  
 		 $MyData->addPoints($stat_data['closed'],"Closed");		 
@@ -1338,10 +1406,9 @@ class Action {
 		require_once '../excel/Classes/PHPExcel/IOFactory.php';
 		require_once '../excel/Classes/PHPExcel/Worksheet/RowIterator.php';
 		Atomik::needed("ExportXls.class");
+		Atomik::needed('Tool.class');
 		include("app/includes/ExportXls.class.php");
-		// require_once("pChart/pData.class");  
-		// require_once("pChart/pChart.class");  
-
+ 
 		// Set the enviroment variable for GD
 		putenv('GDFONTPATH=' . realpath('.'));
 		error_reporting(E_ALL);
@@ -1356,7 +1423,7 @@ class Action {
                         DIRECTORY_SEPARATOR."Actions_list_template_02.xlsx";
 		if (!file_exists($file_template)) {
 			echo "Warning: Excel actions list template is missing.<br/>".$file_template;
-			exit();
+			// exit();
 			$objPHPExcel = new PHPExcel;
 			$objPHPExcel->getActiveSheet()->setTitle('Header');
 			$objWorksheet = $objPHPExcel->createSheet();
@@ -1370,12 +1437,13 @@ class Action {
 			'Summary'=>3);
 		}
 		$filename_simple = $this->getExportFilename();
-		$filename= "..".DIRECTORY_SEPARATOR."result".DIRECTORY_SEPARATOR.$filename_simple;
-		$pie_filename = "..".DIRECTORY_SEPARATOR."result".DIRECTORY_SEPARATOR."actions_pie.png";
-		$bar_filename = "..".DIRECTORY_SEPARATOR."result".DIRECTORY_SEPARATOR."actions_bar.png";
+		$dir_path_result = "..".DIRECTORY_SEPARATOR."result".DIRECTORY_SEPARATOR;
+		$filename= $dir_path_result.$filename_simple;
+		$pie_filename = $dir_path_result."actions_pie_".uniqid().".png";
+		$bar_filename = $dir_path_result."actions_bar_".uniqid().".png";
+		$aera_filename = $dir_path_result."actions_aera_".uniqid().".png";
 		/*
 		*  Intro
-		*
 		*/   
 		$objPHPExcel->setActiveSheetIndex($sheet_tab['Header']);
 		$objPHPExcel->getActiveSheet()->setCellValue('A1', $this->getExportTitle());
@@ -1386,7 +1454,7 @@ class Action {
 		$objPHPExcel->getActiveSheet()->setCellValue('E12', $this->today_date);
 		$objPHPExcel->getActiveSheet()->getStyle('A1:E19')->applyFromArray($style_first_page);
 		$objPHPExcel->setActiveSheetIndex($sheet_tab['Action list']);
-		$header=array('Id','Project','Context','Equipment','Description','Assignee','Date open','Date expected','Data closed','Status','Criticality','Comment');
+		$header=array('Id','System','Item','Context','Description','Submitter','Assignee','Date open','Date expected','Date closed','Status','Criticality','Comment');
 		for($i=0;$i<count($header);$i++) {
 			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($i, 2, $header[$i]);
 		}
@@ -1394,38 +1462,41 @@ class Action {
 		/* draw thick border around the actions */
 		$list_actions = $this->getActions();
 		$amount_actions=count($list_actions);
-		$objPHPExcel->getActiveSheet()->getStyle('A2:L'.strval($amount_actions + 2))->applyFromArray($style_encadrement);
+		$objPHPExcel->getActiveSheet()->getStyle('A2:M'.strval($amount_actions + 2))->applyFromArray($style_encadrement);
 		foreach($list_actions as $row) {
 			if ($row_counter % 2) {
 				/* alternate white and grey line color */
-				$objPHPExcel->getActiveSheet()->getStyle('A'.$row_counter.':L'.$row_counter)->applyFromArray($style_white_line);
+				$objPHPExcel->getActiveSheet()->getStyle('A'.$row_counter.':M'.$row_counter)->applyFromArray($style_white_line);
 			}
 			/* border inside */
-			$objPHPExcel->getActiveSheet()->getStyle('A'.$row_counter.':L'.$row_counter)->getBorders()->getInside()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+			$objPHPExcel->getActiveSheet()->getStyle('A'.$row_counter.':M'.$row_counter)->getBorders()->getInside()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 			$this->get($row['id']);
 			// var_dump($this->getReviewId());
-			$data[0] = $this->id;
-			$data[1] = $this->project;
-			$data[2] = $this->getPlainContext();
-			$data[3] = $this->lru;
-			//$data[4] = convert_html2txt($action->description);//." [".$action->id."] ";
-			$data[4] = $this->getPlainDescription();
-			$data[5] = $this->getAssignee();   
-			$data[6] = $this->date_open;
-			$data[7] = $this->date_expected;
-			$data[8] = $this->date_closure;
+			$data = array('id'=>$this->id,
+						'project'=>$this->project,
+						'lru'=>$this->lru,
+						'context'=>$this->getPlainContext(),
+						'description'=>$this->getPlainDescription(),
+						'submitter'=>$this->getSubmitter(),
+						'assignee'=>$this->getAssignee(),
+						'open'=>$this->date_open,
+						'expected'=>$this->date_expected,
+						'closure'=>$this->date_closure,
+						'status'=>$this->status,
+						'criticality'=>$this->criticality,
+						'response'=>Tool::convert_html2txt($this->response));
 			if ($this->status == "Closed" ) {
-				$data[9] = "Closed";
+				$data['status'] = "Closed";
 				$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 				$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('00FF00');
 			}
 			else if ($this->status == "Propose to close" ) {
-				$data[9] = "ECE Closed";
+				$data['status'] = "ECE Closed";
 				$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
 				$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('99FF00');
 			}	
 			else {
-				$data[9] = "Open";
+				$data['status'] = "Open";
 				if ($this->deadline_over) {
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_YELLOW);
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
@@ -1437,13 +1508,14 @@ class Action {
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('0000FF');
 				}
 			}
-			$data[10] = $this->crit;
-			Atomik::needed('Tool.class');
-			$data[11] = Tool::convert_html2txt($this->response);
 			$index = 0;
 			foreach ($data as $val) {
 				$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($index++, $row_counter, $val);
 			}
+			/* Add hyperlink toward review */
+			$url_context = Tool::getClientUrl();
+			$url_context .= Atomik::appUrl('post_review',array('id'=>$this->review_id));
+			$objPHPExcel->getActiveSheet()->getCell('D'.$row_counter)->getHyperlink()->setUrl(rawurlencode($url_context));
 			$row_counter++;	
 		}
 		/*
@@ -1454,7 +1526,7 @@ class Action {
 		if ($row_counter > 3) {
 			$nb_actions = $row_counter - 3;
 			/* Apply an autofilter to a range of cells */
-			$objPHPExcel->getActiveSheet()->setAutoFilter('A2:L2');
+			$objPHPExcel->getActiveSheet()->setAutoFilter('A2:M2');
 			$user = new User(&$this->env_context);
 			$user->get_stat_actions (true); 
 			/*
@@ -1498,6 +1570,7 @@ class Action {
 			/*
 			* Table of actions attendees
 			*/
+			/*
 			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
 			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(40);
 			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(12);
@@ -1519,9 +1592,9 @@ class Action {
 					}
 				}
 			}
+			*/
 			if ($user->nb != 0) {
 				/* Bar */  	 
-				// Dataset definition 
 				$this->new_drawBar(&$user,
 									$bar_filename);
 				$gdBar_img = @imagecreatefrompng($bar_filename);  	
@@ -1537,11 +1610,25 @@ class Action {
 			$objDrawingBar->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
 			$objDrawingBar->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
 			$objDrawingBar->setHeight(500);
-			$objDrawingBar->setCoordinates('B'.strval($row_counter+2));
+			$objDrawingBar->setCoordinates('A'.strval($row_counter+30));
 			$objDrawingBar->setOffsetX(400);
 			$objDrawingBar->getShadow()->setVisible(true);
 			$objDrawingBar->getShadow()->setDirection(45);
 			
+			$this->getAeraStats($aera_filename);
+			$gdAera_img = @imagecreatefrompng($aera_filename); 
+			$objDrawingAera = new PHPExcel_Worksheet_MemoryDrawing;
+			$objDrawingAera->setWorksheet($objPHPExcel->getActiveSheet());
+			$objDrawingAera->setName('Actions follow-up');
+			$objDrawingAera->setDescription('Actions follow-up');
+			$objDrawingAera->setImageResource($gdAera_img);
+			$objDrawingAera->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+			$objDrawingAera->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+			$objDrawingAera->setHeight(500);
+			$objDrawingAera->setCoordinates('A'.strval($row_counter+60));
+			$objDrawingAera->setOffsetX(400);
+			$objDrawingAera->getShadow()->setVisible(true);
+			$objDrawingAera->getShadow()->setDirection(45);			
 			/* count actions and display pie chart */  
 			$objPHPExcel->setActiveSheetIndex(0);
 		}

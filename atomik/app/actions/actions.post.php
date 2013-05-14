@@ -29,6 +29,9 @@ if (isset($_POST['show_status'])) {
 if (isset($_POST['show_poster'])) {
 	Atomik::set('session/user_id',$_POST['show_poster']);		
 }
+if (isset($_POST['submitter_id'])) {
+	Atomik::set('session/submitter_id',$_POST['submitter_id']);		
+}
 if (isset($_POST['show_criticality'])) {
 	Atomik::set('session/severity_id',$_POST['show_criticality']);		
 }

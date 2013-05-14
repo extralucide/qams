@@ -1,2 +1,3 @@
 <?
+Atomik::disableLayout();
 Atomik::noRender();

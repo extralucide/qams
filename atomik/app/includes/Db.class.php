@@ -425,6 +425,23 @@ $sql_query = <<<____SQL
 ____SQL;
 $this->pdo_query($sql_query);
 $sql_query = file_get_contents("../sql/severity.sql");
+$sql_query = <<<____SQL
+		INSERT INTO `bug_criticality` (`level`, `name`, `description`, `type`) VALUES
+		(3, 'Severe', 'work product is still usable in some cases, data could be lost or corrupted', 'spr'),
+		(2, 'Medium', 'he work product is usable and fairly stable, but some functionality is not available or creates problems', 'spr'),
+		(1, 'Minor', 'the work product is usable and stable', 'spr'),
+		(4, 'Showstopper', 'user cannot continue to use the work product', 'spr'),
+		(10, 'Action', 'An action is an assignment to an organization or person with a date for completion to correct a finding, error, or deficiency identified when conducting a review. ', 'action'),
+		(11, 'Finding', 'A finding is the identification of a failure to show compliance to one or more of the means of compliance objectives.', 'action'),
+		(12, 'Observation', 'An observation is the identification of a potential life cycle process improvement. An observation is not a compliance issue and does not need to be addressed before approval.', 'action'),
+		(13, 'Major', 'Used in Airbus proof reading', 'Airbus'),
+		(14, 'Task', NULL, 'action'),
+		(15, 'Issue', 'An issue is a concern not specific to software compliance or process improvement but may be a safety, system, program management, organizational, or other concern that is detected during a software review.', 'action'),
+		(16, 'Low', 'Low priority', 'data'),
+		(17, 'Medium', 'Medium priority', 'data'),
+		(18, 'High', 'High priority', 'data');
+____SQL;
+$this->pdo_query($sql_query);
 $this->pdo_query($sql_query);
 /* insert remarks table */
 $sql_query = <<<____SQL
@@ -659,6 +676,7 @@ $sql_query = <<<____SQL
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
 			  `scope` text NOT NULL,
 			  `description` text NOT NULL,
+			  `abrvt` text NOT NULL,
 			  PRIMARY KEY (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 			
@@ -666,11 +684,13 @@ $sql_query = <<<____SQL
 			-- Contenu de la table `scope`
 			--
 			
-			INSERT INTO `scope` (`id`, `scope`, `description`) VALUES
-			(1, 'System', ''),
-			(2, 'Software', ''),
-			(3, 'Hardware', ''),
-			(4, 'Equipment', '');
+			INSERT INTO `scope` (`id`, `scope`, `description`, `abrvt`) VALUES
+			(1, 'System', '', 'Sys'),
+			(2, 'Software', '', 'Sw'),
+			(3, 'Hardware', '', 'Hw'),
+			(4, 'Equipment', '', 'Eqpt'),
+			(5, 'PLD', '', 'PLD'),
+			(6, 'Board', '', 'Board');
 ____SQL;
 $this->pdo_query($sql_query);
 /* Wiki */

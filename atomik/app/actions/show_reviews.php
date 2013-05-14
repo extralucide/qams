@@ -54,7 +54,7 @@ Atomik::set('css_title',"data");
 /* menu project */
 $html=  '<form method="POST" action="'.Atomik::url('show_reviews', false).'">';
 $html.= '<fieldset class="medium">';
-$html.= Project::getSelectProject($context_array['project_id'],"active");
+$html.= Project::getSelectProject($context_array['project_id'],"active",$context_array['aircraft_id']);
 $html.= '</fieldset >';
 // $html.= '<input type="hidden" name="context" value="'.$context.'">';
 $html.= '</form>';

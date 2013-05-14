@@ -23,7 +23,7 @@ $html.='<ul class="li_below">';
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_company').'">Companies</a></h2></li>';
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_aircraft').'">Aircrafts</a></h2></li>';
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_project').'">Systems</a></h2></li>';
-$html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_eqpt').'">Equipments</a></h2></li>	';
+$html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_eqpt').'">Items</a></h2></li>	';
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('users').'">Users</a></h2></li>';
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_category').'">Categories</a></h2></li>';
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('list_severity').'">Severities</a></h2></li>';

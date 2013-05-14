@@ -33,12 +33,12 @@ $html.= '</fieldset >';
 $html.= '</form>';
 $html .='<a href="'.Atomik::url("admin",false).'" ><img src="'.Atomik::asset('assets/images/pages/sommaire.png').'" border="0" alt="Back" title="Back"><h2>Back</h2></a>';
 
-Atomik::set('title',"Project");
+Atomik::set('title',"System");
 Atomik::set('css_title',"action");
 Atomik::set('css_reset',"no_show");
 Atomik::set('url',"list_project");
 Atomik::set('url_add',Atomik::url('edit_project'));
-Atomik::set('title_add',"Add a project");
+Atomik::set('title_add',"Add a system");
 Atomik::set('page',$page);
 Atomik::set('limite',$limite);
 Atomik::set('css_page_previous','no_show');	

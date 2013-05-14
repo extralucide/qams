@@ -109,8 +109,8 @@ else if (isset($_GET['current_project_id'])){
 		$project->get($current_project_id);
 		// $current_project = Atomik_Db::find("projects","projects.id = {$current_project_id}");
 		$_SESSION['current_aircraft_id'] = $project->getAircraftId();
-		$_SESSION['current_project_name'] = $project->getAircraft();
-		$_SESSION['current_project_name'] .= " ";
+		// $_SESSION['current_project_name'] = $project->getAircraft();
+		$_SESSION['current_project_name'] = " ";
 		$_SESSION['current_project_name'] .= $project->getProjectName();
 	}
 }
