@@ -173,6 +173,18 @@ class Project {
 				$this->manager_id="";				
 				$this->parent="";		
 			}
+			if($this->scope == "Software"){
+				$this->photo_file=Atomik::asset("assets/images/SW.png");	
+				$this->thumbnail=Atomik::asset("assets/images/SW.png");
+			}
+			else if($this->scope == "PLD"){
+				$this->photo_file=Atomik::asset("assets/images/fpga.jpg");	
+				$this->thumbnail=Atomik::asset("assets/images/fpga.jpg");
+			}			
+			else{
+				$this->photo_file=Atomik::asset("assets/images/systems/board.png");	
+				$this->thumbnail=Atomik::asset("assets/images/systems/board_tb.png");			
+			}
 		}
 	}
     public function __construct($context=null) {
@@ -196,6 +208,7 @@ class Project {
 			$this->sub_project_id = "";
 			$this->review_id = "";
 		}
+		$this->description = "";
 		$this->photo_file=Atomik::asset("assets/images/systems/coeur.png");	
 		$this->thumbnail=Atomik::asset("assets/images/systems/coeur_tb.png");		
 	}
@@ -241,10 +254,8 @@ class Project {
 		$system_w_photo = new Project;
         foreach($list as $id => $system):
             $system_w_photo->get($system['id']);
-            //echo  $id.":".$aircraft['id'].":".$aircraft_w_photo->photo_file."<br/>";
             $list[$id]['photo_file'] = $system_w_photo->photo_file;
             $list[$id]['thumbnail'] = $system_w_photo->thumbnail;
-            //echo $aircraft_w_photo->thumbnail."<br/>";
         endforeach;		
 		return($list);
 	}
@@ -318,10 +329,16 @@ class Project {
 		$result = A('db:'.$sql_query);
 		if ($result !== false){
 			$list   = $result->fetchAll(PDO::FETCH_ASSOC);
+			$item_w_photo = new Project;
+			foreach($list as $id => $item):
+				$item_w_photo->getSubProject($item['id']);
+				$list[$id]['photo_file'] = $item_w_photo->photo_file;
+				$list[$id]['thumbnail'] = $item_w_photo->thumbnail;
+			endforeach;			
 		}
 		else{
 			$list = array();
-		}
+		}		
 		return($list);
 	}		
 	public static function getSelectProject($selected,$onchange="inactive",$aircraft_id="",$company_id=""){
@@ -440,7 +457,89 @@ class Project {
 		 $sql_query = "SELECT DISTINCT (projects.id), projects.project as name FROM projects ".
 		 "LEFT OUTER JOIN actions ON actions.project = projects.id WHERE actions.criticality = 14 ".$this->which_week;
 		 return($sql_query);
-	}	
+	}
+	private static function getListDownstreamItems($parent_id,$up=false){
+		if ($up === false){
+			$sql_query = "SELECT lrus.id,lru,description_lru as description,part_number as pn,scope FROM lrus LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE parent_id = {$parent_id} AND lrus.id != parent_id";
+		}
+		else{
+			$sql_query = "SELECT lrus.id,lru,description_lru as description,part_number as pn,scope FROM lrus LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE project = {$parent_id} AND lrus.id = parent_id";
+		}
+		$result = A("db:".$sql_query);
+		// echo $sql_query."<br/>";
+		if ($result != false){
+			$list = $result->fetchAll(PDO::FETCH_OBJ);
+		}
+		else{
+			$list = array();
+		}
+		return($list);
+	}
+	private function display_downstream_data($id,$fhandle,$up=false){
+		$downstream_items_list = Project::getListDownstreamItems($id,$up);
+		if ($downstream_items_list !== false){
+			foreach ($downstream_items_list as $item) :
+				fputs($fhandle,'<node name="'.$item->scope.' '.$item->lru.' ('.$item->pn.')" id="'.$item->id.'" connectionname="" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">');
+				fputs($fhandle,Tool::cleanDescription($item->description));
+				$this->display_downstream_data($item->id,&$fhandle);
+				fputs($fhandle,'</node>');
+			endforeach;
+		}		
+	}
+	private function echo_map(&$node, $selected) {
+		$output = "";
+		$x = $node['x'];
+		$y = $node['y'];
+		$output .= "<a href=\"\" onclick=\"window.top.window.ouvrir('".Atomik::url('edit_eqpt',array('id'=>$node['id']))."','_blank')\">";
+		$output .= "<div style=\"position:absolute;left:{$x};top:{$y};width:{$node['w']};height:{$node['h']};" . ($selected == $node['id'] ? "background-color:red;filter:alpha(opacity=40);opacity:0.4;" : "") . "\">&nbsp;</div></a>\n";
+		for ($i = 0; $i < count($node['childs']); $i++) {
+			$output .= $this->echo_map($node['childs'][$i], $selected);
+		}
+		$output .= "<a href='".Atomik::url('edit_eqpt',array('id'=>$node['id']))."'>open</a>";
+		return($output);
+	}  	
+	public function createDiagram(){
+		require_once 'diagram/class.diagram.php';
+		require_once 'diagram/class.diagram-ext.php';
+		Atomik::needed('Tool.class');
+		$output = "";
+		$diagram_filename = 'diagram_'.uniqid();
+		$diagram_file = dirname(__FILE__).DIRECTORY_SEPARATOR.
+					"..".DIRECTORY_SEPARATOR.
+					"..".DIRECTORY_SEPARATOR.
+					"..".DIRECTORY_SEPARATOR.
+					'result'.DIRECTORY_SEPARATOR.$diagram_filename.'.xml';
+		$fhandle = fopen($diagram_file,'w');
+		fputs($fhandle,'<?xml version="1.0" encoding="UTF-8"?>');
+		fputs($fhandle,'<diagram bgcolor="#f" bgcolor2="#d9e3ed">');
+
+		/* current system */
+		fputs($fhandle,'<node name="'.$this->project_name.'" id="'.$this->id.'" connectionname="" connectioncolor="#526e88" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">');
+		fputs($fhandle,Tool::cleanDescription($this->description));
+		/* 
+		 * find downstream items 
+		 */
+		$this->display_downstream_data($this->id,&$fhandle,true);
+
+		fputs($fhandle,'</node>');
+		/* */    
+		fputs($fhandle,'</diagram>');
+		fclose($fhandle);
+		$diagram = new DiagramExtended($diagram_file);
+		$diagram_display = new Diagram(realpath($diagram_file));
+		$diagram_png="../result/".$diagram_filename.'.png';
+		$diagram_display->Draw($diagram_png);
+	
+		$output = '<img src="'.$diagram_png.'" border="0" style="position:absolute;left:0;top:0;" />';
+
+		$selected = (isset($_GET['id']) ? $_GET['id'] : $id);
+		$diagram_node_position = $diagram->getNodePositions();
+		$output .= $this->echo_map($diagram_node_position, $selected); 
+		return ($output);
+	}
+	/*
+	* deprecated functions 
+	*/
 	  function get_amount_of_tasks ($project_id) {
 		   $sql_query = "SELECT SUM(actions.duration) AS counter FROM projects ".
 		 "LEFT OUTER JOIN actions ON actions.project = projects.id ".

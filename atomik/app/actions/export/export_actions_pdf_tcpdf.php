@@ -307,7 +307,7 @@ if ($nb_actions > 0) {
 		$graphs_file_list=unserialize(urldecode(stripslashes(stripslashes($graphs_encoded))));
 	
 	$pdf->Image($graphs_file_list['actions_pie'], 15, 50, 0, 0, 'PNG');
-	$pdf->Image($graphs_file_list['actions_bar'], 15, 120, 160, 90, 'PNG');
+	$pdf->Image($graphs_file_list['actions_bar'], 15, 120, 180, 90, 'PNG');
 	// add a page
 	$pdf->AddPage();
 	$pdf->Image($graphs_file_list['actions_spline'], 15, 50, 180, 90, 'PNG');

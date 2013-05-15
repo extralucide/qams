@@ -207,7 +207,8 @@ function gestion_diagram(id,target){
 }
 function gestion_prr(target)
 {
-	document.getElementById('prr_table').innerHTML = '<li class=\"warning\" style=\"list-style-type: none\">Creating peer review table and computing validation status ... Please wait ...</li>';
+	var msg = msg || '<li class=\"warning\" style=\"list-style-type: none\">Creating peer review table and computing validation status ... Please wait ...</li>';
+	document.getElementById('prr_table').innerHTML = msg;
 	http_prr = createRequestObject();
 	http_prr.open('get', target, true);
 	http_prr.onreadystatechange = handleAJAXReturn_prr;

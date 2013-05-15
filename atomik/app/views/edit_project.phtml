@@ -1,6 +1,7 @@
 <div id="page_tabs">
 <div id="system" class="<?= A('system_highlight')?>">System</div>
-<div id="equipments" class="<?= A('equipments_highlight')?>">Equipments</div>
+<div id="equipments" class="<?= A('equipments_highlight')?>">Items</div>
+<div id="diagram" class="<?= A('diagram_highlight')?>">PBS</div>
 </div><!-- EndTabHeaders -->
 <div class="clearb"></div>
 <div class="nice_square go_right">
@@ -70,12 +71,17 @@
 <img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="32" alt="Add new entry" title="Add new entry" border="no" />Add equipment</a>
 </div>
 <div class="<?= A('css_eqpt')?>">
-<h3 class="">Equipments list</h3>
+<h3 class="">Items list</h3>
 <span id="prr_table"></span>
 <div class="spacer"></div>
 </div>
 <iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none"></iframe>
 <span id="export_data_list_frame"></span>
+</div>
+</div>
+<div id="diagram_c" >
+<iframe class="pbs_frame" src="<?= Atomik::url('system/view_diagram',array('id'=>$id))?>" ></iframe>
+<span id="baseline_table"></span>
 </div>
 </div>
 </div>
@@ -88,6 +94,7 @@
         width : '450'
     });
 	cms_page_tab_style();
-	gestion_prr("<?= Atomik::url('system/display_eqpts_list',array('id'=>$id))?>");
+	gestion_prr("<?= Atomik::url('system/display_eqpts_list',array('id'=>$id))?>",'<li class=\"warning\" style=\"list-style-type: none\">Creating items table ... Please wait ...</li>');
+	/* gestion_baseline("<?= Atomik::url('system/view_diagram',array('id'=>$id))?>"); */
 //]]>
 </script>

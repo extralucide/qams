@@ -16,9 +16,8 @@ $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "";
 $project = new Project($context_array);
 $list_aircraft = Aircraft::getAircrafts(Atomik::get('session/company_id'));
 $list_projects = Project::getProject(Atomik::get('session/current_aircraft_id'),
-									Atomik::get('session/company_id'));
+									Atomik::get('session/company_id'));							
 Atomik::set('menu',array('equipment' => 'Parent','assignee' => 'Manager'));									
-$list_items = Project::getSelectSubProject(&$project,$project->parent);
 if ($id != "") {
    Atomik::set('title',"Update item");
    $button = "Modify";
@@ -30,6 +29,7 @@ else {
 	$submit = "submit";
 	$button = "Add";
 }
+$list_items = Project::getSelectSubProject(&$project,$project->parent);
 $html ='<a href="'.Atomik::url("admin",false).'" ><img src="'.Atomik::asset('assets/images/pages/sommaire.png').'" border="0" alt="Back" title="Back"><h2>Back</h2></a>';
 
 Atomik::set('url_add',Atomik::url('add_aircraft_picture',array('id' => $id)));

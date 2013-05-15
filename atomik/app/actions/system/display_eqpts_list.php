@@ -9,5 +9,7 @@ $counter=0;
 $project = new Project(&$context_array);
 $list_data = $project->getSubProjectList();
 Atomik::set('css_admin',"no_show");
-
+if ($list_data == NULL){
+	Atomik::noRender();
+}
 

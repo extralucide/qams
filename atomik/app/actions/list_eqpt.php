@@ -16,7 +16,7 @@ if ($context_array['company_id'] == ""){
 }
 $context_array['project_id']= Atomik::get('session/project_id');
 $context_array['sub_project_id']= "";
-//$list_data = Aircraft::getList($context_array['company_id']);
+
 $project = new Project($context_array);
 $list_data = $project->getSubProjectList();
 /* menu company */
@@ -43,12 +43,12 @@ $html.= '</fieldset >';
 $html.= '</form>';
 $html .='<a href="'.Atomik::url("admin",false).'" ><img src="'.Atomik::asset('assets/images/pages/sommaire.png').'" border="0" alt="Back" title="Back"><h2>Back</h2></a>';
 
-Atomik::set('title',"Equipment");
+Atomik::set('title',"Items");
 Atomik::set('css_title',"hardware");
 Atomik::set('css_reset',"no_show");
 Atomik::set('url',"list_eqpt");
 Atomik::set('url_add',Atomik::url('edit_eqpt'));
-Atomik::set('title_add',"Add an equipement");
+Atomik::set('title_add',"Add an item");
 Atomik::set('page',$page);
 Atomik::set('limite',$limite);
 Atomik::set('css_page_previous','no_show');	

@@ -10,12 +10,18 @@ li.box {
 }
 </style>
 <ul>
-<li class="box" style="list-style-type: none;">
+<li class="box" style="list-style-type: none;height:350px">
+<div>
+<div style="float:right;margin-right:40px;padding:10px">
+<a href="<?= "../result/".$excel_filename ?>" >
+<img alt="Export openxml" title="Export openxml" border="0" src="<?= Atomik::asset('assets/images/256x256/Excel2007.png')?>" class='no_img_button' width="256" height="256" />
+</a>
+</div>
+<div style="margin:10px;width:300px">
 <b><?= $excel_filename?></b> report has been generated.<br/>
 Click here to open the Microsoft Excel workbook:
-<a href="<?= "../result/".$excel_filename ?>" >
-<img alt="Export openxml" title="Export openxml" border="0" src="<?= Atomik::asset('assets/images/32x32/Excel2007.png')?>" class='no_img_button' width="32" height="32"style="margin='8px';width='48px';height='48px';" />
-</a>
+</div>
+</div>
 </li>
 </ul>
 <script type="text/javascript">

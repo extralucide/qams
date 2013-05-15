@@ -51,7 +51,7 @@
 </select><br />
 <label>Scope:</label>
 <select class='combobox' onchange_="this.form.submit()" name='scope_id'>
-<? foreach(array(1=>"System",2=>"Software",3=>"Hardware",4=>"Equipment") as $scope_id => $scope_name):?>
+<? foreach(array(1=>"System",4=>"Equipment",3=>"Hardware",2=>"Software",5=>"PLD") as $scope_id => $scope_name):?>
 <option value="<?= $scope_id ?>"<? if ($scope_name == $project->scope){ print " SELECTED ";}?>><?= $scope_name?>
 <? endforeach ?>
 </select><br />

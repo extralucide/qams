@@ -497,7 +497,7 @@ class Action {
 	private function setAssignee($id,$fname,$lname){
 		$this->assignee_id = $id;
 		Atomik::needed('User.class');
-		$this->attendee = str_replace("é","&#233;",User::getLiteName($fname,$lname));	
+		$this->attendee = str_replace("Ã©","&#233;",User::getLiteName($fname,$lname));	
 	}
 	public function getAssignee($option=false){
 		if($option == false){
@@ -505,10 +505,10 @@ class Action {
 		}
 		else{
 			/* For PDF document generation. */
-			// $attendee = preg_replace(array("/é/s","/Ã©/s"),array("&#233;","&#233;"),$this->attendee);
-			// $attendee = utf8_encode(str_replace("é","&#233;",$this->attendee));
+			// $attendee = preg_replace(array("/Ã©/s","/ÃƒÂ©/s"),array("&#233;","&#233;"),$this->attendee);
+			// $attendee = utf8_encode(str_replace("Ã©","&#233;",$this->attendee));
 			// $attendee = utf8_decode($this->attendee);
-			// $attendee = str_replace("&#233;","é",$this->attendee);
+			// $attendee = str_replace("&#233;","Ã©",$this->attendee);
 			$attendee = html_entity_decode($this->attendee,ENT_COMPAT,"UTF-8");
 			// echo $attendee."<br/>";
 		}
@@ -528,7 +528,12 @@ class Action {
 		$result = A("db:".$sql_query);
 		if ($result != false){
 			$row = $result->fetch(PDO::FETCH_OBJ);
-			$submitter = $row->fname." ".$row->lname;
+			if ($row != false){
+				$submitter = $row->fname." ".$row->lname;
+			}
+			else{
+				$submitter = "";
+			}
 		}
 		else{
 			$submitter = "";
@@ -1312,7 +1317,7 @@ class Action {
 		$DataSet->SetXAxisName("Attendees");
 		$DataSet->SetYAxisName("Actions");
 		$DataSet->SetSerieSymbol("Serie1",Atomik::asset('assets/images/Point_Asterisk.gif'));
-		//$DataSet->SetYAxisUnit("µm");
+		//$DataSet->SetYAxisUnit("Âµm");
 
 		// Initialise the graph
 		$graph_width = 1024;
@@ -1439,9 +1444,6 @@ class Action {
 		$filename_simple = $this->getExportFilename();
 		$dir_path_result = "..".DIRECTORY_SEPARATOR."result".DIRECTORY_SEPARATOR;
 		$filename= $dir_path_result.$filename_simple;
-		$pie_filename = $dir_path_result."actions_pie_".uniqid().".png";
-		$bar_filename = $dir_path_result."actions_bar_".uniqid().".png";
-		$aera_filename = $dir_path_result."actions_aera_".uniqid().".png";
 		/*
 		*  Intro
 		*/   
@@ -1500,12 +1502,12 @@ class Action {
 				if ($this->deadline_over) {
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_YELLOW);
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('FF0000');
+					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('FF0000'); /* Red */
 				}
 				else {
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_YELLOW);
 					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('0000FF');
+					$objPHPExcel->getActiveSheet()->getStyle('J'.$row_counter)->getFill()->getStartColor()->setARGB('FFA500'); /* Orange */
 				}
 			}
 			$index = 0;
@@ -1515,7 +1517,7 @@ class Action {
 			/* Add hyperlink toward review */
 			$url_context = Tool::getClientUrl();
 			$url_context .= Atomik::appUrl('post_review',array('id'=>$this->review_id));
-			$objPHPExcel->getActiveSheet()->getCell('D'.$row_counter)->getHyperlink()->setUrl(rawurlencode($url_context));
+			$objPHPExcel->getActiveSheet()->getCell('D'.$row_counter)->getHyperlink()->setUrl($url_context);//rawurlencode($url_context)
 			$row_counter++;	
 		}
 		/*
@@ -1527,8 +1529,36 @@ class Action {
 			$nb_actions = $row_counter - 3;
 			/* Apply an autofilter to a range of cells */
 			$objPHPExcel->getActiveSheet()->setAutoFilter('A2:M2');
-			$user = new User(&$this->env_context);
-			$user->get_stat_actions (true); 
+			if (Atomik::has('session/actions_graph')){
+				$graphs_encoded = Atomik::get('session/actions_graph');
+				$graphs_file_list=unserialize(urldecode(stripslashes(stripslashes($graphs_encoded))));
+				$pie_filename = $dir_path_result.$graphs_file_list['actions_pie'];
+				$bar_filename = $dir_path_result.$graphs_file_list['actions_bar'];
+				$aera_filename = $dir_path_result.$graphs_file_list['actions_spline'];
+			}
+			else{
+				$pie_filename = $dir_path_result."actions_pie_".uniqid().".png";
+				$bar_filename = $dir_path_result."actions_bar_".uniqid().".png";
+				$aera_filename = $dir_path_result."actions_aera_".uniqid().".png";
+				$user = new User(&$this->env_context);
+				$user->get_stat_actions (true);
+				/* count actions */
+				$actions_closed = Action::new_count_actions("closed");
+				$actions_open = Action::new_count_actions("open");
+				$actions = array('closed'=>$actions_closed,'open'=>$actions_open);
+				$this->new_drawPie($actions,
+									$pie_filename);
+				if ($user->nb != 0) {
+					/* Bar */  	 
+					$this->new_drawBar(&$user,
+										$bar_filename);	
+				}
+				else {
+					$bar_filename = 'artichow/images/error.png';
+				}
+				$this->getAeraStats($aera_filename);				
+			}
+
 			/*
 			* Pie poster
 			*/
@@ -1548,12 +1578,8 @@ class Action {
 			$objPHPExcel->getActiveSheet()->getStyle('B'.strval($row_counter))->getFont()->setBold(true);
 			//$objPHPExcel->getActiveSheet()->getStyle('B'.strval($row_counter+36))->getFont()->setUnderline(PHPExcel_Style_Font::UNDERLINE_SINGLE);
 			$objPHPExcel->getActiveSheet()->getStyle('B'.strval($row_counter))->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_BLUE);
-			/* count actions and display pie chart */
-			$actions_closed = Action::new_count_actions("closed");
-			$actions_open = Action::new_count_actions("open");
-			$actions = array('closed'=>$actions_closed,'open'=>$actions_open);
-			$this->new_drawPie($actions,
-								$pie_filename);
+			
+			/* display pie chart */
 			$gdPie_img = @imagecreatefrompng($pie_filename);
 			$objDrawingPie = new PHPExcel_Worksheet_MemoryDrawing;
 			$objDrawingPie->setWorksheet($objPHPExcel->getActiveSheet());
@@ -1593,15 +1619,7 @@ class Action {
 				}
 			}
 			*/
-			if ($user->nb != 0) {
-				/* Bar */  	 
-				$this->new_drawBar(&$user,
-									$bar_filename);
-				$gdBar_img = @imagecreatefrompng($bar_filename);  	
-			}
-			else {
-				$gdBar_img = @imagecreatefrompng('artichow/images/error.png');
-			}
+			$gdBar_img = @imagecreatefrompng($bar_filename);
 			$objDrawingBar = new PHPExcel_Worksheet_MemoryDrawing;
 			$objDrawingBar->setWorksheet($objPHPExcel->getActiveSheet());
 			$objDrawingBar->setName('Assignees stat');
@@ -1615,7 +1633,6 @@ class Action {
 			$objDrawingBar->getShadow()->setVisible(true);
 			$objDrawingBar->getShadow()->setDirection(45);
 			
-			$this->getAeraStats($aera_filename);
 			$gdAera_img = @imagecreatefrompng($aera_filename); 
 			$objDrawingAera = new PHPExcel_Worksheet_MemoryDrawing;
 			$objDrawingAera->setWorksheet($objPHPExcel->getActiveSheet());

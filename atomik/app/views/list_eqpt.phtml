@@ -8,13 +8,15 @@
 foreach ($list_data as $row) {
 	$table_color= ($fill)?'rouge':'vert';?>
 	<tr class="<?= $table_color ?>">
-	<? if ($row['parent_lru'] == $row['lru']){
-			$name = $row['scope']." ".$row['aircraft']." ".$row['project']." ".$row['lru'];
+	<? $name = $row['scope']." ".$row['aircraft']." ".$row['project'];
+		if ($row['parent_lru'] == $row['lru']){
+			$name .= " ".$row['lru'];
 		}
 		else{
-			$name = $row['scope']." ".$row['aircraft']." ".$row['project']." ".$row['parent_lru']." ".$row['lru'];
+			$name .= $row['parent_lru']." ".$row['lru'];
 		}
 	?>
+	<td style="padding:10px"><img src="<?= $row['thumbnail']?>" width="100"></td>
 	<td colspan="5" style="padding:10px"><a href="<?= Atomik::url('edit_eqpt',array('id'=> $row['id']))?>"><b><?= $name."</b>: ".Tool::cleanDescription($row['description']) ?></a></td>
 	<td></td><td> 
          <a style="float:right"><span class='down_arrow' style="margin-left:0px" onClick="return display_action_comment('eqpt_<?= $row['id'] ?>',this)"></span></a><br/>

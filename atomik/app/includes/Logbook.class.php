@@ -48,12 +48,14 @@ class Logbook {
 	}	 
 	function __construct($context=null) { 
 		Atomik::needed('Project.class');
+		Atomik::needed('Tool.class');
+		Atomik::needed('User.class');
 		$this->company_id 		= isset($context['company_id'])?$context['company_id']:"";
 		$this->aircraft_id 		= isset($context['aircraft_id'])?$context['aircraft_id']:"";	
 		$this->project_id 		= isset($context['project_id'])? $context['project_id'] : "";
 		$this->sub_project_id 	= isset($context['sub_project_id'])? $context['sub_project_id'] : "";
 		$this->baseline 		= isset($context['baseline_id'])? $context['baseline_id'] : "";	
-		$today_date_underscore = date("Y").'_'.date("M").'_'.date("d");
+		$today_date_underscore = date("Y_M_d");
 		$project = new Project(&$context);
 		$project ->get($this->project_id);
 		$this->folder = $project->getFolder();
@@ -71,12 +73,10 @@ class Logbook {
 			$this->board .= $this->equipment." ";
 		}
 		$this->title = $this->board."Logbook";
-		Atomik::needed('Tool.class');
 		$this->filename = Tool::cleanFilename($this->title." ".$today_date_underscore.".xlsx");		
 		$ref = $this->search_logbook_ref();
 		$this->ref 			= $ref->application;
 		$this->issue 		= $ref->version;
-		Atomik::needed('User.class');
 		$user = new User;
 		$this->author 		= User::getNameUserLogged();
 		$this->email 		= User::getEmailUserLogged();

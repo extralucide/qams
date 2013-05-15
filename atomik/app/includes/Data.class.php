@@ -200,14 +200,14 @@ class Data {
    public function createDiagram(){
 		require_once 'diagram/class.diagram.php';
 		require_once 'diagram/class.diagram-ext.php';
-		//$diagram_file ='../result/diagram.xml';
+
 		$output = "";
+		$diagram_filename = 'diagram_'.uniqid();
 		$diagram_file = dirname(__FILE__).DIRECTORY_SEPARATOR.
 					"..".DIRECTORY_SEPARATOR.
 					"..".DIRECTORY_SEPARATOR.
 					"..".DIRECTORY_SEPARATOR.
-					'result'.
-					DIRECTORY_SEPARATOR.'diagram.xml';
+					'result'.DIRECTORY_SEPARATOR.$diagram_filename.'.xml';
 		$fhandle = fopen($diagram_file,'w');
 		fputs($fhandle,'<?xml version="1.0" encoding="UTF-8"?>');
 		fputs($fhandle,'<diagram bgcolor="#f" bgcolor2="#d9e3ed">');
@@ -229,7 +229,6 @@ class Data {
 		/* 
 		 * find downstream documents 
 		 */
-		// $downstream_data = new Data;
 		$downstream_data_list = Data::Get_List_Downstream_Data($this->id);
 		if ($downstream_data_list !== false){
 			foreach ($downstream_data_list as $id) :
@@ -250,7 +249,7 @@ class Data {
 		fclose($fhandle);
 		$diagram = new DiagramExtended($diagram_file);
 		$diagram_display = new Diagram(realpath($diagram_file));
-		$diagram_png="../result/diagram.png";
+		$diagram_png="../result/".$diagram_filename.'.png';
 		$diagram_display->Draw($diagram_png);
 	
 		$output = '<img src="'.$diagram_png.'" border="0" style="position:absolute;left:0;top:0;" />';

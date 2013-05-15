@@ -36,7 +36,6 @@
                         	}
                         	else{
                         		header('Location:../index.php');
-                        		//Atomik::redirect('../index.php');
                         	}
                         }
                         ?>
@@ -47,23 +46,28 @@
                     <a href="<?= Atomik::url('home',false) ?>" style="text-decoration:none"><h2><?= A('site_title')?></h2></a>
                 </div>
             </div>
+			<? if (A('session/current_project_name') == ""){
+					Atomik::set('css_hyperlink',"no_show");
+					Atomik::set('css_search',"shift_search");
+				}?>
             <div id="menu_horizontal">
                 <ul id="menu">
-                    <li class="<?= (A('tab_select') == 'data') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('data',false)?>" >Documents</a>
+                    <li class="<?= (A('tab_select') == 'data') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>"><a href="<?= Atomik::url('data',false)?>" >Documents</a>
                         <ul>
                              <li><a href="<?= Atomik::url('data',false)?>">View Documents</a></li>
                              <li><a href="<?= Atomik::url('data_type',false)?>">View Types</a></li>
                              <li><a href="<?= Atomik::url('baseline') ?>">View Baseline</a></li>
                         </ul>
                     </li>
-                    <li class="<?= (A('tab_select') == 'remark') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('inspection?search=')?>">Peer Reviews</a>
+                    <li class="<?= (A('tab_select') == 'remark') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>">
+					<a href="<?= Atomik::url('inspection?search=')?>">Peer Reviews</a>
 					       <ul>
                               <li><a href="<?= Atomik::url('inspection?search=',false)?>">View Peer Reviews</a></li>
                               <li><a href="<?= Atomik::url('post_remark',false)?>">Post Peer Review</a></li>
 							  <li><a href="<?= Atomik::url('export/read_docx',false)?>">Create Validation Matrix</a></li>
                           </ul>
 					</li>
-                    <li class="<?= (A('tab_select') == 'review') ? 'tab_highlight':'tab_normal' ?>">
+                    <li class="<?= (A('tab_select') == 'review') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>">
 					<a href="<?= Atomik::url('show_reviews',false) ?>">Meetings</a>
                          <ul>
                              <li><a href="<?= Atomik::url('show_reviews',false) ?>">View Reviews</a></li>
@@ -72,7 +76,8 @@
 							 <li><a href="<?= Atomik::url('build_logbook') ?>">View Logbook</a></li>
 						 </ul>
                     </li>
-                    <li class="<?= (A('tab_select') == 'action') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('actions',false)?>">Action Items</a>
+                    <li class="<?= (A('tab_select') == 'action') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>">
+					<a href="<?= Atomik::url('actions',false)?>">Action Items</a>
                           <ul>
                               <li><a href="<?= Atomik::url('actions',false)?>">View Action Items</a></li>
                               <li><a href="<?= Atomik::url('post_action',false)?>">Post Action Items</a></li>

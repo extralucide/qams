@@ -32,6 +32,7 @@ $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('data_type').'">Document
 $html.='	<li class="noarrow"><h2><a href="'.Atomik::url('review_type').'">Review Types</a></h2></li>';
 $html.='</ul>';
 $html.='</div>';
+Atomik::set("css_search","no_show");
 Atomik::set('select_menu',$html);
 Atomik::set('title',"Administration");
 Atomik::set('css_title',"db");

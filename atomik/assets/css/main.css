@@ -79,7 +79,7 @@ a {
 }
 .explain{
 	width:400px;
-	height:200px;
+	height:400px;
 	/* float:right; */
 	font-size: 0.8em;
 	border: 1px solid #000;
@@ -1003,7 +1003,9 @@ html * .logbook
 .no_show{
 	display:none;
 }
-	
+.shift_search{
+	margin-left:750px;
+}
 .menu {
 	display:none;
 	margin-left:0px;
@@ -1909,6 +1911,12 @@ div#saq_086_header {
 	border:none;
 	width:800px;
 	height:300px;	
+}
+.pbs_frame {
+	border:none;
+	width:800px;
+	height:800px;
+	overflow:scroll;
 }
 .edit_data form  {
 }

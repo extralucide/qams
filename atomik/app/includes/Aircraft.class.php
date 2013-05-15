@@ -60,20 +60,24 @@ Class Aircraft{
         return($aircraft);
     } 
     public static function getAircraftName($id){
-        // $aircraft = Atomik_Db::find('aircrafts','id='.$id);
-		Atomik::needed('Tool.class');
-		$filter = Tool::setFilterWhere("aircrafts.id",$id);	
-        $sql_query = "SELECT aircrafts.id,".
-                    "aircrafts.name,".
-                    "aircrafts.description,".
-                    "company_id,".
-                    "enterprises.name as company".
-                    " FROM aircrafts LEFT OUTER JOIN enterprises ON aircrafts.company_id = enterprises.id".
-                    $filter." LIMIT 1";        
-        $result = A("db:".$sql_query);
-		if ($result != false){
-			$aircraft = $result->fetch();
-			$aircraft_name = $aircraft['company']." ".$aircraft['name'];
+		if ($id != ""){
+			Atomik::needed('Tool.class');
+			$filter = Tool::setFilterWhere("aircrafts.id",$id);	
+			$sql_query = "SELECT aircrafts.id,".
+						"aircrafts.name,".
+						"aircrafts.description,".
+						"company_id,".
+						"enterprises.name as company".
+						" FROM aircrafts LEFT OUTER JOIN enterprises ON aircrafts.company_id = enterprises.id".
+						$filter." LIMIT 1";        
+			$result = A("db:".$sql_query);
+			if ($result != false){
+				$aircraft = $result->fetch();
+				$aircraft_name = $aircraft['company']." ".$aircraft['name'];
+			}
+			else{
+				$aircraft_name = "";
+			}
 		}
 		else{
 			$aircraft_name = "";
