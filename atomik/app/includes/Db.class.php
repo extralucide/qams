@@ -252,7 +252,7 @@ ____SQL;
 $this->pdo_query($sql_query);
 $sql_query = file_get_contents("../sql/projects.sql");
 $this->pdo_query($sql_query);
-/* create sub projects table */
+/* create items table */
 $sql_query = <<<____SQL
                 CREATE TABLE IF NOT EXISTS `lrus` (
                                        `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -267,6 +267,16 @@ $sql_query = <<<____SQL
                                        `manager_id` int(11) NOT NULL,
                                        PRIMARY KEY (`id`)
                                        ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;        
+____SQL;
+$this->pdo_query($sql_query);
+/* create items systems jonctiontable */
+$sql_query = <<<____SQL
+		CREATE TABLE IF NOT EXISTS `lru_join_project` (
+		  `id` int(11) NOT NULL auto_increment,
+		  `item_id` int(11) NOT NULL,
+		  `parent_id` int(11) NOT NULL,
+		  PRIMARY KEY  (`id`)
+		) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;     
 ____SQL;
 $this->pdo_query($sql_query);
 $sql_query = file_get_contents("../sql/eqpt.sql");
@@ -514,7 +524,16 @@ $this->pdo_query($sql_query);
 /* import documents */
 $sql_query = file_get_contents("../sql/documents.sql");
 $this->pdo_query($sql_query);
-
+/* create PR link table */
+$sql_query = <<<____SQL
+		CREATE TABLE IF NOT EXISTS `pr_link` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `pr_id` int(11) NOT NULL,
+		  `data_id` int(11) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+____SQL;
+$this->pdo_query($sql_query);
 /* import document types */
 $sql_query = <<<____SQL
 --
