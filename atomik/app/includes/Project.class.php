@@ -297,11 +297,17 @@ class Project {
 	public function getSubProjectList(){
 		Atomik::needed("Tool.class");
 		$which_project = Tool::setFilter("list_lrus.project",$this->project_id);
+		if (($this->project_id== NULL) || ($this->project_id == 0)){
+			$which_project = "";
+		}
+		else {
+			$which_project = "AND (list_lrus.project = {$this->project_id} OR list_lrus.project = 0)";
+		}		
 		$which_aircraft = Tool::setFilter("aircrafts.id",$this->aircraft_id);
 		$which_company = Tool::setFilter("enterprises.id",$this->company_id);
 		$sql_query = "SELECT list_lrus.id, ".
 							"list_lrus.lru, ".
-							"t2.lru as parent_lru, ".
+							"parent_item.lru as parent_lru, ".
 							"list_lrus.abstract, ".
 							"list_lrus.part_number, ".
 							"list_lrus.dal, ".
@@ -313,34 +319,89 @@ class Project {
 							"aircrafts.name as aircraft, ".
 							"parent_id ".
 							"FROM lrus list_lrus INNER JOIN (".
-							"SELECT id,lru FROM lrus".
-							") t2 ON t2.id = list_lrus.parent_id ".
+							"SELECT lrus.id,lru FROM lrus ".
+							"INNER JOIN projects ON projects.id = lrus.project ".
+							"INNER JOIN aircrafts ON projects.aircraft_id = aircrafts.id {$which_aircraft} ".
+							") parent_item ON parent_item.id = list_lrus.parent_id ".
 							"LEFT OUTER JOIN projects ON projects.id = list_lrus.project ".
-							"LEFT OUTER JOIN aircrafts ON projects.aircraft_id = aircrafts.id ".
-							"LEFT OUTER JOIN enterprises ON enterprises.id = aircrafts.company_id ".
+							"LEFT OUTER JOIN aircrafts ON projects.aircraft_id = aircrafts.id {$which_aircraft}".
+							"LEFT OUTER JOIN enterprises ON enterprises.id = aircrafts.company_id {$which_company}".
 							"LEFT OUTER JOIN scope ON scope.id = list_lrus.scope_id ".
 							"LEFT OUTER JOIN bug_users ON bug_users.id = list_lrus.manager_id ".
 							"WHERE list_lrus.id IS NOT NULL ".
 							$which_project.
-							$which_aircraft.
-							$which_company.
-							" ORDER BY `aircrafts`.`name` ASC,`scope` ASC,`projects`.`project` ASC,`list_lrus`.`parent_id` ASC,`list_lrus`.`lru` ASC";					
+							" ORDER BY `aircrafts`.`name` ASC,`scope` ASC,`projects`.`project` ASC,`list_lrus`.`parent_id` ASC,`list_lrus`.`lru` ASC";
 		// echo $sql_query."<br/>";
 		$result = A('db:'.$sql_query);
 		if ($result !== false){
 			$list   = $result->fetchAll(PDO::FETCH_ASSOC);
+			// var_dump($list);
 			$item_w_photo = new Project;
-			foreach($list as $id => $item):
+			foreach($list as $id => &$item):
 				$item_w_photo->getSubProject($item['id']);
-				$list[$id]['photo_file'] = $item_w_photo->photo_file;
-				$list[$id]['thumbnail'] = $item_w_photo->thumbnail;
-			endforeach;			
+				$item['photo_file'] = $item_w_photo->photo_file;
+				$item['thumbnail'] = $item_w_photo->thumbnail;
+				/* Looking for items with multiple parents */
+				$sql_query = "SELECT lrus.id FROM lrus LEFT OUTER JOIN lru_join_project ON lru_join_project.item_id = lrus.id WHERE lru_join_project.item_id = {$item['id']} AND lrus.id != lrus.parent_id";
+				$result = A('db:'.$sql_query);
+				if ($result !== false){
+					$row   = $result->fetchAll(PDO::FETCH_ASSOC);
+					// var_dump($row);
+					if ($row !== false){
+						if (count($row)>0){
+							$item['parent_lru'] = $item['lru'];
+						}
+					}
+				}
+				endforeach;			
 		}
 		else{
 			$list = array();
 		}		
 		return($list);
-	}		
+	}
+	public static function getParentsList($item_id){
+		$sql_query = "SELECT lru_join_project.id as link_id,lrus.id as id,lru,description_lru as description FROM lrus LEFT OUTER JOIN lru_join_project ON lru_join_project.parent_id = lrus.id ".
+					"WHERE lru_join_project.item_id = {$item_id}";
+		$sql_query .= " UNION SELECT NULL,parent_item.id as id,parent_item.lru,parent_item.description FROM lrus list_lrus INNER JOIN (SELECT id,parent_id,lru,description_lru as description FROM lrus) parent_item ON parent_item.id = list_lrus.parent_id ".
+					"WHERE list_lrus.id = {$item_id} AND list_lrus.id != list_lrus.parent_id";	
+		// echo $sql_query;					
+		$result = A('db:'.$sql_query);
+		if ($result !== false){
+			$list   = $result->fetchAll(PDO::FETCH_ASSOC);
+			if ($list !== false){
+
+			}
+			else{
+				$list = null;
+			}
+		}
+		else{
+			$list = null;
+		}
+		return($list);
+	}
+	public function getAllParentsList($item_id){
+		$sql_query = "SELECT lru_join_project.id as link_id,lrus.id as id,lru,description_lru as description FROM lrus LEFT OUTER JOIN lru_join_project ON lru_join_project.parent_id = lrus.id ".
+					"WHERE lru_join_project.item_id = {$item_id}";
+		$sql_query .= " UNION SELECT NULL,parent_item.id as id,parent_item.lru,parent_item.description FROM lrus list_lrus INNER JOIN (SELECT id,parent_id,lru,description_lru as description FROM lrus) parent_item ON parent_item.id = list_lrus.parent_id ".
+					"WHERE list_lrus.id = {$item_id} AND list_lrus.id != list_lrus.parent_id";	
+		// echo $sql_query;					
+		$result = A('db:'.$sql_query);
+		if ($result !== false){
+			$list   = $result->fetchAll(PDO::FETCH_ASSOC);
+			if ($list !== false){
+
+			}
+			else{
+				$list = null;
+			}
+		}
+		else{
+			$list = null;
+		}
+		return($list);	
+	}	
 	public static function getSelectProject($selected,$onchange="inactive",$aircraft_id="",$company_id=""){
 		$html='<label for="show_project">System:</label>';
 		$html.='<select class="combobox"';
@@ -388,7 +449,7 @@ class Project {
         $html .='</select>';
         return($html);
     }
-	public static function getSelectSubProject($project,$selected,$onchange="inactive"){
+	public static function getSelectSubProject($project,$selected="",$onchange="inactive"){
 		$html ='<label for="show_lru">'.A('menu/equipment').':</label>';
 		$html.='<select class="combobox"';
 		if ($onchange=="active") {
@@ -460,10 +521,11 @@ class Project {
 	}
 	private static function getListDownstreamItems($parent_id,$up=false){
 		if ($up === false){
-			$sql_query = "SELECT lrus.id,lru,description_lru as description,part_number as pn,scope FROM lrus LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE parent_id = {$parent_id} AND lrus.id != parent_id";
+			$sql_query = "SELECT lrus.id,lru,description_lru as description,part_number as pn,abrvt as scope FROM lrus LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE parent_id = {$parent_id} AND lrus.id != parent_id";
+			$sql_query .= " UNION SELECT lrus.id,lru,description_lru as description,part_number as pn,abrvt as scope FROM lrus LEFT OUTER JOIN lru_join_project ON lru_join_project.item_id = lrus.id LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE lru_join_project.parent_id = {$parent_id} AND lrus.id != lrus.parent_id";
 		}
 		else{
-			$sql_query = "SELECT lrus.id,lru,description_lru as description,part_number as pn,scope FROM lrus LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE project = {$parent_id} AND lrus.id = parent_id";
+			$sql_query = "SELECT lrus.id,lru,description_lru as description,part_number as pn,abrvt as scope FROM lrus LEFT OUTER JOIN scope ON scope.id = lrus.scope_id WHERE project = {$parent_id} AND lrus.id = parent_id";
 		}
 		$result = A("db:".$sql_query);
 		// echo $sql_query."<br/>";
@@ -498,12 +560,11 @@ class Project {
 		$output .= "<a href='".Atomik::url('edit_eqpt',array('id'=>$node['id']))."'>open</a>";
 		return($output);
 	}  	
-	public function createDiagram(){
+	public function createDiagram($diagram_filename){
 		require_once 'diagram/class.diagram.php';
 		require_once 'diagram/class.diagram-ext.php';
 		Atomik::needed('Tool.class');
 		$output = "";
-		$diagram_filename = 'diagram_'.uniqid();
 		$diagram_file = dirname(__FILE__).DIRECTORY_SEPARATOR.
 					"..".DIRECTORY_SEPARATOR.
 					"..".DIRECTORY_SEPARATOR.
@@ -530,8 +591,6 @@ class Project {
 		$diagram_png="../result/".$diagram_filename.'.png';
 		$diagram_display->Draw($diagram_png);
 	
-		$output = '<img src="'.$diagram_png.'" border="0" style="position:absolute;left:0;top:0;" />';
-
 		$selected = (isset($_GET['id']) ? $_GET['id'] : $id);
 		$diagram_node_position = $diagram->getNodePositions();
 		$output .= $this->echo_map($diagram_node_position, $selected); 

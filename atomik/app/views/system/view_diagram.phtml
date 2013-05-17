@@ -1,2 +1,13 @@
-<?= $diagram_img ?>
+<!-- http://www.siteduzero.com/informatique/tutoriels/simplifiez-vos-developpements-javascript-avec-jquery/faire-patienter-l-utilisateur-avec-une-animation -->
+<div id="r"></div>
 <script type="text/javascript" src="assets/js/libs/data.js"></script>
+<script type="text/javascript" src="assets/js/libs/jquery.min.js"></script>
+<script>
+  $('#r').html('<img src="assets/images/loading.gif" style="margin-top:100px;margin-left:200px"');
+  $('#r').load("<?= Atomik::url('system/create_diagram',array('id'=>$id))?>",function(response, status, xhr) {
+	  if (status == "error") {
+		var msg = "Sorry but there was an error: ";
+		$("#r").html(msg + xhr.status + " " + xhr.statusText);
+	  }
+});
+ </script>

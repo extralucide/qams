@@ -24,17 +24,32 @@ if ($id != "") {
    Atomik::set('title',"Update system");
    $button = "Modify";
    $project->get($id);
+   Atomik::set('title_add',"Add an item");
+   Atomik::set('url_add',Atomik::url('edit_eqpt&project_id='.$id,false));
 }
 else {
 	Atomik::set('title',"New system");
 	$button = "Add";
 	Atomik::set('css_eqpt',"no_show");
+	Atomik::set('css_add',"no_show");
 }
 $html ='<a href="'.Atomik::url("list_project",false).'" ><img src="'.Atomik::asset('assets/images/pages/sommaire.png').'" border="0" alt="Back" title="Back"><h2>Back</h2></a>';
-Atomik::set('url_add',Atomik::url('add_aircraft_picture',array('id' => $id)));
-Atomik::set('title_add',"Update picture");
+// Atomik::set('url_add',Atomik::url('add_aircraft_picture',array('id' => $id)));
+
 Atomik::set('css_reset',"no_show");
 Atomik::set('css_title',"user");
-Atomik::set('css_add',"no_show");
 Atomik::set('css_page',"no_show");
 Atomik::set('select_menu',$html);
+
+Atomik::disableLayout();
+Atomik::noRender();
+$vars = array('list_aircraft'=>$list_aircraft,
+				'list_data'=>$list_data,
+				'project'=>$project,
+				'button'=>$button,
+				'page'=>$limite,
+				'limite'=>$limite,
+				'id'=>$id);
+$view_output = Atomik::render("edit_project",$vars);
+$content = Atomik::renderLayout("_layout_simple",$view_output);
+echo $content;

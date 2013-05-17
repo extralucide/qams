@@ -3,7 +3,7 @@
 <div id="parents" class="<?= A('parents_highlight')?>">Parent items</div>
 </div><!-- EndTabHeaders -->
 <div class="clearb"></div>
-<div class="wide_nice_square">
+<div class="nice_square go_right">
 <div id="item_c">
 <div style="float:right;margin-right:40px;padding:10px">
 <img src="<?= $project->photo_file ?>" alt="" width="200" >
@@ -23,8 +23,8 @@
 	</form>
 	</div>
 </div>
-<div style="margin:10px;width:600px">
-<form class="edit_data" method='POST' action="<?= Atomik::url('edit_eqpt', false) ?>">
+<div style="margin:10px;width:400px">
+<form method='POST' action="<?= Atomik::url('edit_eqpt', false) ?>">
 <fieldset class="medium">
 <label for='aircraft_id'>Aircraft:</label>           
 <select class='combobox' onchange_="this.form.submit()" name='aircraft_id'>
@@ -32,7 +32,7 @@
 <? foreach($list_aircraft as $row):?>
     <option value="<?= $row['id'] ?>"
     <? if ($row['id'] == $project->aircraft_id){ print " SELECTED ";}?>
-    ><?= $row['company']." ".$row['aircraft']?>
+    ><?= $row['aircraft']?>
 <? endforeach ?>
 </select><br /> 
 <label for='project_id'>System:</label>           
@@ -92,7 +92,7 @@
 <div class="<?= A('css_eqpt')?>">
 <h3 class="">Parents list</h3>
 <span id="parents_list"></span>
-</div><div class="spacer"></div>
+</div>
 <form class="<?= A('css_admin')?>" method='post' action="<?= Atomik::url('system/add_item_parent_link')?>" >
 <fieldset class="medium">
 <label for='project'>Parent</label>
@@ -111,8 +111,6 @@
 </fieldset>
 </form>
 <div class="spacer"></div>
-<a href="<?= Atomik::url("list_eqpt",false)?>" >
-<img src="<?= Atomik::asset('assets/images/pages/sommaire.png')?>" border="0" alt="Back" title="Back"><h2>Back</h2></a>
 </div>
 <iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none"></iframe>
 <span id="export_data_list_frame"></span>

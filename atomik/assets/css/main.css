@@ -725,7 +725,7 @@ h1 {
 	/* border: 1px solid #222222;*/
 	list-style: none;
 	float: left;
-	behavior:expression(addHover(this));
+	/* behavior:expression(addHover(this)); */
 }
 .subnav li  ul {
 	padding: 2em;
@@ -1019,7 +1019,6 @@ html * .logbook
  */
 .down_arrow3 {
   display: inline; 
-  //margin:4px 0 0 0;
   padding-left:16px;
   width:16px;
   border-style:none;
@@ -1411,6 +1410,23 @@ html * .logbook
 /* end Button */
 li.no_bullet{
 	list-style-type:none;
+}
+.wide_nice_square {
+	background: transparent;
+	margin-left: 0px;
+	padding-top: 10px;
+	padding-left: 10px;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	border-top: 1px solid #F4F4F4;
+	-moz-border-radius: 5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+	overflow:visible;
+	/*width:800px;*/
+	min-height:600px;
+	z-index:10;
 }
 div.nice_square {
 	background: transparent;
@@ -1914,7 +1930,7 @@ div#saq_086_header {
 }
 .pbs_frame {
 	border:none;
-	width:800px;
+	width:100%;
 	height:800px;
 	overflow:scroll;
 }
@@ -1925,8 +1941,8 @@ div#saq_086_header {
     height: 21px;
     padding: 0 0 0 8px;
     font: 12px/21px arial,sans-serif;
-    background-image: url("assets/images/grad_dark_50_dwn.png");
-    background-repeat: repeat-x;
+    /*background-image: url("assets/images/grad_dark_50_dwn.png");
+    background-repeat: repeat-x;*/
     z-index:1;
     border-radius: 5px;
     -moz-border-radius: 5px;

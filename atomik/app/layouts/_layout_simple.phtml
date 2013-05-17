@@ -20,25 +20,18 @@
             dojo.require("dojo.parser");
         </script>
     </head>
-    <body>	
+    <body>
         <div style="background-color:#FFF">
             <div id="bandeau_generic">
-                <div id="bandeau3">	<span id="img_user">
-                        <?
-						Atomik::needed('User.class');
+                <div id="bandeau3">
+					<span id="img_user">
+                        <? Atomik::needed('User.class');
                         if(User::isUserLogged()){
-							print User::getNameUserLogged()."<br/>";
-                            print '<div class="font_project">'.A('session/current_project_name').'</div>';
+							echo User::getNameUserLogged().'<br/><div class="font_project">'.A('session/current_project_name').'</div>';
                         }
                         else {
-                        	if(Atomik::get('request/action') == "view"){
-                        		/* access enabled just to see wiki*/
-                        	}
-                        	else{
-                        		header('Location:../index.php');
-                        	}
-                        }
-                        ?>
+							Atomik::redirect('../index.php');
+                        }?>
                     </span>
                     <a href="../index.php?loggedOut=TRUE"><img alt="loggout" height="22" width="22" src="<?= Atomik::asset('assets/images/22x22/exit.png')?>" class='img_logout_btn' /></a>
                 </div>
@@ -52,7 +45,8 @@
 				}?>
             <div id="menu_horizontal">
                 <ul id="menu">
-                    <li class="<?= (A('tab_select') == 'data') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>"><a href="<?= Atomik::url('data',false)?>" >Documents</a>
+                    <li class="<?= (A('tab_select') == 'data') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>">
+					<a href="<?= Atomik::url('data',false)?>" >Documents</a>
                         <ul>
                              <li><a href="<?= Atomik::url('data',false)?>">View Documents</a></li>
                              <li><a href="<?= Atomik::url('data_type',false)?>">View Types</a></li>
@@ -90,14 +84,14 @@
                     	<li><a href="<?= Atomik::url('wiki') ?>">Wiki</a></li>
 						<li class="<?= (A('tab_select') == 'about') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('about',false) ?>">About</a></li>
 						<li class="<?= (A('tab_select') == 'tour') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('tour',false) ?>">Tour</a></li>
-						<li class="<?= (A('tab_select') == 'user_guide') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('user_guide',false) ?>">User Guide</a></li>
+						<li class="<?= (A('tab_select') == 'user_guide') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('user_guide',false) ?>">User Guide</a></li>						
             		</ul>
                     </li>
 					<? if (User::getAdminUserLogged()){?>
                     <li class="<?= (A('tab_select') == 'admin') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('admin',false) ?>">Admin</a>
                     </li>
 					<?}
-					?>				
+					?>
                 </ul>
                 <div class="<?= A('css_search')?>">
                     <form class="search_form" method="POST" action="<?= Atomik::url() ?>">
@@ -117,6 +111,10 @@
                     <?php endforeach; ?>
                 </ul>
                 <div style="min-height:800px">
+					<div class="<?= A('css_add')?>" style="width:824px;">
+					<a href="<?= A('url_add')?>" style="width:60%;text-decoration: none;outline-width: medium;outline-style: none;" title="Add new entry">
+					<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="32" alt="Add new entry" title="Add new entry" border="no" /><?= A('title_add')?></a>
+					</div>
                     <?php echo $contentForLayout; ?>
                 </div>	
             </div>

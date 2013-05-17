@@ -45,10 +45,16 @@ else {
 	$list_data = $result->fetchAll(PDO::FETCH_ASSOC);
 }			 
 $result = A('db:'.$list_pr_sql_query);
-$list_pr = $result->fetchAll(PDO::FETCH_OBJ);
-/* amount of rows */
-if 	($list_pr !== false){
-	$nb_row_response=count($list_pr);
+if 	($result !== false){
+	$list_pr = $result->fetchAll(PDO::FETCH_OBJ);
+	/* amount of rows */
+	if 	($list_pr !== false){
+		$nb_row_response=count($list_pr);
+	}
+}
+else{
+	$nb_row_response = 0;
+	$list_pr = array();
 }
 // if ($nb_row_response == 0) {
 	// Atomik::noRender();

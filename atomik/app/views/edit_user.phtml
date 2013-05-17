@@ -89,7 +89,7 @@
 </div>
 <div id="projects_c">
 <div class="<?= A('css_modify')?>">
-<span id="prr_table"></span>
+<span id="projects_list"></span>
 <div class="spacer"></div>	
 <form class="<?= A('css_admin')?>" method='post' action="<?= Atomik::url('user/add_user_project_link')?>" target_="uploadFrame" onsubmit_="document.getElementById('uploadFrame').style.display = 'block'" >
 <fieldset class="medium">
@@ -127,6 +127,16 @@
 		//uiColor : '#9AB8F3'
 	});
 	cms_page_tab_style();
-	gestion_prr("<?= Atomik::url('user/display_projects_list',array('id'=>$user_to_edit->id))?>");
+	/* gestion_prr("<?= Atomik::url('user/display_projects_list',array('id'=>$user_to_edit->id))?>"); */
 //]]>
 </script>
+<script type="text/javascript" src="assets/js/libs/jquery.min.js"></script>
+<script>
+  $('#projects_list').html('<li class=\"warning\" style=\"list-style-type: none\"><img src="assets/images/loading.gif">Creating projects table ... Please wait ...</li>');
+  $('#projects_list').load("<?= Atomik::url('user/display_projects_list',array('id'=>$user_to_edit->id))?>",function(response, status, xhr) {
+	  if (status == "error") {
+		var msg = "Sorry but there was an error: ";
+		$("#r").html(msg + xhr.status + " " + xhr.statusText);
+	  }
+});
+ </script>

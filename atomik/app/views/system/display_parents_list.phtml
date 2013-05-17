@@ -1,0 +1,20 @@
+<table cellspacing="0" class="pagetable" style="float:left;width:500px">
+<thead>
+<tr class='vert'>
+<th colspan="11">Parent items</th>
+</tr>
+</thead>
+<tbody>
+<?
+foreach( $list_data as $row):
+	$color = ($counter%2)?"vert":"rouge";?>		
+	<tr class='<?= $color?>'><td colspan="4"><span style='color:#000'><a href="<?= Atomik::url('edit_eqpt',array('id'=> $row['id']))?>"><?= "<b>".$row['lru']."</b>"?></a></span></td>
+	<td colspan="6"><?= $row['description']?></td>	
+	<td><a class="<?= A('css_admin')?>" href="<?= Atomik::url('system/remove_parent_link',array('link_id'=>$row['link_id'],'item_id'=>$item_id))?>" >
+	<img style='padding-left:5px;padding-top:5px;float:right' border="0" width='20' height='20' src='<?= Atomik::asset("assets/images/32x32/agt_action_fail.png")?>' alt='remove link' title='remove link' /></a></td>
+	</tr>
+	<? $counter++;
+endforeach;
+?>
+</tbody>
+</table>

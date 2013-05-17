@@ -4,7 +4,7 @@
 <div id="diagram" class="<?= A('diagram_highlight')?>">PBS</div>
 </div><!-- EndTabHeaders -->
 <div class="clearb"></div>
-<div class="nice_square go_right">
+<div class="wide_nice_square">
 <div id="system_c">
 <div style="float:right;margin-right:40px;padding:10px">
 <img src="<?= $project->photo_file ?>" alt="" width="200" >
@@ -68,11 +68,11 @@
 <div class="<?= A('css_eqpt')?>">
 <div  style="width:824px;">
 <a href="<?= Atomik::url('edit_eqpt',array('project_id' => $id))?>" style="width:60%;text-decoration: none;outline-width: medium;outline-style: none;" title="Add new entry">
-<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="32" alt="Add new entry" title="Add new entry" border="no" />Add equipment</a>
+<img src="<?= Atomik::asset('assets/images/newobject.gif')?>" class="systemicon" width="32" alt="Add new entry" title="Add new entry" border="no" />Add item</a>
 </div>
 <div class="<?= A('css_eqpt')?>">
 <h3 class="">Items list</h3>
-<span id="prr_table"></span>
+<span id="items_list"></span>
 <div class="spacer"></div>
 </div>
 <iframe id="uploadFrame" name="uploadFrame" src="#" style="display:none"></iframe>
@@ -82,6 +82,8 @@
 <div id="diagram_c" >
 <iframe class="pbs_frame" src="<?= Atomik::url('system/view_diagram',array('id'=>$id))?>" ></iframe>
 <span id="baseline_table"></span>
+<a href="<?= Atomik::url("list_project",false)?>" >
+<img src="<?= Atomik::asset('assets/images/pages/sommaire.png')?>" border="0" alt="Back" title="Back"><h2>Back</h2></a>
 </div>
 </div>
 </div>
@@ -94,7 +96,17 @@
         width : '450'
     });
 	cms_page_tab_style();
-	gestion_prr("<?= Atomik::url('system/display_eqpts_list',array('id'=>$id))?>",'<li class=\"warning\" style=\"list-style-type: none\">Creating items table ... Please wait ...</li>');
+	/* gestion_prr("<?= Atomik::url('system/display_eqpts_list',array('id'=>$id))?>",'<li class=\"warning\" style=\"list-style-type: none\">Creating items table ... Please wait ...</li>');*/
 	/* gestion_baseline("<?= Atomik::url('system/view_diagram',array('id'=>$id))?>"); */
 //]]>
 </script>
+<script type="text/javascript" src="assets/js/libs/jquery.min.js"></script>
+<script>
+  $('#items_list').html('<li class=\"warning\" style=\"list-style-type: none\"><img src="assets/images/loading.gif">Creating items table ... Please wait ...</li>');
+  $('#items_list').load("<?= Atomik::url('system/display_eqpts_list',array('id'=>$id))?>",function(response, status, xhr) {
+	  if (status == "error") {
+		var msg = "Sorry but there was an error: ";
+		$("#r").html(msg + xhr.status + " " + xhr.statusText);
+	  }
+});
+ </script>
