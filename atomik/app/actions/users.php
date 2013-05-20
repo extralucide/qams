@@ -30,18 +30,17 @@ $show_project = "";
 $show_poster = "";
 $line = 0;
 $header_fields = array("Id","Name", "Company",  "Function","Project","Email","Telephone","" );
-// $env_context[] = array();
 $context = array();
-// $env_context = $context_array;
-// $env_context['filter_letter']=$filter_letter;
-// var_dump($context_array);
 $user = new User(&$context_array);
-// var_dump($context_array);
+
+/* count users and set amount of pages - first query */
 $list_users = $user->getUsersList();
 $nbtotal = count($list_users);
 $nbpage = Tool::compute_pages($nbtotal,&$page,&$debut,$limite);						
 Atomik::set('nb_pages',$nbpage);
-$user->prepare($user->get_list_poster());
+
+/* get users list - second query */
+$user->prepare();
 $list_users_lite = $user->execute($debut,$limite);
 $html = "";
 

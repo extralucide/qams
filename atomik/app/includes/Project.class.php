@@ -231,6 +231,7 @@ class Project {
 										$company_id="",
 										$nb_projects=0){
 		Atomik::needed('Tool.class');
+		Atomik::needed('User.class');
         $which_company = Tool::setFilter("aircrafts.id",$aircraft_id);
 		$which_aircraft = Tool::setFilter("enterprises.id",$company_id);
 
@@ -251,12 +252,24 @@ class Project {
 		$list_data = A("db:".$sql_query);
         $list = $list_data->fetchAll(PDO::FETCH_ASSOC);
 		$nb_projects = count($list);
+		/* Get pictures */
 		$system_w_photo = new Project;
-        foreach($list as $id => $system):
-            $system_w_photo->get($system['id']);
-            $list[$id]['photo_file'] = $system_w_photo->photo_file;
-            $list[$id]['thumbnail'] = $system_w_photo->thumbnail;
-        endforeach;		
+		if (User::getCompanyUserLogged() != "ECE"){
+	        foreach($list as $id => &$system):
+	            $system_w_photo->get($system['id']);
+	            $system['photo_file'] = $system_w_photo->photo_file;
+	            $system['thumbnail'] = $system_w_photo->thumbnail;
+	            $system['project'] = str_rot13($system['project']);
+	            $system['description'] = str_rot13($system['description']);
+	        endforeach;
+		}
+		else{
+	        foreach($list as $id => &$system):
+	            $system_w_photo->get($system['id']);
+	            $system['photo_file'] = $system_w_photo->photo_file;
+	            $system['thumbnail'] = $system_w_photo->thumbnail;
+	        endforeach;		
+		}
 		return($list);
 	}
 	public function setProject($project_id){

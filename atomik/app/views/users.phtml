@@ -35,9 +35,11 @@ for ($i=ord("A");$i<=ord("Z");$i++)
 if ($nbtotal != 0){ 
 	foreach ($list_users_lite as $row) {
 		$user->get_user_info($row['id']);
-		$color = ($line++ % 2 == 0) ? 'rouge' : 'vert';
 		if (!$user->getActive()){
 			$color = 'rouge_fonce';
+		}
+		else{
+			$color = ($line++ % 2 == 0) ? 'rouge' : 'vert';
 		}
 		?>
 		<tr class='grey_border <?= $color?>'>

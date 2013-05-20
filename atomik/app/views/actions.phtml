@@ -93,16 +93,16 @@ if ($nb_actions != 0){
 		<div id="bande_gauche" style="width:350px;float:left">
 			<div class="my_menu" >
 				<ul>
-					<li class="edit_action"><h2><a href="<?= Atomik::url('post_action',false)?>?id=<?= $action->id ?>" >Edit action</h2></a></li>
-					<li class="copy_action"><h2><a href="<?= Atomik::url('post_action',false)?>?copy_id=<?= $action->id ?>" >Copy action</h2></a></li>
-					<li class="delete"><h2><a href="<?= Atomik::url('action/remove_action',false)?>?id=<?= $action->id ?>"  >Delete action</a></h2></li>
-					<li class="edit_action"><h2><a href="<?= Atomik::url('comment_action',false)?>?id=<?= $action->id ?>"  >Comment action</a></h2></li>
+					<li class="edit_action"><h2><a href="<?= Atomik::url('post_action',array('id'=>$action->id))?>" >Edit action</h2></a></li>
+					<li class="copy_action"><h2><a href="<?= Atomik::url('post_action',array('copy_id'=>$action->id ))?>" >Copy action</h2></a></li>
+					<li class="delete"><h2><a href="<?= Atomik::url('action/remove_action',array('id'=>$action->id ))?>"  >Delete action</a></h2></li>
+					<li class="edit_action"><h2><a href="<?= Atomik::url('comment_action',array('id'=>$action->id ))?>"  >Comment action</a></h2></li>
 				</ul>		
 			</div>
 		</div>	
 		<div id="bande_gauche">
 			<div class="contenu smallsize_nomargin">
-			<h1><u>Poster</u></h1><?=$action->getPoster()?>
+			<h1><u>Poster</u></h1><?=$action->getSubmitter()?>
 			<h1><u>Severity</u></h1><?=$action->getSeverity()?>
 			<h1><u>Context</u></h1>
 			<?=stripslashes($action->context)?>

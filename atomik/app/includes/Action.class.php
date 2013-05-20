@@ -289,6 +289,7 @@ class Action {
 	public static function getHotActions($aircraft_id="",$project_id=""){
 		$today = date("Y-m-d");
 		Atomik::needed('Tool.class');
+		Atomik::needed('User.class');
 		$which_project = Tool::setFilter("projects.id",$project_id);
 		$which_aircraft = Tool::setFilter("aircrafts.id",$aircraft_id);		
 		$sql = "SELECT actions.comment,review,actions.id,posted_by,context,actions.Description as description,".
@@ -307,7 +308,14 @@ class Action {
 				   $which_project.
 				   $which_aircraft;
 		//echo "TEST: ".$sql."<br/>";
-		$actions_list = A("db:".$sql)->fetchall();	
+		$actions_list = A("db:".$sql)->fetchall();
+		/* Make obscured */
+		if (User::getCompanyUserLogged() != "ECE"){
+			foreach($actions_list as $key => &$action):
+				$action['fname'] = str_rot13($action['fname']);
+				$action['lname'] = str_rot13($action['lname']);	
+			endforeach;
+		}		
 		return($actions_list);
 	}
 	public static function getStatusList(){
@@ -495,9 +503,13 @@ class Action {
 		return($status_id);		
 	}
 	private function setAssignee($id,$fname,$lname){
-		$this->assignee_id = $id;
+		/* manage e cute */
 		Atomik::needed('User.class');
-		$this->attendee = str_replace("Ã©","&#233;",User::getLiteName($fname,$lname));	
+		$this->assignee_id = $id;
+		$this->attendee = str_replace("Ã©","&#233;",User::getLiteName($fname,$lname));
+		if (User::getCompanyUserLogged() != "ECE"){
+			$this->attendee = str_rot13($this->attendee);
+		}
 	}
 	public function getAssignee($option=false){
 		if($option == false){
@@ -524,12 +536,19 @@ class Action {
 		return($this->submitter_id);
 	}
 	public function getSubmitter(){
+		Atomik::needed('User.class');
 		$sql_query = "SELECT fname,lname FROM bug_users WHERE id = {$this->submitter_id} LIMIT 1";
 		$result = A("db:".$sql_query);
 		if ($result != false){
 			$row = $result->fetch(PDO::FETCH_OBJ);
 			if ($row != false){
-				$submitter = $row->fname." ".$row->lname;
+				if (User::getCompanyUserLogged() != "ECE"){
+					$submitter = str_rot13($row->fname." ".$row->lname);
+
+				}
+				else{			
+					$submitter = $row->fname." ".$row->lname;
+				}
 			}
 			else{
 				$submitter = "";
@@ -664,6 +683,12 @@ class Action {
 			$this->review_type = $row['type'];
 			$this->description = $row['Description'];
 			$this->response = $row['comment'];
+			if (User::getCompanyUserLogged() != "ECE"){
+				$this->project = str_rot13($this->project);
+				$this->lru = str_rot13($this->lru);
+				$this->description = str_rot13($this->description);
+				$this->response = str_rot13($this->response);
+			}			
 			/* date */
 			/* Convert date to display nicely */
 			$this->date_open = Date::convert_date_conviviale ($row['date_open']);

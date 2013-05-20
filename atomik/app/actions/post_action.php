@@ -161,6 +161,12 @@ $severity_selected		= $action->getSeverityId();
 $list_users_pdo_statement = $project->getUsers();
 if ($list_users_pdo_statement != false){
 	$list_users = $list_users_pdo_statement->fetchAll();
+	if (User::getCompanyUserLogged() != "ECE"){
+		foreach($list_users as $key => &$user):
+			$user['fname'] = str_rot13($user['fname']);
+			$user['lname'] = str_rot13($user['lname']);
+		endforeach;
+	}	
 }
 else{
 	$list_users = array();

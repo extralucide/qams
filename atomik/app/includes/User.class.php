@@ -37,6 +37,7 @@ class User {
 	public $service;
 	public $service_acronym;
 	public $company_name;
+	private $user_logged_company;
 	private $overview;
 	private $property;
 	public $email;
@@ -99,11 +100,12 @@ class User {
 			$id = self::getIdUserLogged();
 			$this->get_user_info($id);
 		}
+		$this->user_logged_company = self::getCompanyUserLogged();
 	}
-	public function prepare($sql_query){
+	public function prepare(){
+		$sql_query = $this->get_list_poster();
 		// cancelled actions are not shown but still exists in the db
 		$sql_query .= "  LIMIT :debut,:nombre";  //id ASC id ASC
-		// echo $sql_query;
 		unset($this->prepare);
 		$this->prepare = $this->db->db_prepare($sql_query);	
 	}
@@ -140,7 +142,7 @@ class User {
 		return($nb_remarks);
   }  
  	public function action_get_list_poster (){
-		 $sql_query = "SELECT DISTINCT (bug_users.id),".
+		 $sql_query = "SELECT DISTINCT (bug_users.id), ".
 					"bug_users.lname,".
 					"bug_users.fname,".
 					"bug_users.function,".
@@ -169,16 +171,24 @@ class User {
 					   $this->search_query.
 					   " ORDER BY lname ASC" ;
 		$result = $this->db->db_query($sql_query);
-		$list   = $result->fetchAll(PDO::FETCH_OBJ); 			   
+		$list   = $result->fetchAll(PDO::FETCH_OBJ);
+		/* Make obscured */
+		if ($this->user_logged_company != "ECE"){
+			foreach($list as $key => &$user):
+				$user->lname = $this->encode_rot13($user->lname);
+				$user->fname = $this->encode_rot13($user->fname);
+				$user->function = $this->encode_rot13($user->function);
+			endforeach;
+		}
 		return($list);
   } 
  	public function get_list_poster (){
-		 $sql_query = "SELECT DISTINCT (bug_users.id),".
-										"bug_users.lname,".
+		 $sql_query = "SELECT DISTINCT (bug_users.id)".
+										/*"bug_users.lname,".
 										"bug_users.fname,".
 										"bug_users.function,".
 										"bug_users.enterprise_id,".
-										"bug_users.email ".
+										"bug_users.email ".*/
 										"FROM bug_users ".
 										 " LEFT OUTER JOIN user_join_project ON user_join_project.user_id = bug_users.id ".
 										 " WHERE bug_users.id IS NOT NULL ".
@@ -197,12 +207,8 @@ class User {
 	return ($list);
   }
    public function get_stat_actions($exclude_users=false) {
-		$list = $this->action_get_list_poster ();
-		// echo $sql_query."<br>";
-		// $result = $this->db->db_query($sql_query);
-		// $list   = $result->fetchAll(PDO::FETCH_OBJ);      
+		$list = $this->action_get_list_poster ();  
 		/* amount of rows */	
-		// var_dump($list);
 		$this->nb=count($list); 
 		if ($this->nb != 0) {
 			$this->index_poster = 0;
@@ -221,8 +227,6 @@ class User {
 						$nb_closed[$this->index_poster] = $closed_actions;
 						$this->index_poster++;						
 					}
-					// $this->poster_nb_tab[$poster]=$nb[$this->index_poster];	
-					// $poster.= ": ".$row->function;	
 			 endforeach;
 			 if ($data == null){
 				$this->name = array();
@@ -264,7 +268,27 @@ class User {
 			$user=$result['fname']." ".$result['lname'];
 		}
 		return($user);
-	}	
+	}
+	public static function getCompanyUserLogged(){
+			$sql_query = "SELECT enterprises.name as enterprise FROM bug_users ".
+						"LEFT OUTER JOIN enterprises ON enterprises.id = enterprise_id ".
+						" WHERE bug_users.id = ".self::getIdUserLogged().
+						" LIMIT 1";		
+		$result = A("db:".$sql_query);
+		if (($result !== false) AND ($result != null)){
+			$row = $result->fetch(PDO::FETCH_OBJ);
+			if ($row !== false){
+				$company = $row->enterprise;
+			}
+			else{
+				$company = "";
+			}			
+		}
+		else{
+			$company = "";
+		}
+		return($company);		
+	}		
 	public static function getEmailUserLogged(){
 		if (isset($_COOKIE["bug_cookie"])){
 			$cookie = unserialize(stripslashes($_COOKIE['bug_cookie']));
@@ -356,8 +380,6 @@ class User {
 	}		
 	public function getProjects($user_id=""){
 		if ($user_id!=""){
-			//Atomik::needed('Tool.class');
-			//$filter = Tool::setFilterWhere("bug_users.id",$user_id);	
 			/*
 			* Get project whom the user is assigned
 			*/
@@ -374,12 +396,20 @@ class User {
 			if (count($list_projects)==0){
 				$list_projects=null;
 			}
-			// $list_projects = $result->fetchAll(PDO::FETCH_KEY_PAIR);
+			else{
+				if ($this->user_logged_company != "ECE"){
+					foreach($list_projects as $key => &$project):
+						$project['company'] = $this->encode_rot13($project['company']);
+						$project['aircraft'] = $this->encode_rot13($project['aircraft']);
+						$project['project'] = $this->encode_rot13($project['project']);	
+					endforeach;
+				}
+			}
 		}
 		else{
 			$list_projects=null;
 		}
-		//$this->projects[$row->id]=$row->project;
+	
 		return($list_projects);	
 	}	
 	
@@ -415,13 +445,19 @@ class User {
 		$third_letter = User::getSecondLetter($lname);
 		$trigram = $first_letter.$second_letter.$third_letter;
 		return($trigram);
-	}	
+	}
+	public function encode_rot13($txt){
+		if ($this->user_logged_company != "ECE"){
+			$result = str_rot13($txt);
+		}
+		else{
+			$result = $txt;
+		}
+		return $result;
+	}
 	public function get_user_info($user_id=""){
 		$result = false;
 		if ($user_id != ""){
-			// include("atomik/app/includes/Tool.class.php");
-			// Atomik::needed('Tool.class');
-			// $filter = Tool::setFilterWhere("bug_users.id",$user_id);
 			$sql_query = "SELECT is_admin,".
 						"fname,".
 						"lname,".
@@ -445,28 +481,26 @@ class User {
 						" ORDER BY `bug_users`.`lname` ASC";
 			$result = $this->db->db_query($sql_query);
 		}
-		//$result = $sth->fetchAll();
-		//$nb_row_response=count($result);
-		//var_dump($result);
 		if ($result !== false) {
-			$this->id = $user_id;
 			$row = $result->fetch(PDO::FETCH_ASSOC);
-			$this->name = $row['fname']." ".$row['lname'];			
-			$this->fname = $row['fname'];
-			$this->lname = $row['lname'];
+			$this->id = $user_id;
+			$this->company_name = $this->encode_rot13($row['enterprise']);		
+			$this->fname = $this->encode_rot13($row['fname']);
+			$this->lname = $this->encode_rot13($row['lname']);
+			$this->name = $this->fname." ".$this->lname;
 			/* acronym */
 			$this->acronym = User::getAcronym($this->fname,$this->lname);			
 			$this->username = $row['username'];
 			$this->dismissed = $row['dismissed'];
 			$this->password = $row['password'];
-			$this->user_function = $row['function'];
+			$this->user_function = $this->encode_rot13($row['function']);
 			$this->overview = $row['overview'];
 			$this->property = $row['property'];
-			$this->company_name = $row['enterprise'];
+			
 			$this->company_id = $row['enterprise_id'];
 			$this->service = $row['service'];
 			$this->service_acronym = $row['acronym'];
-			$this->email = $row['email'];
+			$this->email = $this->encode_rot13($row['email']);
 			$this->phone = $row['telephone'];
 			$this->folder = $row['folder'];
 			$this->user_right = $row['is_admin'];
@@ -477,9 +511,12 @@ class User {
 						"..".DIRECTORY_SEPARATOR.
 						"..".DIRECTORY_SEPARATOR.
 						"assets".DIRECTORY_SEPARATOR."images".DIRECTORY_SEPARATOR."photos".DIRECTORY_SEPARATOR;
-			$image_name = "90px-Lakeyboy_Silhouette.PNG";
-			$thumbnail_name = "90px-Lakeyboy_Silhouette.PNG";
-			 if (file_exists($img_path.DIRECTORY_SEPARATOR.$user_id.".png")) {
+						
+			 if ($this->user_logged_company != "ECE"){
+				$image_name = "90px-Lakeyboy_Silhouette.PNG";
+				$thumbnail_name = "90px-Lakeyboy_Silhouette.PNG";				 	
+			 }
+			 else if (file_exists($img_path.DIRECTORY_SEPARATOR.$user_id.".png")) {
 				$image_name = $user_id.".png";
 				$thumbnail_name = $user_id."_tb.png";									
 			 }
@@ -492,22 +529,14 @@ class User {
 				$thumbnail_name = $user_id."_tb.jpeg";				
 			 }			 
 			 else {
-				$this->photo_file=Atomik::asset("assets/images/photos/".$image_name);
+				$image_name = "90px-Lakeyboy_Silhouette.PNG";
+				$thumbnail_name = "90px-Lakeyboy_Silhouette.PNG";			 	
 			 }
 			 $this->photo_file=Atomik::asset("assets/images/photos/".$image_name);
 			 $this->thumbnail=Atomik::asset("assets/images/photos/".$thumbnail_name);
 			/*
 			* Get project whom the user is assigned
 			*/
-            // $sql_query = "SELECT projects.project,user_join_project.id FROM bug_users ".
-                        // "LEFT OUTER JOIN user_join_project ON bug_users.id = user_join_project.user_id ".
-                        // "LEFT OUTER JOIN projects ON projects.id = user_join_project.project_id ".
-                        // "WHERE bug_users.id = {$user_id}";
-            //echo  $sql_query;
-			// $result = $db->db_query($sql_query);
-	        // while ($row = $result->fetch(PDO::FETCH_OBJ)) {	
-                // $this->projects[$row->id]=$row->project;
-            // }
 			$this->projects=$this->getProjects($user_id);
         }
 		else {
