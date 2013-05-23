@@ -699,6 +699,9 @@ class User {
 		  else{
 				$author_lite = $last_name;
 		  }
+		  if (self::getCompanyUserLogged() != "ECE"){
+			$author_lite = str_rot13($author_lite);
+		  }
 		  return($author_lite);	
 	}
 	public function find_poster($reader,$client=array()) {

@@ -90,7 +90,7 @@ $aircraft_found = false;
 if (isset($_GET['current_aircraft_id'])){
 	$current_aircraft_id = $_GET['current_aircraft_id'];
 	$_SESSION['current_aircraft_id'] = $current_aircraft_id;
-	$current_aircraft = Atomik_Db::find("aircrafts","aircrafts.id = {$current_aircraft_id}");
+	$current_aircraft = Atomik_Db::find("aircrafts",array("aircrafts.id"=>$current_aircraft_id));
 	$_SESSION['current_aircraft'] = $current_aircraft['name'];
 	unset($_SESSION['current_project_id']);
 	$_SESSION['current_project_name'] = Aircraft::getAircraftName($current_aircraft_id);;
@@ -150,7 +150,7 @@ else if (isset($_SESSION['current_aircraft_id'])){
 	}	
 	$current_project = "None";
 	$current_aircraft_id = $_SESSION['current_aircraft_id'];
-	$current_aircraft = $_SESSION['current_aircraft'];
+	$current_aircraft = (isset($_SESSION['current_aircraft']))?$_SESSION['current_aircraft']:"";
 	$message= 'Aircraft '.$current_aircraft.' selected.';
 	$label = 'warning';
 	/* Hot actions */

@@ -308,12 +308,21 @@ class Action {
 				   $which_project.
 				   $which_aircraft;
 		//echo "TEST: ".$sql."<br/>";
-		$actions_list = A("db:".$sql)->fetchall();
+		$result = A("db:".$sql);
+		if ($result !== false){
+		   $actions_list = $result->fetchall();
+		}	
+		else{
+		   $actions_list = array();
+		}	
 		/* Make obscured */
 		if (User::getCompanyUserLogged() != "ECE"){
 			foreach($actions_list as $key => &$action):
 				$action['fname'] = str_rot13($action['fname']);
-				$action['lname'] = str_rot13($action['lname']);	
+				$action['lname'] = str_rot13($action['lname']);
+				$action['description'] = str_rot13($action['description']);
+				$action['project'] = str_rot13($action['project']);
+				$action['lru'] = str_rot13($action['lru']);
 			endforeach;
 		}		
 		return($actions_list);
@@ -523,6 +532,10 @@ class Action {
 			// $attendee = str_replace("&#233;","Ã©",$this->attendee);
 			$attendee = html_entity_decode($this->attendee,ENT_COMPAT,"UTF-8");
 			// echo $attendee."<br/>";
+		}
+		if (User::getCompanyUserLogged() != "ECE"){
+			$attendee = str_rot13($attendee);
+
 		}
 		return($attendee);
 	}

@@ -8,7 +8,6 @@ Atomik::needed("Tool.class");
 
 $page = isset($_REQUEST['page']) ? (int)$_REQUEST['page'] : 1;  
 $limite = isset($_REQUEST['limite']) ? (int)$_REQUEST['limite'] : 8;
-// var_dump($_GET);
 $iterations_selected = isset($_GET['iterations']) ? (int)$_GET['iterations'] : 10; /* 10 months by default */
 $granularity_selected = isset($_GET['granularity']) ? (int)$_GET['granularity'] : 2; /* Months by default */
 Atomik::set('tab_select','action');
@@ -141,13 +140,14 @@ $html.='</fieldset >';
 $html.='</form>';
 
 /* menu submitter */
-$list_users_pdo_statement = $project->getUsers();
+$list_users = $project->getUsers();
+/*
 if ($list_users_pdo_statement != false){
 	$list_users = $list_users_pdo_statement->fetchAll();
 }
 else{
 	$list_users = array();
-}
+}*/
 $html.='<form method="POST" action="'.Atomik::url('actions', false).'">';
 $html.='<fieldset class="medium">';
 $html.='<label for="submitter_id">Submittter:</label>';
@@ -176,3 +176,11 @@ $html.= $action->getSelectSeverity($context_array['criticality_id'],"active");
 $html.='</fieldset >';
 $html.='</form>';
 Atomik::set('select_menu',$html);
+if ($nb_actions == 0){
+    Atomik::noRender();
+    echo '<div class="nice_square go_right">';
+    echo "<li class='warning' style='list-style-type: none;margin-top:5px;margin-right:10px'>";
+    echo "no data !";
+    echo "</li>";
+    echo "</div>";
+}

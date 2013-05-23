@@ -49,6 +49,11 @@
 			<? if (A('session/current_project_name') == ""){
 					Atomik::set('css_hyperlink',"no_show");
 					Atomik::set('css_search',"shift_search");
+				}
+				else{
+					if (!User::getAdminUserLogged()){
+						/* Atomik::set('css_search',"shift_search_no_admin"); */
+					}
 				}?>
             <div id="menu_horizontal">
                 <ul id="menu">
@@ -84,20 +89,32 @@
                           </ul>
                     </li>
                     </li>
-                    <li class="<?= (A('tab_select') == 'misc') ? 'tab_highlight':'tab_normal' ?>"><a href="#">Miscelleanous</a>
+
+					<? if (User::getAdminUserLogged()){?>
+                    <li class="<?= (A('tab_select') == 'admin') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('admin',false) ?>">Admin</a>
+                    </li>
+					<?}
+					else{?>
+	                    <li class="<?= (A('tab_select') == 'options') ? 'tab_highlight':'tab_normal' ?> <?=A('css_hyperlink')?>">
+						<a href="<?= Atomik::url('list_project',false)?>">Options</a>
+	                          <ul>
+	                              <li><a href="<?= Atomik::url('list_project',false)?>">View systems</a></li>
+	                              <li><a href="<?= Atomik::url('list_eqpt',false)?>">View items</a></li>
+	                              <li><a href="<?= Atomik::url('users',false) ?>">View users</a></li>
+	                          </ul>
+	                    </li>
+	                    <?					
+					}
+					?>
+                    <li class="<?= (A('tab_select') == 'misc') ? 'tab_highlight':'tab_normal' ?>"><a href="#">About</a>
                     <ul>
-                    	<li><a href="<?= Atomik::url('users',false) ?>">View Users</a></li>
+                    	
                     	<li><a href="<?= Atomik::url('wiki') ?>">Wiki</a></li>
 						<li class="<?= (A('tab_select') == 'about') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('about',false) ?>">About</a></li>
 						<li class="<?= (A('tab_select') == 'tour') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('tour',false) ?>">Tour</a></li>
 						<li class="<?= (A('tab_select') == 'user_guide') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('user_guide',false) ?>">User Guide</a></li>
             		</ul>
-                    </li>
-					<? if (User::getAdminUserLogged()){?>
-                    <li class="<?= (A('tab_select') == 'admin') ? 'tab_highlight':'tab_normal' ?>"><a href="<?= Atomik::url('admin',false) ?>">Admin</a>
-                    </li>
-					<?}
-					?>				
+                    </li>								
                 </ul>
                 <div class="<?= A('css_search')?>">
                     <form class="search_form" method="POST" action="<?= Atomik::url() ?>">
@@ -109,15 +126,15 @@
             </div>
             <div id="content_" >
                 <ul id="messages" style="margin-left:-40px;">
-                    <?php foreach (A('flash:all') as $label => $messages): ?>
-                        <?php foreach ($messages as $message): ?>
+                    <? foreach (A('flash:all') as $label => $messages): ?>
+                        <? foreach ($messages as $message): ?>
                     <li class="<?php echo $label ?>" style="list-style-type: none">
                                 <?php echo $message ?></li>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
+                        <? endforeach ?>
+                    <? endforeach ?>
                 </ul>
                 <div style="min-height:800px">
-                    <?php echo $contentForLayout; ?>
+                    <?= $contentForLayout ?>
                 </div>	
             </div>
             <div class="spacer"></div>

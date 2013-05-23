@@ -264,8 +264,19 @@ class Review {
 						 $which_project.
 						 $which_aircraft.
 						 " ORDER BY date DESC, project ASC,lru ASC LIMIT 0,10";
-		$all_posts = A('db:'.$sql_query);
-		return($all_posts);
+		$result = A('db:'.$sql_query);
+		if ($result !== false){
+			$all_reviews   = $result->fetchAll(PDO::FETCH_ASSOC);
+			if (User::getCompanyUserLogged() != "ECE"){
+				foreach($all_reviews as $id => &$review):	
+					$review['fname'] = str_rot13($review['fname']);
+					$review['lname'] = str_rot13($review['lname']);
+					$review['project'] = str_rot13($review['project']);
+					$review['lru'] = str_rot13($review['lru']);
+				endforeach;
+			}
+		}
+		return($all_reviews);
 	}
 	public function getBaseline($all_project=false){
 		/* List of baseline */

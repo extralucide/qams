@@ -214,6 +214,7 @@ class Project {
 	}
 	public function getUsers(){
 		Atomik::needed('Tool.class');
+		Atomik::needed('User.class');
 		$which_aircraft = Tool::setFilter("user_join_project.project_id",$this->project_id);		
 		$which_project = Tool::setFilter("projects.aircraft_id",$this->aircraft_id);
 		$sql_query = "SELECT DISTINCT bug_users.id,fname,lname,function ".
@@ -224,7 +225,20 @@ class Project {
 					$which_aircraft.
 					$which_project.
 					" ORDER BY `bug_users`.`lname` ASC";
-		$list = A("db:".$sql_query);
+		$result = A("db:".$sql_query);
+		if ($result !== false){
+			$list = $result->fetchAll();
+			if (User::getCompanyUserLogged() != "ECE"){
+				foreach($list as $id => &$user):
+				    $user['fname'] = str_rot13($user['fname']);
+				    $user['lname'] = str_rot13($user['lname']);
+				    $user['function'] = str_rot13($user['function']);
+				endforeach;
+			}		
+		}
+		else{
+			$list=array();		
+		}
 		return($list);
 	}
 	public static function getProject($aircraft_id="",
@@ -304,11 +318,15 @@ class Project {
 	}
     public static function getSubProjectAcronym($id){
         $row = Atomik_Db::find('lrus','id='.$id);    
-		$acronym = $row['lru'];	
+		$acronym = $row['lru'];
+		if (User::getCompanyUserLogged() != "ECE"){
+			$acronym = str_rot13($acronym);
+		}
 		return ($acronym);
 	}	
 	public function getSubProjectList(){
 		Atomik::needed("Tool.class");
+		Atomik::needed("User.class");
 		$which_project = Tool::setFilter("list_lrus.project",$this->project_id);
 		if (($this->project_id== NULL) || ($this->project_id == 0)){
 			$which_project = "";
@@ -350,6 +368,15 @@ class Project {
 			$list   = $result->fetchAll(PDO::FETCH_ASSOC);
 			// var_dump($list);
 			$item_w_photo = new Project;
+			if (User::getCompanyUserLogged() != "ECE"){
+				foreach($list as $id => &$item):	
+					$item['project'] = str_rot13($item['project']);
+					$item['lru'] = str_rot13($item['lru']);
+					$item['parent_lru'] = str_rot13($item['parent_lru']);
+					$item['description'] = str_rot13($item['description']);
+					$item['abstract'] = str_rot13($item['abstract']);
+				endforeach;
+			}
 			foreach($list as $id => &$item):
 				$item_w_photo->getSubProject($item['id']);
 				$item['photo_file'] = $item_w_photo->photo_file;
